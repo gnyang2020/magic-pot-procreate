@@ -12,14 +12,14 @@
 <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: linear-gradient(165deg, #07C183, #05D68E); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 16px 60px; color: #333; }
+body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: #ffffff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 16px 60px; color: #333; }
 .header-hero { text-align: center; padding: 32px 24px 28px; margin-bottom: 8px; position: relative; }
 .header-hero::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 320px; height: 120px; background: radial-gradient(ellipse, rgba(255,255,255,0.12) 0%, transparent 70%); pointer-events: none; }
-h1 { font-size: 28px; font-weight: 900; color: #fff; letter-spacing: 2px; line-height: 1.4; text-shadow: 0 2px 12px rgba(0,0,0,0.15); margin-bottom: 4px; position: relative; }
-.title-kr { font-size: 36px; font-weight: 900; letter-spacing: 6px; display: block; margin-top: 2px; background: linear-gradient(180deg, #fff 30%, rgba(255,255,255,0.7) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.title-brand { font-family: 'Fredoka', 'Apple SD Gothic Neo', sans-serif; font-size: 42px; font-weight: 700; letter-spacing: 1.5px; display: block; margin-top: 4px; background: linear-gradient(180deg, #fff 30%, rgba(255,255,255,0.72) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 2px 16px rgba(0,0,0,0.12); }
-.sub-maker { font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 12px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; }
-.sub { font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 28px; line-height: 1.7; text-align: center; max-width: 400px; margin-left: auto; margin-right: auto; }
+h1 { font-size: 28px; font-weight: 900; color: #111; letter-spacing: 2px; line-height: 1.4; margin-bottom: 4px; position: relative; }
+.title-kr { font-size: 36px; font-weight: 900; letter-spacing: 6px; display: block; margin-top: 2px; color: #111; }
+.title-brand { font-family: 'Fredoka', 'Apple SD Gothic Neo', sans-serif; font-size: 42px; font-weight: 700; letter-spacing: 1.5px; display: block; margin-top: 4px; color: #111; }
+.sub-maker { font-size: 11px; color: #9aa1ab; margin-bottom: 12px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; }
+.sub { font-size: 13px; color: #6b7280; margin-bottom: 28px; line-height: 1.7; text-align: center; max-width: 400px; margin-left: auto; margin-right: auto; }
 .card { background: #FFFFFF; border-radius: 16px; box-shadow: 0 2px 16px rgba(7,193,131,0.08); padding: 28px 24px; width: 100%; max-width: 540px; margin-bottom: 16px; }
 .section-title { font-size: 11px; font-weight: 700; color: #07C183; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 12px; }
 .dropzone { border: 2px dashed #A7F3D0; border-radius: 14px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: #F0FDF9; margin-bottom: 10px; }
@@ -89,6 +89,9 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 .pill-tab.active[data-c="naver"] { background: linear-gradient(135deg, #22E267, #00C853); }
 .pill-tab.active[data-c="png"]   { background: linear-gradient(135deg, #38BDF8, #0EA5E9); }
 .pill-tab.active[data-c="gif"]   { background: linear-gradient(135deg, #D946EF, #A855F7); }
+.sub-row { display:flex; gap:6px; margin-top:8px; }
+.sub-tog { flex:1; padding:9px 8px; border-radius:10px; font-size:13px; font-weight:700; color:#9aa1ab; background:#fff; border:2px solid #E0E0E0; cursor:pointer; font-family:inherit; transition:all .15s; }
+.sub-tog.active { border-color:#111827; background:#111827; color:#fff; }
 .target-panel { display: none; }
 .target-panel.active { display: block; }
 /* 안내사항 */
@@ -145,16 +148,16 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 .popup-tab.active { border-color: #FFCDD2; background: #FFF0F3; color: #E91E63; }
 /* 푸터 */
 .footer-links { width: 100%; max-width: 540px; margin-top: 4px; }
-.creator-link { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; padding:15px 20px; background:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.45); border-radius:14px; cursor:pointer; transition:all 0.2s; text-decoration:none; }
+.creator-link { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; padding:15px 20px; background:#F0FDF9; border:1px solid #A7F3D0; border-radius:14px; cursor:pointer; transition:all 0.2s; text-decoration:none; }
 .creator-link { transition: transform 0.1s cubic-bezier(0.34,1.56,0.64,1), background 0.2s; }
-.creator-link:active { background:rgba(255,255,255,0.5); transform: scale(1.06); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-.creator-link-txt { font-size:14px; color:#fff; font-weight:700; letter-spacing:0.02em; }
-.review-link { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:10px; padding:14px 20px; background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.35); border-radius:14px; cursor:pointer; transition:all 0.2s; text-decoration:none; }
+.creator-link:active { background:#DCFCE7; transform: scale(1.06); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.creator-link-txt { font-size:14px; color:#059669; font-weight:700; letter-spacing:0.02em; }
+.review-link { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:10px; padding:14px 20px; background:#F4F5F6; border:1px solid #E5E7EB; border-radius:14px; cursor:pointer; transition:all 0.2s; text-decoration:none; }
 .review-link { transition: transform 0.1s cubic-bezier(0.34,1.56,0.64,1), background 0.2s; }
-.review-link:active { background:rgba(255,255,255,0.45); transform: scale(1.06); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-.review-link-txt { font-size:13px; color:rgba(255,255,255,0.95); font-weight:600; letter-spacing:0.02em; }
+.review-link:active { background:#E5E7EB; transform: scale(1.06); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.review-link-txt { font-size:13px; color:#6b7280; font-weight:600; letter-spacing:0.02em; }
 .product-name { text-align: center; margin-top: 16px; padding: 12px 0 4px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 1.5px; }
-.copyright { text-align: center; font-size: 10px; color: rgba(255,255,255,0.4); padding: 6px 0 0; letter-spacing: 0.3px; line-height: 1.8; }
+.copyright { text-align: center; font-size: 10px; color: #222; padding: 6px 0 0; letter-spacing: 0.3px; line-height: 1.8; }
 </style>
 </head>
 <body>
@@ -164,20 +167,6 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 <p class="sub">단 5초면 됩니다. 작가님들 귀한 시간 아껴드립니다.<br>제가 아껴드린 시간으로 제안 1개 더 하는 거 어때요 💕</p>
 </div>
 <div class="card">
-<div style="display:flex;align-items:center;justify-content:space-between;">
-<div class="section-title" style="margin-bottom:0;">파일 업로드</div>
-<button type="button" onclick="clearFiles()" style="background:#EEEEEE;border:1px solid #DDD;border-radius:6px;font-size:10px;color:#888;cursor:pointer;font-weight:600;font-family:inherit;padding:4px 10px;transition:all 0.15s;">전체 삭제</button>
-</div>
-<div style="height:8px;"></div>
-<div class="dropzone" id="dropzone">
-<p><span>클릭</span>하거나 여기 끌어다 놓으세요</p>
-<div style="font-size:11px;color:#999;line-height:1.7;margin-top:8px;text-align:center;">
-PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
-</div>
-</div>
-<input type="file" id="fileInput" accept="*/*" multiple>
-<div class="file-list" id="fileList"></div>
-
 <div class="section-title">테두리 설정</div>
 <div class="setting-row">
 <span class="setting-label">두께</span>
@@ -203,12 +192,18 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 </div>
 
 <div class="target-group">
-<div class="target-title">테두리 적용 대상</div>
-<div class="tabs-pill">
-<button type="button" class="pill-tab active" data-c="kakao" onclick="switchTargetTab('kakao')">카카오</button>
-<button type="button" class="pill-tab" data-c="naver" onclick="switchTargetTab('naver')">네이버</button>
-<button type="button" class="pill-tab" data-c="png" onclick="switchTargetTab('png')">PNG</button>
-<button type="button" class="pill-tab" data-c="gif" onclick="switchTargetTab('gif')">GIF</button>
+<div class="target-title">어디에 낼까요?</div>
+<div class="tabs-pill" id="platformTabs">
+<button type="button" class="pill-tab active" data-p="kakao" data-c="kakao" onclick="switchPlatform('kakao')">카카오</button>
+<button type="button" class="pill-tab" data-p="ogq" data-c="naver" onclick="switchPlatform('ogq')">오지큐</button>
+</div>
+<div class="sub-row" id="subKakao">
+<button type="button" class="sub-tog active" onclick="pickSub(this,'kakao','ilban')">일반</button>
+<button type="button" class="sub-tog" onclick="pickSub(this,'kakao','onestop')">원스톱</button>
+</div>
+<div class="sub-row" id="subOgq" style="display:none;">
+<button type="button" class="sub-tog active" onclick="pickSub(this,'ogq','meomti')">멈티 (PNG)</button>
+<button type="button" class="sub-tog" onclick="pickSub(this,'ogq','umti')">움티 (GIF)</button>
 </div>
 <div class="target-options">
 
@@ -237,6 +232,11 @@ PSD 1개에 시안을 여러 개 만든다면 반드시 각 시안을 폴더로 
 </div>
 </div>
 </label>
+</div>
+
+<!-- 원스톱 (placeholder) -->
+<div class="target-panel" data-c="onestop">
+<div class="option-notice" style="margin:0;">🛠️ 원스톱(3슬롯) 모드는 곧 추가됩니다. 지금은 <b>일반</b> 탭으로 진행해 주세요.</div>
 </div>
 
 <!-- 네이버 -->
@@ -349,6 +349,22 @@ PSD 여러 개를 넣으면 각각 GIF로 변환됩니다. 2개 이상은 ZIP으
 
 </div>
 </div>
+
+<!-- 파일 업로드 (맨 아래) -->
+<div style="display:flex;align-items:center;justify-content:space-between;">
+<div class="section-title" style="margin-bottom:0;">파일 업로드</div>
+<button type="button" onclick="clearFiles()" style="background:#EEEEEE;border:1px solid #DDD;border-radius:6px;font-size:10px;color:#888;cursor:pointer;font-weight:600;font-family:inherit;padding:4px 10px;transition:all 0.15s;">전체 삭제</button>
+</div>
+<div style="height:8px;"></div>
+<div class="dropzone" id="dropzone">
+<p><span>클릭</span>하거나 여기 끌어다 놓으세요</p>
+<div style="font-size:11px;color:#999;line-height:1.7;margin-top:8px;text-align:center;">
+PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
+</div>
+</div>
+<input type="file" id="fileInput" accept="*/*" multiple>
+<div class="file-list" id="fileList"></div>
+
 <button class="run-btn" id="runBtn" onclick="run()" disabled>테두리 추가하기</button>
 <div id="status"></div>
 <div class="progress-bar-wrap" id="progressWrap">
@@ -428,6 +444,31 @@ function switchTargetTab(c) {
   document.querySelectorAll('.pill-tab').forEach(t => t.classList.toggle('active', t.dataset.c === c));
   document.querySelectorAll('.target-panel').forEach(p => p.classList.toggle('active', p.dataset.c === c));
   if (typeof selectTarget === 'function' && map[c]) selectTarget(map[c]);
+}
+
+/* ── 신규 2탭(플랫폼) 내비 — 기존 패널/로직 그대로 재사용 ── */
+const platTargetMap = { kakao: 'top-of-group', naver: 'all-layers', gif: 'gif-only' };
+function showPanelOnly(c) {
+  document.querySelectorAll('.target-panel').forEach(p => p.classList.toggle('active', p.dataset.c === c));
+  if (typeof selectTarget === 'function' && platTargetMap[c]) selectTarget(platTargetMap[c]);
+}
+function switchPlatform(p) {
+  document.querySelectorAll('#platformTabs .pill-tab').forEach(t => t.classList.toggle('active', t.dataset.p === p));
+  document.getElementById('subKakao').style.display = (p === 'kakao') ? 'flex' : 'none';
+  document.getElementById('subOgq').style.display  = (p === 'ogq')   ? 'flex' : 'none';
+  // 각 플랫폼 기본 서브 선택
+  const rowId = (p === 'kakao') ? 'subKakao' : 'subOgq';
+  const btns = document.querySelectorAll('#' + rowId + ' .sub-tog');
+  btns.forEach((b, i) => b.classList.toggle('active', i === 0));
+  showPanelOnly(p === 'kakao' ? 'kakao' : 'naver');
+}
+function pickSub(btn, p, sub) {
+  btn.parentElement.querySelectorAll('.sub-tog').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (p === 'kakao' && sub === 'ilban')        showPanelOnly('kakao');
+  else if (p === 'kakao' && sub === 'onestop') showPanelOnly('onestop');
+  else if (p === 'ogq' && sub === 'meomti')    showPanelOnly('naver');
+  else if (p === 'ogq' && sub === 'umti')      showPanelOnly('gif');
 }
 
 /* ── 상태 변수 ── */
