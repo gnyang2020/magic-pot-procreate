@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGIC POT 컬러 톤앤매너 비교</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: #F0F0F0; padding: 20px 16px 60px; }
+
+.page-title { text-align: center; font-size: 22px; font-weight: 800; color: #333; margin: 20px 0 6px; font-family: 'Fredoka', sans-serif; }
+.page-sub { text-align: center; font-size: 13px; color: #999; margin-bottom: 32px; line-height: 1.6; }
+
+/* 안 선택 탭 */
+.plan-tabs { display: flex; gap: 8px; max-width: 540px; margin: 0 auto 24px; }
+.plan-tab { flex: 1; padding: 14px 10px; border: 2.5px solid #E0E0E0; border-radius: 14px; background: #fff; font-size: 13px; font-weight: 700; color: #999; cursor: pointer; text-align: center; font-family: inherit; transition: all 0.2s; }
+.plan-tab:hover { background: #F8F8F8; }
+.plan-tab.active-a { border-color: #EC4899; background: #FFF1F5; color: #EC4899; }
+.plan-tab.active-b { border-color: #7C3AED; background: #FAF5FF; color: #7C3AED; }
+.plan-tab.active-c { border-color: #07C183; background: #F0FDF9; color: #07C183; }
+.plan-tab .tab-badge { display: block; font-size: 10px; font-weight: 600; margin-top: 2px; color: #bbb; }
+.plan-tab.active-a .tab-badge { color: #F472B6; }
+.plan-tab.active-b .tab-badge { color: #A78BFA; }
+.plan-tab.active-c .tab-badge { color: #34D399; }
+
+/* 미리보기 컨테이너 */
+.preview-wrap { display: none; max-width: 540px; margin: 0 auto; }
+.preview-wrap.active { display: block; }
+
+/* ===== 공통 미리보기 구조 ===== */
+.demo-phone { border-radius: 24px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.15); }
+.demo-header { text-align: center; padding: 36px 24px 28px; position: relative; }
+.demo-header h2 { font-family: 'Fredoka', sans-serif; font-size: 38px; font-weight: 700; line-height: 1.2; margin-bottom: 4px; letter-spacing: 2px; }
+.demo-header .maker { font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+.demo-header .desc { font-size: 13px; line-height: 1.7; max-width: 360px; margin: 0 auto; }
+
+.demo-card { border-radius: 16px; padding: 24px 20px; margin: 0 16px 14px; }
+.demo-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 12px; }
+.demo-dropzone { border: 2px dashed; border-radius: 14px; padding: 28px 16px; text-align: center; margin-bottom: 14px; }
+.demo-dropzone p { font-size: 14px; line-height: 1.6; }
+.demo-dropzone span { font-weight: 700; }
+.demo-dropzone .sub { font-size: 11px; margin-top: 6px; line-height: 1.7; }
+
+.demo-setting-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.demo-setting-label { font-size: 13px; font-weight: 600; min-width: 45px; }
+.demo-input { width: 70px; padding: 8px 10px; border-radius: 10px; font-size: 15px; font-weight: 700; border: 2px solid; outline: none; font-family: inherit; }
+.demo-unit { font-size: 12px; }
+.demo-pill { padding: 5px 14px; border: none; border-radius: 99px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+
+/* 폴더 탭 미리보기 */
+.demo-folder-tabs { display: flex; gap: 0; }
+.demo-folder-btn { flex: 1; padding: 10px 6px; border-bottom: none; border-radius: 14px 14px 0 0; font-size: 12px; font-weight: 700; text-align: center; font-family: inherit; position: relative; margin-right: -1px; border: 2.5px solid #E0E0E0; background: #F5F5F5; color: #bbb; }
+.demo-folder-btn .fbadge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; margin-left: 2px; vertical-align: middle; background: #E0E0E0; color: #fff; }
+.demo-folder-content { border: 2.5px solid; border-radius: 0 0 14px 14px; padding: 18px 14px; min-height: 100px; }
+.demo-panel-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+.demo-panel-desc { font-size: 12px; margin-bottom: 12px; line-height: 1.6; }
+
+.demo-sub-toggle { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border: 2px solid #E0E0E0; border-radius: 8px; font-size: 11px; font-weight: 600; background: #fff; margin-right: 4px; }
+
+/* CTA 버튼 */
+.demo-cta { width: calc(100% - 32px); margin: 0 16px 16px; padding: 15px; border: none; border-radius: 14px; font-size: 15px; font-weight: 800; font-family: inherit; color: #fff; cursor: pointer; }
+
+/* 푸터 미리보기 */
+.demo-footer { padding: 12px 16px 24px; text-align: center; }
+.demo-footer-link { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; border-radius: 14px; margin-bottom: 8px; text-decoration: none; font-size: 14px; font-weight: 700; }
+.demo-footer-sub { font-size: 10px; margin-top: 8px; letter-spacing: 0.3px; }
+
+/* 안내 바 */
+.demo-notice-bar { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 16px; border-radius: 12px; margin-bottom: 14px; font-size: 12px; font-weight: 700; }
+
+/* 컬러 스와치 표시 */
+.color-swatches { display: flex; gap: 6px; flex-wrap: wrap; max-width: 540px; margin: 20px auto 10px; }
+.swatch { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #fff; border-radius: 8px; font-size: 11px; font-weight: 600; color: #555; }
+.swatch-dot { width: 18px; height: 18px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.1); }
+.plan-label { max-width: 540px; margin: 24px auto 8px; font-size: 12px; font-weight: 700; color: #999; letter-spacing: 1px; }
+
+/* ===== A안 전용 색상 ===== */
+.plan-a .demo-phone { background: #FFF1F5; }
+.plan-a .demo-header { background: linear-gradient(165deg, #EC4899, #F472B6); }
+.plan-a .demo-header h2 { color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.1); background: linear-gradient(180deg, #fff 30%, rgba(255,255,255,0.8)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.plan-a .demo-header .maker { color: rgba(255,255,255,0.5); }
+.plan-a .demo-header .desc { color: rgba(255,255,255,0.8); }
+.plan-a .demo-card { background: #fff; box-shadow: 0 2px 16px rgba(236,72,153,0.08); }
+.plan-a .demo-section-title { color: #EC4899; }
+.plan-a .demo-dropzone { border-color: #FBBCE0; background: #FFF7FB; }
+.plan-a .demo-dropzone p { color: #D1699E; }
+.plan-a .demo-dropzone span { color: #EC4899; }
+.plan-a .demo-dropzone .sub { color: #C9A0B4; }
+.plan-a .demo-setting-label { color: #888; }
+.plan-a .demo-input { border-color: #FBBCE0; color: #EC4899; background: #FFF7FB; }
+.plan-a .demo-unit { color: #C9A0B4; }
+.plan-a .demo-pill { background: #FFF0F6; color: #EC4899; }
+.plan-a .demo-pill:hover { background: #EC4899; color: #fff; }
+.plan-a .demo-notice-bar { background: #FFF8E1; border: 1.5px solid #FFE082; color: #F59E0B; }
+.plan-a .demo-cta { background: linear-gradient(135deg, #2563EB, #3B82F6); }
+.plan-a .demo-folder-btn.active-kakao { border-color: #FFCA28; background: #FFFDE7; color: #B8860B; }
+.plan-a .demo-folder-btn.active-kakao .fbadge { background: #FFCA28; }
+.plan-a .demo-folder-content { border-color: #FFCA28; background: #FFFDE7; }
+.plan-a .demo-panel-title { color: #B8860B; }
+.plan-a .demo-panel-desc { color: #A08050; }
+.plan-a .demo-sub-toggle.active { border-color: #FFCA28; background: #FFFDE7; color: #B8860B; }
+.plan-a .demo-footer { background: linear-gradient(165deg, #EC4899, #F472B6); }
+.plan-a .demo-footer-link { background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4); color: #fff; }
+.plan-a .demo-footer-sub { color: rgba(255,255,255,0.45); }
+
+/* ===== B안 전용 색상 ===== */
+.plan-b .demo-phone { background: #FAF5FF; }
+.plan-b .demo-header { background: linear-gradient(165deg, #7C3AED, #9F67FF); }
+.plan-b .demo-header h2 { color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.1); background: linear-gradient(180deg, #fff 30%, rgba(255,255,255,0.8)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.plan-b .demo-header .maker { color: rgba(255,255,255,0.5); }
+.plan-b .demo-header .desc { color: rgba(255,255,255,0.8); }
+.plan-b .demo-card { background: #fff; box-shadow: 0 2px 16px rgba(124,58,237,0.08); }
+.plan-b .demo-section-title { color: #7C3AED; }
+.plan-b .demo-dropzone { border-color: #D8B4FE; background: #FBF7FF; }
+.plan-b .demo-dropzone p { color: #9A7CBF; }
+.plan-b .demo-dropzone span { color: #7C3AED; }
+.plan-b .demo-dropzone .sub { color: #B8A0CC; }
+.plan-b .demo-setting-label { color: #888; }
+.plan-b .demo-input { border-color: #D8B4FE; color: #7C3AED; background: #FBF7FF; }
+.plan-b .demo-unit { color: #B8A0CC; }
+.plan-b .demo-pill { background: #F3ECFF; color: #7C3AED; }
+.plan-b .demo-pill:hover { background: #7C3AED; color: #fff; }
+.plan-b .demo-notice-bar { background: #FFF8E1; border: 1.5px solid #FFE082; color: #F59E0B; }
+.plan-b .demo-cta { background: linear-gradient(135deg, #059669, #10B981); }
+.plan-b .demo-folder-btn.active-kakao { border-color: #FFCA28; background: #FFFDE7; color: #B8860B; }
+.plan-b .demo-folder-btn.active-kakao .fbadge { background: #FFCA28; }
+.plan-b .demo-folder-content { border-color: #FFCA28; background: #FFFDE7; }
+.plan-b .demo-panel-title { color: #B8860B; }
+.plan-b .demo-panel-desc { color: #A08050; }
+.plan-b .demo-sub-toggle.active { border-color: #FFCA28; background: #FFFDE7; color: #B8860B; }
+.plan-b .demo-footer { background: linear-gradient(165deg, #7C3AED, #9F67FF); }
+.plan-b .demo-footer-link { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.35); color: #fff; }
+.plan-b .demo-footer-sub { color: rgba(255,255,255,0.45); }
+
+/* ===== C안 전용 색상 ===== */
+.plan-c .demo-phone { background: #F0FDF9; }
+.plan-c .demo-header { background: linear-gradient(165deg, #07C183, #05D68E); }
+.plan-c .demo-header h2 { color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.1); background: linear-gradient(180deg, #fff 30%, rgba(255,255,255,0.8)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.plan-c .demo-header .maker { color: rgba(255,255,255,0.5); }
+.plan-c .demo-header .desc { color: rgba(255,255,255,0.8); }
+.plan-c .demo-card { background: #fff; box-shadow: 0 2px 16px rgba(7,193,131,0.08); }
+.plan-c .demo-section-title { color: #07C183; }
+.plan-c .demo-dropzone { border-color: #A7F3D0; background: #F0FDF9; }
+.plan-c .demo-dropzone p { color: #6DB89A; }
+.plan-c .demo-dropzone span { color: #059669; }
+.plan-c .demo-dropzone .sub { color: #94B8A8; }
+.plan-c .demo-setting-label { color: #888; }
+.plan-c .demo-input { border-color: #A7F3D0; color: #059669; background: #F0FDF9; }
+.plan-c .demo-unit { color: #94B8A8; }
+.plan-c .demo-pill { background: #ECFDF5; color: #059669; }
+.plan-c .demo-pill:hover { background: #059669; color: #fff; }
+.plan-c .demo-notice-bar { background: #FFF0F3; border: 1.5px solid #FFCDD2; color: #E91E63; }
+.plan-c .demo-cta { background: linear-gradient(135deg, #2563EB, #3B82F6); }
+.plan-c .demo-folder-btn.active-kakao { border-color: #FFCA28; background: #FFFDE7; color: #B8860B; }
+.plan-c .demo-folder-btn.active-kakao .fbadge { background: #FFCA28; }
+.plan-c .demo-folder-content { border-color: #FFCA28; background: #FFFDE7; }
+.plan-c .demo-panel-title { color: #B8860B; }
+.plan-c .demo-panel-desc { color: #A08050; }
+.plan-c .demo-sub-toggle.active { border-color: #FFCA28; background: #FFFDE7; color: #B8860B; }
+.plan-c .demo-footer { background: linear-gradient(165deg, #07C183, #05D68E); }
+.plan-c .demo-footer-link { background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4); color: #fff; }
+.plan-c .demo-footer-sub { color: rgba(255,255,255,0.45); }
+
+/* 현재 vs 변경 비교 라벨 */
+.compare-label { text-align: center; font-size: 11px; font-weight: 700; color: #bbb; letter-spacing: 1px; margin-bottom: 16px; padding: 8px 16px; background: rgba(0,0,0,0.03); border-radius: 8px; max-width: 540px; margin-left: auto; margin-right: auto; }
+</style>
+</head>
+<body>
+
+<div class="page-title">COLOR COMPARE</div>
+<p class="page-sub">MAGIC POT 톤앤매너 3가지 안 비교<br>탭을 눌러서 전환해 보세요</p>
+
+<!-- 안 선택 탭 -->
+<div class="plan-tabs">
+<button class="plan-tab active-a" onclick="switchPlan('a')">A안<span class="tab-badge">코랄 핑크</span></button>
+<button class="plan-tab" onclick="switchPlan('b')">B안<span class="tab-badge">라벤더 퍼플</span></button>
+<button class="plan-tab" onclick="switchPlan('c')">C안<span class="tab-badge">그린 유지+보완</span></button>
+</div>
+
+<!-- 컬러 스와치 -->
+<div class="color-swatches" id="swatches-a">
+<div class="swatch"><div class="swatch-dot" style="background:#EC4899;"></div>Primary</div>
+<div class="swatch"><div class="swatch-dot" style="background:#F59E0B;"></div>Secondary</div>
+<div class="swatch"><div class="swatch-dot" style="background:#2563EB;"></div>CTA</div>
+<div class="swatch"><div class="swatch-dot" style="background:#FFF1F5;"></div>BG</div>
+</div>
+<div class="color-swatches" id="swatches-b" style="display:none;">
+<div class="swatch"><div class="swatch-dot" style="background:#7C3AED;"></div>Primary</div>
+<div class="swatch"><div class="swatch-dot" style="background:#8B5CF6;"></div>Secondary</div>
+<div class="swatch"><div class="swatch-dot" style="background:#059669;"></div>CTA</div>
+<div class="swatch"><div class="swatch-dot" style="background:#FAF5FF;"></div>BG</div>
+</div>
+<div class="color-swatches" id="swatches-c" style="display:none;">
+<div class="swatch"><div class="swatch-dot" style="background:#07C183;"></div>Primary</div>
+<div class="swatch"><div class="swatch-dot" style="background:#EC4899;"></div>Point</div>
+<div class="swatch"><div class="swatch-dot" style="background:#2563EB;"></div>CTA</div>
+<div class="swatch"><div class="swatch-dot" style="background:#F0FDF9;"></div>BG</div>
+</div>
+
+<!-- ===== A안: 코랄 핑크 ===== -->
+<div class="preview-wrap active plan-a" id="plan-a">
+<div class="plan-label">A안 — 코랄 핑크 (Viral Pink)</div>
+<div class="demo-phone">
+<div class="demo-header">
+<h2>MAGIC POT</h2>
+<div class="maker">made by 쥐냥</div>
+<div class="desc">단 5초면 됩니다. 작가님들 귀한 시간 아껴드립니다.</div>
+</div>
+
+<div class="demo-card">
+<div class="demo-section-title">파일 업로드</div>
+<div class="demo-dropzone">
+<p><span>클릭</span>하거나 여기 끌어다 놓으세요</p>
+<div class="sub">PNG 여러 장 · PSD 여러 개 가능</div>
+</div>
+
+<div class="demo-section-title">테두리 설정</div>
+<div class="demo-setting-row">
+<span class="demo-setting-label">두께</span>
+<input type="number" class="demo-input" value="5" readonly>
+<span class="demo-unit">px</span>
+<button class="demo-pill">4</button>
+<button class="demo-pill">8</button>
+<button class="demo-pill">12</button>
+</div>
+
+<div class="demo-notice-bar">사용하기 전에 꼭 확인하세요 ▸</div>
+
+<div style="margin-bottom:14px;">
+<div style="font-size:13px;font-weight:700;color:#555;margin-bottom:8px;">테두리 적용 대상</div>
+<div class="demo-folder-tabs">
+<button class="demo-folder-btn active-kakao">카카오 <span class="fbadge" style="background:#FFCA28;">KAKAO</span></button>
+<button class="demo-folder-btn">네이버 <span class="fbadge">OGQ</span></button>
+<button class="demo-folder-btn">PNG</button>
+<button class="demo-folder-btn">GIF</button>
+</div>
+<div class="demo-folder-content">
+<div class="demo-panel-title">카카오 이모티콘 전용</div>
+<div class="demo-panel-desc">PSD를 넣으면 PNG로 자동 출력 · 텍스트 레이어에만 아웃라인 적용</div>
+<div style="display:flex;gap:6px;">
+<span class="demo-sub-toggle active">360 × 360 자동 변환</span>
+<span class="demo-sub-toggle">원본 사이즈 그대로</span>
+</div>
+</div>
+</div>
+</div>
+
+<button class="demo-cta">테두리 추가하기</button>
+
+<div class="demo-footer">
+<a class="demo-footer-link" href="#">쥐냥 작가 구경가기</a>
+<div class="demo-footer-sub">ALRAME BETA · &copy; 2025 G.NYANG</div>
+</div>
+</div>
+</div>
+
+<!-- ===== B안: 라벤더 퍼플 ===== -->
+<div class="preview-wrap plan-b" id="plan-b">
+<div class="plan-label">B안 — 라벤더 퍼플 (Study Purple)</div>
+<div class="demo-phone">
+<div class="demo-header">
+<h2>MAGIC POT</h2>
+<div class="maker">made by 쥐냥</div>
+<div class="desc">단 5초면 됩니다. 작가님들 귀한 시간 아껴드립니다.</div>
+</div>
+
+<div class="demo-card">
+<div class="demo-section-title">파일 업로드</div>
+<div class="demo-dropzone">
+<p><span>클릭</span>하거나 여기 끌어다 놓으세요</p>
+<div class="sub">PNG 여러 장 · PSD 여러 개 가능</div>
+</div>
+
+<div class="demo-section-title">테두리 설정</div>
+<div class="demo-setting-row">
+<span class="demo-setting-label">두께</span>
+<input type="number" class="demo-input" value="5" readonly>
+<span class="demo-unit">px</span>
+<button class="demo-pill">4</button>
+<button class="demo-pill">8</button>
+<button class="demo-pill">12</button>
+</div>
+
+<div class="demo-notice-bar">사용하기 전에 꼭 확인하세요 ▸</div>
+
+<div style="margin-bottom:14px;">
+<div style="font-size:13px;font-weight:700;color:#555;margin-bottom:8px;">테두리 적용 대상</div>
+<div class="demo-folder-tabs">
+<button class="demo-folder-btn active-kakao">카카오 <span class="fbadge" style="background:#FFCA28;">KAKAO</span></button>
+<button class="demo-folder-btn">네이버 <span class="fbadge">OGQ</span></button>
+<button class="demo-folder-btn">PNG</button>
+<button class="demo-folder-btn">GIF</button>
+</div>
+<div class="demo-folder-content">
+<div class="demo-panel-title">카카오 이모티콘 전용</div>
+<div class="demo-panel-desc">PSD를 넣으면 PNG로 자동 출력 · 텍스트 레이어에만 아웃라인 적용</div>
+<div style="display:flex;gap:6px;">
+<span class="demo-sub-toggle active">360 × 360 자동 변환</span>
+<span class="demo-sub-toggle">원본 사이즈 그대로</span>
+</div>
+</div>
+</div>
+</div>
+
+<button class="demo-cta">테두리 추가하기</button>
+
+<div class="demo-footer">
+<a class="demo-footer-link" href="#">쥐냥 작가 구경가기</a>
+<div class="demo-footer-sub">ALRAME BETA · &copy; 2025 G.NYANG</div>
+</div>
+</div>
+</div>
+
+<!-- ===== C안: 그린 유지+보완 ===== -->
+<div class="preview-wrap plan-c" id="plan-c">
+<div class="plan-label">C안 — 그린 유지 + 포인트 보완</div>
+<div class="demo-phone">
+<div class="demo-header">
+<h2>MAGIC POT</h2>
+<div class="maker">made by 쥐냥</div>
+<div class="desc">단 5초면 됩니다. 작가님들 귀한 시간 아껴드립니다.</div>
+</div>
+
+<div class="demo-card">
+<div class="demo-section-title">파일 업로드</div>
+<div class="demo-dropzone">
+<p><span>클릭</span>하거나 여기 끌어다 놓으세요</p>
+<div class="sub">PNG 여러 장 · PSD 여러 개 가능</div>
+</div>
+
+<div class="demo-section-title">테두리 설정</div>
+<div class="demo-setting-row">
+<span class="demo-setting-label">두께</span>
+<input type="number" class="demo-input" value="5" readonly>
+<span class="demo-unit">px</span>
+<button class="demo-pill">4</button>
+<button class="demo-pill">8</button>
+<button class="demo-pill">12</button>
+</div>
+
+<div class="demo-notice-bar">사용하기 전에 꼭 확인하세요 ▸</div>
+
+<div style="margin-bottom:14px;">
+<div style="font-size:13px;font-weight:700;color:#555;margin-bottom:8px;">테두리 적용 대상</div>
+<div class="demo-folder-tabs">
+<button class="demo-folder-btn active-kakao">카카오 <span class="fbadge" style="background:#FFCA28;">KAKAO</span></button>
+<button class="demo-folder-btn">네이버 <span class="fbadge">OGQ</span></button>
+<button class="demo-folder-btn">PNG</button>
+<button class="demo-folder-btn">GIF</button>
+</div>
+<div class="demo-folder-content">
+<div class="demo-panel-title">카카오 이모티콘 전용</div>
+<div class="demo-panel-desc">PSD를 넣으면 PNG로 자동 출력 · 텍스트 레이어에만 아웃라인 적용</div>
+<div style="display:flex;gap:6px;">
+<span class="demo-sub-toggle active">360 × 360 자동 변환</span>
+<span class="demo-sub-toggle">원본 사이즈 그대로</span>
+</div>
+</div>
+</div>
+</div>
+
+<button class="demo-cta">테두리 추가하기</button>
+
+<div class="demo-footer">
+<a class="demo-footer-link" href="#">쥐냥 작가 구경가기</a>
+<div class="demo-footer-sub">ALRAME BETA · &copy; 2025 G.NYANG</div>
+</div>
+</div>
+</div>
+
+<script>
+function switchPlan(plan) {
+  // 탭 상태
+  document.querySelectorAll('.plan-tab').forEach(t => t.className = 'plan-tab');
+  event.target.closest('.plan-tab').classList.add('active-' + plan);
+
+  // 미리보기 전환
+  document.querySelectorAll('.preview-wrap').forEach(p => p.classList.remove('active'));
+  document.getElementById('plan-' + plan).classList.add('active');
+
+  // 스와치 전환
+  document.querySelectorAll('.color-swatches').forEach(s => s.style.display = 'none');
+  document.getElementById('swatches-' + plan).style.display = 'flex';
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>알라메 탭 디자인 예시</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Pretendard', -apple-system, sans-serif; background: #F5F5F5; padding: 30px 20px; }
+h1 { text-align: center; font-size: 20px; color: #333; margin-bottom: 8px; }
+p.subtitle { text-align: center; font-size: 13px; color: #999; margin-bottom: 40px; }
+.demo-label { font-size: 15px; font-weight: 800; color: #333; margin-bottom: 12px; padding-left: 4px; }
+.demo-label span { font-size: 12px; font-weight: 500; color: #999; margin-left: 6px; }
+.demo-section { max-width: 500px; margin: 0 auto 50px; }
+
+/* 공통 */
+.sub-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.sub-btn {
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1.5px solid #E0E0E0;
+  background: #fff;
+  color: #999;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.sub-btn.active-kakao { border-color: #FFCA28; background: #FFFDE7; color: #B8860B; }
+.sub-btn.active-naver { border-color: #03C75A; background: #e6f9f0; color: #03C75A; }
+.sub-btn.active-png { border-color: #2196F3; background: #F0F7FF; color: #2196F3; }
+.sub-btn.active-gif { border-color: #9C27B0; background: #F3E5F5; color: #9C27B0; }
+
+.settings-box {
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.settings-box.kakao-bg { background: #FFFDE7; border: 1px solid rgba(229,168,0,0.15); }
+.settings-box.naver-bg { background: #f0faf5; border: 1px solid rgba(3,199,90,0.15); }
+.settings-box.gif-bg { background: rgba(156,39,176,0.05); border: 1px solid rgba(156,39,176,0.12); }
+
+.notice-box {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: #FFF8E1;
+  border-radius: 8px;
+  font-size: 11px;
+  color: #666;
+  line-height: 1.7;
+  border: 1px solid rgba(229,168,0,0.1);
+}
+
+.panel-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+.panel-desc { font-size: 12px; color: #777; margin-bottom: 14px; line-height: 1.6; }
+
+.vs-tag {
+  text-align: center;
+  margin: 40px 0;
+  font-size: 13px;
+  color: #bbb;
+  font-weight: 700;
+}
+
+/* ============================================ */
+/*  디자인 A: 컬러 폴더 탭 (테두리 완전 연결)      */
+/* ============================================ */
+.folder-wrap {
+  position: relative;
+}
+.folder-tabs {
+  display: flex;
+  gap: 0;
+  position: relative;
+  z-index: 2;
+}
+.folder-btn {
+  flex: 1;
+  padding: 11px 6px;
+  border: 2.5px solid #E0E0E0;
+  border-bottom: none;
+  border-radius: 14px 14px 0 0;
+  background: #F5F5F5;
+  font-size: 12px;
+  font-weight: 700;
+  color: #BDBDBD;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  text-align: center;
+  position: relative;
+  margin-right: -1px;
+}
+.folder-btn:last-child { margin-right: 0; }
+.folder-btn .fbadge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  margin-left: 3px;
+  vertical-align: middle;
+  background: #E0E0E0;
+  color: #fff;
+}
+/* 선택된 탭 — 아래 테두리를 배경색으로 덮어서 본문과 연결 */
+.folder-btn.active {
+  z-index: 3;
+  margin-right: -1px;
+}
+.folder-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2.5px;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+/* 카카오 */
+.folder-btn.active[data-theme="kakao"] { border-color: #FFCA28; background: #FFFDE7; color: #B8860B; }
+.folder-btn.active[data-theme="kakao"] .fbadge { background: #FFCA28; }
+.folder-btn.active[data-theme="kakao"]::after { background: #FFFDE7; }
+/* 네이버 */
+.folder-btn.active[data-theme="naver"] { border-color: #03C75A; background: #f0faf5; color: #03C75A; }
+.folder-btn.active[data-theme="naver"] .fbadge { background: #03C75A; }
+.folder-btn.active[data-theme="naver"]::after { background: #f0faf5; }
+/* PNG */
+.folder-btn.active[data-theme="png"] { border-color: #2196F3; background: #F0F7FF; color: #2196F3; }
+.folder-btn.active[data-theme="png"] .fbadge { background: #2196F3; }
+.folder-btn.active[data-theme="png"]::after { background: #F0F7FF; }
+/* GIF */
+.folder-btn.active[data-theme="gif"] { border-color: #9C27B0; background: #F9F0FC; color: #9C27B0; }
+.folder-btn.active[data-theme="gif"] .fbadge { background: #9C27B0; }
+.folder-btn.active[data-theme="gif"]::after { background: #F9F0FC; }
+
+.folder-content {
+  position: relative;
+  z-index: 1;
+  border: 2.5px solid #E0E0E0;
+  border-radius: 0 0 14px 14px;
+  padding: 20px 16px;
+  min-height: 200px;
+  background: #fff;
+  transition: all 0.2s;
+}
+.folder-content.fc-kakao { border-color: #FFCA28; background: #FFFDE7; }
+.folder-content.fc-naver { border-color: #03C75A; background: #f0faf5; }
+.folder-content.fc-png { border-color: #2196F3; background: #F0F7FF; }
+.folder-content.fc-gif { border-color: #9C27B0; background: #F9F0FC; }
+
+.folder-panel { display: none; }
+.folder-panel.active { display: block; }
+
+/* ============================================ */
+/*  디자인 B: 알약 탭 + 카드형                     */
+/* ============================================ */
+.pill-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  background: #EEEEEE;
+  border-radius: 14px;
+  margin-bottom: 14px;
+}
+.pill-btn {
+  flex: 1;
+  padding: 10px 6px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 700;
+  color: #999;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  text-align: center;
+}
+.pill-btn .pbadge {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  margin-left: 2px;
+  vertical-align: middle;
+  background: transparent;
+  color: #ccc;
+  border: 1px solid #ccc;
+}
+.pill-btn:hover { background: rgba(255,255,255,0.5); }
+/* 선택 상태 */
+.pill-btn.active[data-theme="kakao"] { background: #FFCA28; color: #fff; box-shadow: 0 2px 8px rgba(255,202,40,0.4); }
+.pill-btn.active[data-theme="kakao"] .pbadge { background: rgba(255,255,255,0.3); color: #fff; border-color: transparent; }
+.pill-btn.active[data-theme="naver"] { background: #03C75A; color: #fff; box-shadow: 0 2px 8px rgba(3,199,90,0.4); }
+.pill-btn.active[data-theme="naver"] .pbadge { background: rgba(255,255,255,0.3); color: #fff; border-color: transparent; }
+.pill-btn.active[data-theme="png"] { background: #2196F3; color: #fff; box-shadow: 0 2px 8px rgba(33,150,243,0.4); }
+.pill-btn.active[data-theme="png"] .pbadge { background: rgba(255,255,255,0.3); color: #fff; border-color: transparent; }
+.pill-btn.active[data-theme="gif"] { background: #9C27B0; color: #fff; box-shadow: 0 2px 8px rgba(156,39,176,0.4); }
+.pill-btn.active[data-theme="gif"] .pbadge { background: rgba(255,255,255,0.3); color: #fff; border-color: transparent; }
+
+.pill-content {
+  border-radius: 16px;
+  padding: 20px 16px;
+  min-height: 200px;
+  background: #fff;
+  border: 2px solid #E8E8E8;
+  transition: all 0.2s;
+}
+.pill-content.pc-kakao { border-color: #FFCA28; background: #fff; }
+.pill-content.pc-naver { border-color: #03C75A; background: #fff; }
+.pill-content.pc-png { border-color: #2196F3; background: #fff; }
+.pill-content.pc-gif { border-color: #9C27B0; background: #fff; }
+
+.pill-panel { display: none; }
+.pill-panel.active { display: block; }
+
+</style>
+</head>
+<body>
+
+<h1>알라메 탭 디자인 비교</h1>
+<p class="subtitle">아래 두 가지 중 마음에 드는 걸 골라주세요</p>
+
+<!-- ========== 디자인 A: 폴더 탭 (완전 연결) ========== -->
+<div class="demo-section">
+<div class="demo-label">디자인 A <span>컬러 폴더 탭 — 테두리 완전 연결</span></div>
+
+<div class="folder-wrap">
+<div class="folder-tabs" id="folderTabs">
+  <button class="folder-btn active" data-theme="kakao" data-tab="fa-kakao" onclick="switchFolder(this)">카카오 <span class="fbadge" style="background:#FFCA28;">KAKAO</span></button>
+  <button class="folder-btn" data-theme="naver" data-tab="fa-naver" onclick="switchFolder(this)">네이버 <span class="fbadge">OGQ</span></button>
+  <button class="folder-btn" data-theme="png" data-tab="fa-png" onclick="switchFolder(this)">PNG</button>
+  <button class="folder-btn" data-theme="gif" data-tab="fa-gif" onclick="switchFolder(this)">GIF</button>
+</div>
+
+<div class="folder-content fc-kakao" id="folderContent">
+  <!-- 카카오 -->
+  <div class="folder-panel active" id="fa-kakao">
+    <div class="panel-title" style="color:#B8860B;">카카오 이모티콘 전용</div>
+    <div class="panel-desc">PSD를 넣으면 PNG로 자동 출력 · 텍스트 레이어에만 아웃라인 적용</div>
+    <div class="sub-btns">
+      <button class="sub-btn active-kakao">360 × 360 자동 변환</button>
+      <button class="sub-btn">원본 사이즈 그대로</button>
+    </div>
+    <div class="settings-box" style="background:rgba(255,202,40,0.12);border:1px solid rgba(229,168,0,0.2);">
+      PSD 파일 내 시안이 여러 개라면 시안 1개당 폴더 1개로 구분해 주세요.<br>
+      최상단에 텍스트 레이어 배치 · 텍스트가 없으면 빈 레이어를 넣어주세요.
+    </div>
+  </div>
+
+  <!-- 네이버 -->
+  <div class="folder-panel" id="fa-naver">
+    <div class="panel-title" style="color:#03C75A;">네이버 OGQ 스티커 전용</div>
+    <div class="panel-desc">시안 전체에 아웃라인 적용</div>
+    <div class="sub-btns">
+      <button class="sub-btn active-naver">740 × 640</button>
+      <button class="sub-btn">원본 사이즈</button>
+      <button class="sub-btn">OGQ GIF</button>
+      <button class="sub-btn">메인/탭</button>
+    </div>
+    <div class="settings-box naver-bg" style="margin-top:2px;">
+      <b style="color:#03C75A;">OGQ GIF 자동 변환 규칙</b><br>
+      1, 2, 3 프레임 → <b>1, 2, 2, 3, 3, 1</b>로 자동 변환
+    </div>
+  </div>
+
+  <!-- PNG -->
+  <div class="folder-panel" id="fa-png">
+    <div class="panel-title" style="color:#2196F3;">PNG 단일 파일</div>
+    <div class="panel-desc">시안 전체에 아웃라인 적용 · PSD 없이 PNG 여러 장 올릴 때</div>
+    <div style="text-align:center;padding:24px;color:#bbb;font-size:13px;">
+      별도 서브 옵션 없음 — 파일 올리고 바로 실행
+    </div>
+  </div>
+
+  <!-- GIF -->
+  <div class="folder-panel" id="fa-gif">
+    <div class="panel-title" style="color:#9C27B0;">GIF 출력</div>
+    <div class="panel-desc">PSD를 넣으면 GIF로 자동 출력</div>
+    <div style="display:flex;gap:12px;margin-bottom:12px;">
+      <div style="flex:1;">
+        <div style="font-size:10px;font-weight:700;color:#9C27B0;margin-bottom:4px;">사이즈</div>
+        <div class="sub-btns" style="margin-bottom:0;">
+          <button class="sub-btn active-gif">원본</button>
+          <button class="sub-btn">360</button>
+          <button class="sub-btn">740</button>
+        </div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:10px;font-weight:700;color:#9C27B0;margin-bottom:4px;">테두리</div>
+        <div class="sub-btns" style="margin-bottom:0;">
+          <button class="sub-btn active-gif">텍스트만</button>
+          <button class="sub-btn">전체</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-box gif-bg">
+      <div style="display:flex;gap:6px;margin-bottom:6px;">
+        <button class="sub-btn active-gif" style="flex:1;">모두 동일</button>
+        <button class="sub-btn" style="flex:1;">프레임별 설정</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:11px;font-weight:600;color:#9C27B0;">프레임 속도</span>
+        <input type="number" value="0.13" style="width:70px;padding:5px 8px;border:2px solid #9C27B0;border-radius:8px;font-size:13px;font-weight:700;color:#9C27B0;background:#fff;outline:none;">
+        <span style="font-size:11px;color:#666;">초/프레임</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="vs-tag">- - - - - - - - - - VS - - - - - - - - - -</div>
+
+<!-- ========== 디자인 B: 알약 탭 ========== -->
+<div class="demo-section">
+<div class="demo-label">디자인 B <span>알약 탭 + 카드형</span></div>
+
+<div class="pill-tabs" id="pillTabs">
+  <button class="pill-btn active" data-theme="kakao" data-tab="pb-kakao" onclick="switchPill(this)">카카오 <span class="pbadge">K</span></button>
+  <button class="pill-btn" data-theme="naver" data-tab="pb-naver" onclick="switchPill(this)">네이버 <span class="pbadge">OGQ</span></button>
+  <button class="pill-btn" data-theme="png" data-tab="pb-png" onclick="switchPill(this)">PNG</button>
+  <button class="pill-btn" data-theme="gif" data-tab="pb-gif" onclick="switchPill(this)">GIF</button>
+</div>
+
+<div class="pill-content pc-kakao" id="pillContent">
+  <!-- 카카오 -->
+  <div class="pill-panel active" id="pb-kakao">
+    <div class="panel-title" style="color:#B8860B;">카카오 이모티콘 전용</div>
+    <div class="panel-desc">PSD를 넣으면 PNG로 자동 출력 · 텍스트 레이어에만 아웃라인 적용</div>
+    <div class="sub-btns">
+      <button class="sub-btn active-kakao">360 × 360 자동 변환</button>
+      <button class="sub-btn">원본 사이즈 그대로</button>
+    </div>
+    <div class="settings-box" style="background:rgba(255,202,40,0.08);border:1px solid rgba(229,168,0,0.15);">
+      PSD 파일 내 시안이 여러 개라면 시안 1개당 폴더 1개로 구분해 주세요.<br>
+      최상단에 텍스트 레이어 배치 · 텍스트가 없으면 빈 레이어를 넣어주세요.
+    </div>
+  </div>
+
+  <!-- 네이버 -->
+  <div class="pill-panel" id="pb-naver">
+    <div class="panel-title" style="color:#03C75A;">네이버 OGQ 스티커 전용</div>
+    <div class="panel-desc">시안 전체에 아웃라인 적용</div>
+    <div class="sub-btns">
+      <button class="sub-btn active-naver">740 × 640</button>
+      <button class="sub-btn">원본 사이즈</button>
+      <button class="sub-btn">OGQ GIF</button>
+      <button class="sub-btn">메인/탭</button>
+    </div>
+    <div class="settings-box naver-bg" style="margin-top:2px;">
+      <b style="color:#03C75A;">OGQ GIF 자동 변환 규칙</b><br>
+      1, 2, 3 프레임 → <b>1, 2, 2, 3, 3, 1</b>로 자동 변환
+    </div>
+  </div>
+
+  <!-- PNG -->
+  <div class="pill-panel" id="pb-png">
+    <div class="panel-title" style="color:#2196F3;">PNG 단일 파일</div>
+    <div class="panel-desc">시안 전체에 아웃라인 적용 · PSD 없이 PNG 여러 장 올릴 때</div>
+    <div style="text-align:center;padding:24px;color:#bbb;font-size:13px;">
+      별도 서브 옵션 없음 — 파일 올리고 바로 실행
+    </div>
+  </div>
+
+  <!-- GIF -->
+  <div class="pill-panel" id="pb-gif">
+    <div class="panel-title" style="color:#9C27B0;">GIF 출력</div>
+    <div class="panel-desc">PSD를 넣으면 GIF로 자동 출력</div>
+    <div style="display:flex;gap:12px;margin-bottom:12px;">
+      <div style="flex:1;">
+        <div style="font-size:10px;font-weight:700;color:#9C27B0;margin-bottom:4px;">사이즈</div>
+        <div class="sub-btns" style="margin-bottom:0;">
+          <button class="sub-btn active-gif">원본</button>
+          <button class="sub-btn">360</button>
+          <button class="sub-btn">740</button>
+        </div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:10px;font-weight:700;color:#9C27B0;margin-bottom:4px;">테두리</div>
+        <div class="sub-btns" style="margin-bottom:0;">
+          <button class="sub-btn active-gif">텍스트만</button>
+          <button class="sub-btn">전체</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-box gif-bg">
+      <div style="display:flex;gap:6px;margin-bottom:6px;">
+        <button class="sub-btn active-gif" style="flex:1;">모두 동일</button>
+        <button class="sub-btn" style="flex:1;">프레임별 설정</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:11px;font-weight:600;color:#9C27B0;">프레임 속도</span>
+        <input type="number" value="0.13" style="width:70px;padding:5px 8px;border:2px solid #9C27B0;border-radius:8px;font-size:13px;font-weight:700;color:#9C27B0;background:#fff;outline:none;">
+        <span style="font-size:11px;color:#666;">초/프레임</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function switchFolder(btn) {
+  const theme = btn.dataset.theme;
+  // 탭 버튼 초기화
+  document.querySelectorAll('.folder-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // 배지 색상
+  document.querySelectorAll('.folder-btn .fbadge').forEach(b => { b.style.background = '#E0E0E0'; });
+  const badge = btn.querySelector('.fbadge');
+  if (badge) {
+    const colors = { kakao: '#FFCA28', naver: '#03C75A', png: '#2196F3', gif: '#9C27B0' };
+    badge.style.background = colors[theme];
+  }
+  // 본문 테두리+배경 색상
+  const content = document.getElementById('folderContent');
+  content.className = 'folder-content fc-' + theme;
+  // 패널 전환
+  document.querySelectorAll('.folder-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(btn.dataset.tab).classList.add('active');
+}
+
+function switchPill(btn) {
+  const theme = btn.dataset.theme;
+  // 탭 버튼 초기화
+  document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // 본문 테두리
+  const content = document.getElementById('pillContent');
+  content.className = 'pill-content pc-' + theme;
+  // 패널 전환
+  document.querySelectorAll('.pill-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(btn.dataset.tab).classList.add('active');
+}
+</script>
+
+</body>
+</html>

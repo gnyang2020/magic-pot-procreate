@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGIC POT — 탭 디자인 시안 5종</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: linear-gradient(165deg, #07C183, #05D68E); min-height: 100vh; padding: 40px 16px 60px; color: #333; }
+  .page-title { font-family: 'Fredoka', sans-serif; font-weight: 700; color: #fff; text-align: center; font-size: 32px; letter-spacing: 1px; margin-bottom: 8px; }
+  .page-sub { text-align: center; color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 28px; }
+  .variants { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+  .variant { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .variant-label { display: inline-block; font-size: 11px; font-weight: 800; color: #07C183; background: #E8FBF3; padding: 4px 10px; border-radius: 99px; margin-bottom: 4px; letter-spacing: 0.5px; }
+  .variant-name { font-size: 16px; font-weight: 800; margin-bottom: 2px; color: #222; }
+  .variant-desc { font-size: 12px; color: #888; margin-bottom: 16px; line-height: 1.6; }
+
+  /* 공통 패널(컨텐츠 영역) */
+  .panel { display: none; padding: 18px 16px; border-radius: 12px; background: #FAFAFA; min-height: 120px; }
+  .panel.active { display: block; }
+  .panel-title { font-size: 14px; font-weight: 800; margin-bottom: 6px; }
+  .panel-desc { font-size: 12px; color: #666; line-height: 1.7; }
+  .panel.kakao .panel-title { color: #F59E0B; }
+  .panel.naver .panel-title { color: #00C853; }
+  .panel.png   .panel-title { color: #0EA5E9; }
+  .panel.gif   .panel-title { color: #A855F7; }
+
+  /* ───────── 시안 1: 밑줄 (Underline) ───────── */
+  .v1 .tabs { display: flex; border-bottom: 1px solid #EEE; margin-bottom: 14px; }
+  .v1 .tab { flex: 1; padding: 12px 6px; text-align: center; font-size: 12px; font-weight: 700; color: #999; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.15s; }
+  .v1 .tab:hover { color: #555; }
+  .v1 .tab.active[data-c="kakao"] { color: #B8860B; border-bottom-color: #E5A800; }
+  .v1 .tab.active[data-c="naver"] { color: #03C75A; border-bottom-color: #03C75A; }
+  .v1 .tab.active[data-c="png"]   { color: #2196F3; border-bottom-color: #2196F3; }
+  .v1 .tab.active[data-c="gif"]   { color: #9C27B0; border-bottom-color: #AB47BC; }
+
+  /* ───────── 시안 2: 알약 (Pill) ───────── */
+  .v2 .tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .v2 .tab { flex: 1; min-width: 80px; padding: 10px 12px; text-align: center; font-size: 12px; font-weight: 700; color: #888; cursor: pointer; background: #F3F3F3; border-radius: 99px; transition: all 0.18s; }
+  .v2 .tab:hover { background: #EAEAEA; }
+  .v2 .tab.active { color: #fff; }
+  .v2 .tab.active[data-c="kakao"] { background: linear-gradient(135deg, #FFE044, #FFC400); }
+  .v2 .tab.active[data-c="naver"] { background: linear-gradient(135deg, #22E267, #00C853); }
+  .v2 .tab.active[data-c="png"]   { background: linear-gradient(135deg, #38BDF8, #0EA5E9); }
+  .v2 .tab.active[data-c="gif"]   { background: linear-gradient(135deg, #D946EF, #A855F7); }
+
+  /* ───────── 시안 3: 세그먼트 (iOS) ───────── */
+  .v3 .tabs { display: flex; gap: 3px; background: #EFEFEF; padding: 3px; border-radius: 10px; margin-bottom: 14px; }
+  .v3 .tab { flex: 1; padding: 9px 6px; text-align: center; font-size: 12px; font-weight: 700; color: #777; cursor: pointer; background: transparent; border-radius: 8px; transition: all 0.15s; }
+  .v3 .tab.active { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .v3 .tab.active[data-c="kakao"] { color: #B8860B; }
+  .v3 .tab.active[data-c="naver"] { color: #03C75A; }
+  .v3 .tab.active[data-c="png"]   { color: #2196F3; }
+  .v3 .tab.active[data-c="gif"]   { color: #9C27B0; }
+
+  /* ───────── 시안 4: 카드 탑 (Card-Top) ───────── */
+  .v4 .tabs { display: flex; gap: 2px; }
+  .v4 .tab { flex: 1; padding: 10px 6px; text-align: center; font-size: 12px; font-weight: 700; color: #999; cursor: pointer; background: #F0F0F0; border-radius: 10px 10px 0 0; border-top: 3px solid transparent; transition: all 0.15s; }
+  .v4 .tab.active { background: #FAFAFA; color: #333; }
+  .v4 .tab.active[data-c="kakao"] { border-top-color: #E5A800; color: #B8860B; }
+  .v4 .tab.active[data-c="naver"] { border-top-color: #03C75A; color: #03C75A; }
+  .v4 .tab.active[data-c="png"]   { border-top-color: #2196F3; color: #2196F3; }
+  .v4 .tab.active[data-c="gif"]   { border-top-color: #AB47BC; color: #9C27B0; }
+  .v4 .panel { border-radius: 0 0 12px 12px; }
+
+  /* ───────── 시안 5: 좌측바 (Color Bar) ───────── */
+  .v5 .tabs { display: flex; gap: 4px; margin-bottom: 14px; }
+  .v5 .tab { flex: 1; padding: 10px 6px 10px 12px; text-align: left; font-size: 12px; font-weight: 700; color: #888; cursor: pointer; background: #F8F8F8; border-left: 4px solid #DDD; border-radius: 0 8px 8px 0; transition: all 0.15s; line-height: 1.2; }
+  .v5 .tab small { display: block; font-size: 9px; font-weight: 600; opacity: 0.7; margin-top: 2px; letter-spacing: 0.5px; }
+  .v5 .tab[data-c="kakao"] { border-left-color: #E5A800; }
+  .v5 .tab[data-c="naver"] { border-left-color: #03C75A; }
+  .v5 .tab[data-c="png"]   { border-left-color: #2196F3; }
+  .v5 .tab[data-c="gif"]   { border-left-color: #AB47BC; }
+  .v5 .tab.active { background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border-left-width: 6px; }
+  .v5 .tab.active[data-c="kakao"] { color: #B8860B; }
+  .v5 .tab.active[data-c="naver"] { color: #03C75A; }
+  .v5 .tab.active[data-c="png"]   { color: #2196F3; }
+  .v5 .tab.active[data-c="gif"]   { color: #9C27B0; }
+
+  .pick-hint { text-align: center; color: rgba(255,255,255,0.85); font-size: 13px; margin-top: 24px; padding: 14px; background: rgba(0,0,0,0.12); border-radius: 12px; }
+  .pick-hint b { color: #fff; }
+</style>
+</head>
+<body>
+<h1 class="page-title">MAGIC POT — 탭 시안 5종</h1>
+<p class="page-sub">마음에 드는 번호를 골라주세요. 각 시안은 클릭하면 실제로 작동합니다.</p>
+
+<div class="variants">
+
+  <!-- 시안 1 -->
+  <div class="variant v1" data-v="1">
+    <span class="variant-label">시안 1</span>
+    <div class="variant-name">밑줄 탭 (Underline)</div>
+    <div class="variant-desc">미니멀한 클래식 스타일. 하단에 컬러 라인으로 활성 표시. 공간을 덜 먹어서 컨텐츠가 바로 이어지는 느낌.</div>
+    <div class="tabs">
+      <div class="tab active" data-c="kakao">카카오</div>
+      <div class="tab" data-c="naver">네이버</div>
+      <div class="tab" data-c="png">PNG</div>
+      <div class="tab" data-c="gif">GIF</div>
+    </div>
+    <div class="panel kakao active"><div class="panel-title">카카오 이모티콘 전용</div><div class="panel-desc">PSD를 넣으면 PNG로 자동 출력. 텍스트 레이어에만 아웃라인 적용.</div></div>
+    <div class="panel naver"><div class="panel-title">네이버 OGQ 스티커 전용</div><div class="panel-desc">PSD를 넣으면 PNG로 자동 출력. 시안 전체에 아웃라인 적용.</div></div>
+    <div class="panel png"><div class="panel-title">PNG 단일 파일</div><div class="panel-desc">시안 전체에 아웃라인 적용. PSD 없이 PNG 여러 장 올릴 때.</div></div>
+    <div class="panel gif"><div class="panel-title">GIF 출력</div><div class="panel-desc">PSD를 넣으면 GIF로 자동 출력.</div></div>
+  </div>
+
+  <!-- 시안 2 -->
+  <div class="variant v2" data-v="2">
+    <span class="variant-label">시안 2</span>
+    <div class="variant-name">알약 탭 (Pill)</div>
+    <div class="variant-desc">모바일 친화적. 선택 시 컬러 fill + 화이트 텍스트. 활성 여부가 강하게 드러나서 초보자도 "지금 뭐 선택됐는지" 바로 알 수 있음.</div>
+    <div class="tabs">
+      <div class="tab active" data-c="kakao">카카오</div>
+      <div class="tab" data-c="naver">네이버</div>
+      <div class="tab" data-c="png">PNG</div>
+      <div class="tab" data-c="gif">GIF</div>
+    </div>
+    <div class="panel kakao active"><div class="panel-title">카카오 이모티콘 전용</div><div class="panel-desc">PSD를 넣으면 PNG로 자동 출력. 텍스트 레이어에만 아웃라인 적용.</div></div>
+    <div class="panel naver"><div class="panel-title">네이버 OGQ 스티커 전용</div><div class="panel-desc">PSD를 넣으면 PNG로 자동 출력. 시안 전체에 아웃라인 적용.</div></div>
+    <div class="panel png"><div class="panel-title">PNG 단일 파일</div><div class="panel-desc">시안 전체에 아웃라인 적용.</div></div>
+    <div class="panel gif"><div class="panel-title">GIF 출력</div><div class="panel-desc">PSD를 넣으면 GIF로 자동 출력.</div></div>
+  </div>
+
+  <!-- 시안 3 -->
+  <div class="variant v3" data-v="3">
+    <span class="variant-label">시안 3</span>
+    <div class="variant-name">세그먼트 컨트롤 (iOS)</div>
+    <div class="variant-desc">iOS 설정 앱에 흔한 회색 컨테이너 안에서 분할되는 스타일. 톤이 차분해서 도구가 복잡해 보이지 않음. 앱 같은 느낌.</div>
+    <div class="tabs">
+      <div class="tab active" data-c="kakao">카카오</div>
+      <div class="tab" data-c="naver">네이버</div>
+      <div class="tab" data-c="png">PNG</div>
+      <div class="tab" data-c="gif">GIF</div>
+    </div>
+    <div class="panel kakao active"><div class="panel-title">카카오 이모티콘 전용</div><div class="panel-desc">PSD를 넣으면 PNG로 자동 출력. 텍스트 레이어에만 아웃라인 적용.</div></div>
+    <div class="panel naver"><div class="panel-title">네이버 OGQ 스티커 전용</div><div class="panel-desc">PSD를 넣으면 PNG로 자동 출력. 시안 전체에 아웃라인 적용.</div></div>
+    <div class="panel png"><div class="panel-title">PNG 단일 파일</div><div class="panel-desc">시안 전체에 아웃라인 적용.</div></div>
+    <div class="panel gif"><div class="panel-title">GIF 출력</div><div class="panel-desc">PSD를 넣으면 GIF로 자동 출력.</div></div>
+  </div>
+
+  <!-- 시안 4 -->
+  <div class="variant v4" data-v="4">
+    <span class="variant-label">시안 4</span>
+    <div class="variant-name">카드 탑 (Card-Top)</div>
+    <div class="variant-desc">탭이 컨텐츠 카드 위에 얹어진 폴더 탭 느낌. 상단 컬러 바로 현재 탭 표시. 전통적이고 알아보기 쉬움.</div>
+    <div class="tabs">
+      <div class="tab active" data-c="kakao">카카오</div>
+      <div class="tab" data-c="naver">네이버</div>
+      <div class="tab" data-c="png">PNG</div>
+      <div class="tab" data-c="gif">GIF</div>
+    </div>
+    <div class="panel kakao active"><div class="panel-title">카카오 이모티콘 전용</div><div class="panel-desc">PSD를 넣으면 PNG로 자동 출력. 텍스트 레이어에만 아웃라인 적용.</div></div>
+    <div class="panel naver"><div class="panel-title">네이버 OGQ 스티커 전용</div><div class="panel-desc">PSD를 넣으면 PNG로 자동 출력. 시안 전체에 아웃라인 적용.</div></div>
+    <div class="panel png"><div class="panel-title">PNG 단일 파일</div><div class="panel-desc">시안 전체에 아웃라인 적용.</div></div>
+    <div class="panel gif"><div class="panel-title">GIF 출력</div><div class="panel-desc">PSD를 넣으면 GIF로 자동 출력.</div></div>
+  </div>
+
+  <!-- 시안 5 -->
+  <div class="variant v5" data-v="5">
+    <span class="variant-label">시안 5</span>
+    <div class="variant-name">좌측 컬러바 탭 (Color Bar)</div>
+    <div class="variant-desc">각 탭에 고유 컬러바 + 라벨로 브랜드 색을 항상 보여줌. 4개 선택지가 동등하게 보이면서도 컬러 식별성이 가장 강한 스타일.</div>
+    <div class="tabs">
+      <div class="tab active" data-c="kakao">카카오<small>KAKAO</small></div>
+      <div class="tab" data-c="naver">네이버<small>NAVER</small></div>
+      <div class="tab" data-c="png">PNG<small>PNG</small></div>
+      <div class="tab" data-c="gif">GIF<small>GIF</small></div>
+    </div>
+    <div class="panel kakao active"><div class="panel-title">카카오 이모티콘 전용</div><div class="panel-desc">PSD를 넣으면 PNG로 자동 출력. 텍스트 레이어에만 아웃라인 적용.</div></div>
+    <div class="panel naver"><div class="panel-title">네이버 OGQ 스티커 전용</div><div class="panel-desc">PSD를 넣으면 PNG로 자동 출력. 시안 전체에 아웃라인 적용.</div></div>
+    <div class="panel png"><div class="panel-title">PNG 단일 파일</div><div class="panel-desc">시안 전체에 아웃라인 적용.</div></div>
+    <div class="panel gif"><div class="panel-title">GIF 출력</div><div class="panel-desc">PSD를 넣으면 GIF로 자동 출력.</div></div>
+  </div>
+
+</div>
+
+<div class="pick-hint">
+  마음에 드는 번호를 <b>"시안 2로 가자"</b>처럼 말해주세요.
+</div>
+
+<script>
+  document.querySelectorAll('.variant').forEach(v => {
+    const tabs = v.querySelectorAll('.tab');
+    const panels = v.querySelectorAll('.panel');
+    tabs.forEach(t => {
+      t.addEventListener('click', () => {
+        const c = t.dataset.c;
+        tabs.forEach(x => x.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+        t.classList.add('active');
+        v.querySelector('.panel.' + c).classList.add('active');
+      });
+    });
+  });
+</script>
+</body>
+</html>
