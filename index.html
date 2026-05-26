@@ -986,40 +986,48 @@ function applyBorderAlgo(w, h, src, offsets, color) {
 /* ── 카카오 PSD 처리 (그룹별 최상위 레이어) ── */
 /* 가이드·배경 그룹은 스티커 처리에서 제외 (넘버링 유무 무관) */
 function isGuideOrBg(name) { return /가이드|guide|배경|background/i.test(name || ''); }
+/* 폴더 이름이 숫자로 시작하면 "넘버링된 스티커 폴더" (1, 24, 01, 1번 …) */
+function isNumberedName(name) { return /^\s*\d+/.test(name || ''); }
+/* 맨 위 자식을 끝까지 따라가 실제 최상위 레이어(리프) 찾기 — 폴더로 감싸도·빈 레이어도 인식 */
+function topMostLeaf(node) {
+  const kids = node && node.children;
+  if (!kids || !kids.length) return node;
+  return topMostLeaf(kids[kids.length - 1]);
+}
+/* 스티커 폴더 목록: 숫자 폴더 2개 이상이면 그것들이 스티커, 아니면 [] (= PSD 전체가 1 시안) */
+function stickerFolders(psd) {
+  const groups = (psd.children || []).filter(c => c.children && c.children.length > 0 && !isGuideOrBg(c.name));
+  const numbered = groups.filter(c => isNumberedName(c.name));
+  return (numbered.length >= 2) ? numbered : [];
+}
 
 async function processPsdTopOfGroup(psd, radius, color, onProgress) {
   const psdW = psd.width, psdH = psd.height;
-  const folders = (psd.children || []).filter(c => c.children && c.children.length > 0 && !isGuideOrBg(c.name));
+  const folders = stickerFolders(psd);
   const previews = [];
 
-  if (folders.length === 0) {
-    /* 폴더 0개 = 평면 단일 시안: "실제 최상위 자식"에만 테두리 → 전체 병합.
-       (빈 레이어는 collectLeafLayers에서 빠지므로 그걸로 top을 잡으면 아래 레이어가 테두리됨 → 실제 맨 위 자식을 직접 본다) */
-    const kids = psd.children || [];
-    const topLayer = kids.length ? kids[kids.length - 1] : null;
-    const topIsLeaf = topLayer && (!topLayer.children || topLayer.children.length === 0);
-    if (topIsLeaf && topLayer.canvas && !isCanvasEmpty(topLayer.canvas)) {
-      await addBorderPsd(topLayer, radius, color, psdW, psdH);   // 맨 위가 텍스트(내용 있음)일 때만 테두리
+  if (folders.length < 2) {
+    /* 숫자 폴더 2개 미만 = PSD 전체가 시안 1개 (평면·폴더로 감쌈·복잡 모두):
+       실제 맨 위 레이어(텍스트)에만 테두리 → 전체 병합. 맨 위가 빈 레이어면 테두리 없음. */
+    const top = topMostLeaf(psd);
+    if (top && top !== psd && top.canvas && !isCanvasEmpty(top.canvas)) {
+      await addBorderPsd(top, radius, color, psdW, psdH);
     }
-    // 맨 위가 빈 레이어면 테두리 없이 전체만 병합 (텍스트 없는 시안 규칙)
     previews.push({ folder: psd, name: psd.name || 'merged', outlined: true, psdW, psdH });
     onProgress(1);
     return previews;
   }
 
-  /* 폴더 2개 이상: 폴더별 처리 (폴더 1개 = 시안 1개) */
+  /* 숫자 폴더 2개 이상: 폴더별 = 스티커 1개. 폴더 맨 위 텍스트만 테두리(빈 레이어면 스킵) */
   for (let fi = 0; fi < folders.length; fi++) {
     const folder = folders[fi];
-    const lastIdx = folder.children.length - 1;
-    const topLayer = folder.children[lastIdx];
-    const topIsLeaf = topLayer && (!topLayer.children || topLayer.children.length === 0);
-    if (!topIsLeaf || !topLayer.canvas || isCanvasEmpty(topLayer.canvas)) {
+    const top = topMostLeaf(folder);
+    if (top && top !== folder && top.canvas && !isCanvasEmpty(top.canvas)) {
+      await addBorderPsd(top, radius, color, psdW, psdH);
+      previews.push({ folder: folder, name: folder.name, outlined: true, psdW, psdH });
+    } else {
       previews.push({ folder: folder, name: folder.name, outlined: false, psdW, psdH });
-      onProgress((fi + 1) / folders.length);
-      continue;
     }
-    await addBorderPsd(topLayer, radius, color, psdW, psdH);
-    previews.push({ folder: folder, name: folder.name, outlined: true, psdW, psdH });
     onProgress((fi + 1) / folders.length);
   }
   return previews;
@@ -1143,10 +1151,10 @@ function mergeFolderToCanvas(folder, psdW, psdH) {
 async function processPsdAllLayers(psd, radius, color, onProgress) {
   const psdW = psd.width, psdH = psd.height;
   const previews = [];
-  const folders = (psd.children || []).filter(c => c.children && c.children.length > 0 && !isGuideOrBg(c.name));
+  const folders = stickerFolders(psd);
 
-  if (folders.length >= 1) {
-    /* 폴더 1개 이상: 폴더별 처리 (폴더 1개 = 시안 1개) */
+  if (folders.length > 0) {
+    /* 숫자 폴더 2개 이상: 폴더별 = 스티커 1개 (전체 테두리) */
     for (let fi = 0; fi < folders.length; fi++) {
       const folder = folders[fi];
       const leafLayers = collectLeafLayers(folder);
