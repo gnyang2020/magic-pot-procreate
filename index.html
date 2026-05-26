@@ -429,7 +429,8 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 • <b>폴더 1개 = 이모티콘 시안 1개</b>로 정리<br>
 • 텍스트는 폴더 안 <b>맨 위 레이어</b>에<br>
 • 텍스트가 없는 시안은 맨 위에 <b>빈 레이어</b> 넣기<br>
-• 배경 및 필요없는 레이어 <b>반드시 지우기</b><br><br>
+• 배경 및 필요없는 레이어 <b>반드시 지우기</b><br>
+• <b>가이드·위치 폴더</b>는 이름에 <b>'가이드'</b> 넣기 → 자동 제외 (또는 삭제)<br><br>
 <div style="background:#F5F5F5;border:1.5px dashed #CCC;border-radius:10px;padding:14px 16px;font-family:'Courier New',monospace;font-size:11px;line-height:2;color:#555;">
 <b style="color:#333;">📁 예시 구조</b><br>
 <span style="color:#E91E63;">📁 폴더 1</span> (이모티콘 1번)<br>
@@ -991,8 +992,8 @@ async function processPsdTopOfGroup(psd, radius, color, onProgress) {
   const folders = (psd.children || []).filter(c => c.children && c.children.length > 0 && !isGuideOrBg(c.name));
   const previews = [];
 
-  if (folders.length <= 1) {
-    /* PSD 전체가 시안 1개 (폴더 0~1개): "실제 최상위 자식"에만 테두리 → 전체 병합.
+  if (folders.length === 0) {
+    /* 폴더 0개 = 평면 단일 시안: "실제 최상위 자식"에만 테두리 → 전체 병합.
        (빈 레이어는 collectLeafLayers에서 빠지므로 그걸로 top을 잡으면 아래 레이어가 테두리됨 → 실제 맨 위 자식을 직접 본다) */
     const kids = psd.children || [];
     const topLayer = kids.length ? kids[kids.length - 1] : null;
@@ -1144,8 +1145,8 @@ async function processPsdAllLayers(psd, radius, color, onProgress) {
   const previews = [];
   const folders = (psd.children || []).filter(c => c.children && c.children.length > 0 && !isGuideOrBg(c.name));
 
-  if (folders.length >= 2) {
-    /* 폴더 2개 이상: 폴더별 처리 (폴더 1개 = 시안 1개) */
+  if (folders.length >= 1) {
+    /* 폴더 1개 이상: 폴더별 처리 (폴더 1개 = 시안 1개) */
     for (let fi = 0; fi < folders.length; fi++) {
       const folder = folders[fi];
       const leafLayers = collectLeafLayers(folder);
