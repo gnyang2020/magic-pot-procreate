@@ -861,7 +861,7 @@ async function detectAllFrameCounts() {
       const buf = await file.arrayBuffer();
       const psd = window.agPsd.readPsd(buf, { loadThumbnail: false, skipLayerImageData: true });
       unwrapAnimationFolder(psd);
-      const folders = (psd.children || []).filter(c => c.children && c.children.length > 0);
+      const folders = (psd.children || []).filter(c => c.children && c.children.length > 0 && !isGuideOrBg(c.name));
       const layers = (psd.children || []).filter(c => !c.children || c.children.length === 0);
       const count = folders.length > 0 ? folders.length : layers.length;
       detectedFiles.push({ name: file.name, frameCount: count });
@@ -983,9 +983,12 @@ function applyBorderAlgo(w, h, src, offsets, color) {
 }
 
 /* ── 카카오 PSD 처리 (그룹별 최상위 레이어) ── */
+/* 가이드·배경 그룹은 스티커 처리에서 제외 (넘버링 유무 무관) */
+function isGuideOrBg(name) { return /가이드|guide|배경|background/i.test(name || ''); }
+
 async function processPsdTopOfGroup(psd, radius, color, onProgress) {
   const psdW = psd.width, psdH = psd.height;
-  const folders = (psd.children || []).filter(c => c.children && c.children.length > 0);
+  const folders = (psd.children || []).filter(c => c.children && c.children.length > 0 && !isGuideOrBg(c.name));
   const previews = [];
 
   if (folders.length <= 1) {
@@ -1139,7 +1142,7 @@ function mergeFolderToCanvas(folder, psdW, psdH) {
 async function processPsdAllLayers(psd, radius, color, onProgress) {
   const psdW = psd.width, psdH = psd.height;
   const previews = [];
-  const folders = (psd.children || []).filter(c => c.children && c.children.length > 0);
+  const folders = (psd.children || []).filter(c => c.children && c.children.length > 0 && !isGuideOrBg(c.name));
 
   if (folders.length >= 2) {
     /* 폴더 2개 이상: 폴더별 처리 (폴더 1개 = 시안 1개) */
