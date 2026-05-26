@@ -89,7 +89,7 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 .pill-tab.active[data-c="naver"] { background: linear-gradient(135deg, #22E267, #00C853); }
 .pill-tab.active[data-c="png"]   { background: linear-gradient(135deg, #38BDF8, #0EA5E9); }
 .pill-tab.active[data-c="gif"]   { background: linear-gradient(135deg, #D946EF, #A855F7); }
-.sub-row { display:flex; gap:6px; margin-top:8px; }
+.sub-row { display:flex; gap:8px; margin:10px 0 16px; }
 .sub-tog { flex:1; padding:9px 8px; border-radius:10px; font-size:13px; font-weight:700; color:#9aa1ab; background:#fff; border:2px solid #E0E0E0; cursor:pointer; font-family:inherit; transition:all .15s; }
 .sub-tog.active { border-color:#111827; background:#111827; color:#fff; }
 .target-panel { display: none; }
@@ -127,6 +127,16 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 .dl-btn:hover { opacity: 0.85; }
 .dl-btn { transition: transform 0.1s cubic-bezier(0.34,1.56,0.64,1); }
 .dl-btn:active { transform: scale(1.06); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+/* 2열 버튼바 (테두리 추가하기 / ZIP 다운로드) — 입력 바로 아래 */
+.action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0 2px; }
+.action-bar .run-btn, .action-bar .dl-btn { margin: 0; width: 100%; }
+.action-bar .dl-btn { background: linear-gradient(135deg, #059669, #10B981); }
+.action-bar .dl-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+@media (max-width: 420px) { .action-bar .run-btn, .action-bar .dl-btn { font-size: 13px; padding: 13px 6px; } }
+/* 미리보기 클릭 = 1장 저장 */
+.preview-item { cursor: pointer; border-radius: 10px; padding: 4px; transition: background 0.12s, transform 0.1s; }
+.preview-item:hover { background: #F0FDF9; transform: translateY(-2px); }
+.preview-item:active { transform: scale(0.95); }
 .reset-row { display: flex; justify-content: flex-end; margin-top: 20px; }
 .reset-btn { padding: 10px 20px; background: #fff; color: #bbb; border: 1.5px solid #E0E0E0; border-radius: 10px; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; }
 .reset-btn:hover { background: #FFF0F0; color: #E53935; border-color: #E53935; }
@@ -223,11 +233,9 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 </label>
 </div>
 <div class="option-notice">
-PSD 1개에 시안을 여러 개 만든다면 반드시 각 시안을 폴더로 묶어주세요.<br>
-폴더·레이어 명은 상관 없습니다.<br>
-그룹별 제일 상단에 텍스트 레이어를 위치하게 해주세요.<br>
-텍스트가 없는 시안의 경우 최상단에 빈 레이어를 꼭 넣어주세요.<br>
-필요없는 레이어나 배경 레이어는 꼭 삭제해 주세요.
+PSD 1개에 이모티콘 <b>여러 개</b> → PSD 파일 <b>1개</b> 넣기<br>
+PSD 1개에 이모티콘 <b>1개</b> → PSD 파일 <b>여러 개</b> 넣기<br>
+가이드·배경은 <b>눈 끄거나 삭제</b>
 </div>
 </div>
 </label>
@@ -235,7 +243,12 @@ PSD 1개에 시안을 여러 개 만든다면 반드시 각 시안을 폴더로 
 
 <!-- 원스톱 (placeholder) -->
 <div class="target-panel" data-c="onestop">
-<div class="option-notice" style="margin:0;">🛠️ 원스톱(3슬롯) 모드는 곧 추가됩니다. 지금은 <b>일반</b> 탭으로 진행해 주세요.</div>
+<div class="option-notice" style="margin:0;">
+<b>텍스트(위) / 캐릭터 / 텍스트(아래)</b>로 구분해 PNG 파일 넣기<br>
+캐릭터 PNG는 <b>필수</b> · 테두리는 <b>텍스트에만</b><br>
+가이드는 <b>반드시 삭제</b><br>
+<span style="color:#999;">🛠️ 슬롯 업로드는 곧 추가됩니다.</span>
+</div>
 </div>
 
 <!-- 네이버 -->
@@ -244,8 +257,8 @@ PSD 1개에 시안을 여러 개 만든다면 반드시 각 시안을 폴더로 
 <input type="radio" name="target" value="all-layers">
 <div class="radio-dot"></div>
 <div class="option-text">
-<div class="option-label">네이버 OGQ 스티커 전용 <span class="badge badge-naver">NAVER</span></div>
-<div class="option-desc">PSD를 넣으면 PNG로 자동 출력<br>시안 전체에 아웃라인 적용</div>
+<div class="option-label">네이버 OGQ 이모티콘 전용 <span class="badge badge-naver">NAVER</span></div>
+<div class="option-desc">PSD를 넣으면 PNG로 자동 출력<br>이모티콘 전체에 아웃라인 적용</div>
 <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
 <label class="out-toggle naver naver-out-btn" onclick="event.stopPropagation();selectTarget('all-layers');document.querySelectorAll('.naver-out-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('ogqGifSettings').style.display='none';">
 <input type="radio" name="naver-output" value="png740" style="accent-color:#03C75A;"> 740 × 640 자동 변환
@@ -272,10 +285,10 @@ OGQ 특성상 1번 프레임이 앞·뒤로 재생되어야 합니다.<br>
 </div>
 </div>
 <div class="option-notice">
-PSD 1개에 시안을 여러 개 만든다면 반드시 각 시안을 폴더로 묶어주세요.<br>
-폴더·레이어 명은 상관 없습니다.<br>
-필요없는 레이어나 배경 레이어는 꼭 삭제해 주세요.<br>
-GIF 파일의 경우 반드시 네이버 제안 가이드를 확인하고 만들어 주세요.
+카카오용으로 그린 PSD(360·1080)도 자동으로 <b>740×640</b> 변환<br>
+<b>PNG</b>를 넣어도 740×640 변환 + 시안 전체 테두리<br>
+PSD 1개에 이모티콘 <b>여러 개</b> → PSD 파일 <b>1개</b> / 이모티콘 <b>1개</b> → PSD <b>여러 개</b><br>
+가이드·배경은 <b>눈 끄거나 삭제</b>
 </div>
 </div>
 </label>
@@ -288,7 +301,7 @@ GIF 파일의 경우 반드시 네이버 제안 가이드를 확인하고 만들
 <div class="radio-dot"></div>
 <div class="option-text">
 <div class="option-label">PNG 단일 파일 <span class="badge badge-blue">PNG</span></div>
-<div class="option-desc">시안 전체에 아웃라인 적용<br>PSD 없이 PNG 여러 장 올릴 때</div>
+<div class="option-desc">이모티콘 전체에 아웃라인 적용<br>PSD 없이 PNG 여러 장 올릴 때</div>
 </div>
 </label>
 </div>
@@ -346,8 +359,9 @@ GIF 파일의 경우 반드시 네이버 제안 가이드를 확인하고 만들
 <div style="font-size:10.5px;color:#9333ea;margin-top:5px;line-height:1.5;">그림 3장 → <b>122331</b> 입력 시 1·2·2·3·3·1 = 6프레임으로 재배열·반복</div>
 </div>
 <div class="option-notice">
-PSD 1개에 시안을 여러 개 만든다면 반드시 각 시안을 폴더로 묶어주세요.<br>
-PSD 여러 개를 넣으면 각각 GIF로 변환됩니다. 2개 이상은 ZIP으로 다운로드됩니다.
+각 <b>프레임</b>을 폴더로 묶고 폴더 이름을 <b>숫자로 시작</b> (1, 2 / 01, 02)<br>
+PSD 1개 = 움직이는 이모티콘 1개 · 여러 개 넣으면 각각 GIF (2개 이상 ZIP)<br>
+<b>GIF는 눈 꺼도 출력돼요 → 가이드는 꼭 삭제</b>
 </div>
 </div>
 </label>
@@ -398,7 +412,27 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 </div>
 </div>
 
+<!-- 카카오 아이콘 (카카오 전용) -->
+<div id="kakaoIconCard" style="display:none;margin-top:18px;">
+<div class="section-title">카카오 아이콘 <span style="color:#9aa1ab;font-weight:600;text-transform:none;letter-spacing:0;">(선택 · 78×78 · PNG 직접 업로드)</span></div>
+<div style="display:flex;gap:10px;">
+  <div style="flex:1;max-width:240px;">
+    <div class="dropzone" id="kakaoIconDrop" style="padding:18px 12px;margin-bottom:6px;position:relative;">
+      <button type="button" id="kakaoIconClear" onclick="event.stopPropagation();clearMt('icon')" style="display:none;position:absolute;top:6px;right:8px;width:22px;height:22px;border-radius:50%;background:rgba(17,24,39,.5);color:#fff;border:0;font-size:14px;line-height:1;cursor:pointer;align-items:center;justify-content:center;">×</button>
+      <p style="font-size:13px;font-weight:700;color:#374151;">아이콘 PNG</p>
+      <div style="font-size:11px;color:#9aa1ab;margin-top:4px;">78×78 · 꽉 차게 확대 · 테두리 없음</div>
+      <div id="kakaoIconName" style="font-size:11px;color:#059669;font-weight:700;margin-top:5px;"></div>
+      <input type="file" id="kakaoIconFile" accept=".png,image/png" style="display:none;">
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="action-bar" id="actionBar">
 <button class="run-btn" id="runBtn" onclick="run()" disabled>테두리 추가하기</button>
+<button class="dl-btn" id="topDlBtn" onclick="downloadResults()" disabled>ZIP 다운로드</button>
+</div>
+
 <div id="status"></div>
 <div class="progress-bar-wrap" id="progressWrap">
 <div class="progress-bar" id="progressBar"></div>
@@ -419,29 +453,57 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 <button class="popup-close" onclick="closeNoticePopup()">✕</button>
 <div style="font-size:15px;font-weight:800;color:#E91E63;margin-bottom:14px;text-align:center;">사용하기 전에 꼭 확인하세요</div>
 <div class="popup-tabs">
-<button class="popup-tab active" id="popTab1" onclick="switchPopupTab(1)">🍯 제작 꿀팁</button>
+<button class="popup-tab active" id="popTab1" onclick="switchPopupTab(1)">🍯 모드별 가이드</button>
 <button class="popup-tab" id="popTab2" onclick="switchPopupTab(2)">⚠️ 안 되는 기능</button>
 </div>
 <div class="popup-scroll">
-<div id="popContent1" style="font-size:12px;color:#555;line-height:1.9;">
-<b style="color:#E91E63;">PSD 파일을 제작하실 때는 반드시<br>폴더에 정리해 주세요.</b><br><br>
-• 폴더 병합하지 말고 <b>그대로</b> 넣어주세요<br>
-• <b>폴더 1개 = 이모티콘 시안 1개</b>로 정리<br>
-• 텍스트는 폴더 안 <b>맨 위 레이어</b>에<br>
-• 텍스트가 없는 시안은 맨 위에 <b>빈 레이어</b> 넣기<br>
-• 배경 및 필요없는 레이어 <b>반드시 지우기</b><br>
-• <b>가이드·위치 폴더</b>는 이름에 <b>'가이드'</b> 넣기 → 자동 제외 (또는 삭제)<br><br>
-<div style="background:#F5F5F5;border:1.5px dashed #CCC;border-radius:10px;padding:14px 16px;font-family:'Courier New',monospace;font-size:11px;line-height:2;color:#555;">
-<b style="color:#333;">📁 예시 구조</b><br>
-<span style="color:#E91E63;">📁 폴더 1</span> (이모티콘 1번)<br>
-&nbsp;&nbsp;├─ <span style="color:#1565C0;">글씨 레이어</span> ← 맨 위!<br>
-&nbsp;&nbsp;├─ 캐릭터 레이어<br>
-&nbsp;&nbsp;└─ 채색 레이어<br>
-<span style="color:#E91E63;">📁 폴더 2</span> (이모티콘 2번)<br>
-&nbsp;&nbsp;├─ <span style="color:#1565C0;">(빈 레이어)</span> ← 글씨 없으면 이렇게<br>
-&nbsp;&nbsp;└─ 캐릭터 레이어<br>
-<span style="color:#1565C0;">✕ 배경 레이어, 쓸모없는 레이어 ← 삭제!</span>
+<div id="popContent1" style="font-size:12px;color:#555;line-height:1.75;">
+
+<div style="font-weight:800;color:#E5A800;font-size:13px;margin-bottom:4px;">🟡 카카오 일반 <span style="font-weight:600;color:#aaa;">· PSD → PNG · 텍스트만 테두리</span></div>
+• 맨 위 레이어 = <b>텍스트</b> → 텍스트에만 흰 테두리<br>
+• 텍스트 없는 이모티콘은 맨 위에 <b>빈 레이어</b><br>
+• 이모티콘 <b>여러 개</b> → 각각 <b>폴더</b>로 묶고 폴더 이름 <b>숫자로 시작</b> (1, 2 / 01, 02)<br>
+• 이모티콘 <b>1개</b> → 그냥 PSD 넣기 (숫자 필요 없음)<br>
+• 가이드·배경 등 필요 없는 레이어는 <b>눈 끄거나 삭제</b><br>
+<div style="background:#FFFBEF;border:1.5px dashed #E5C766;border-radius:10px;padding:12px 14px;font-size:11px;line-height:1.95;color:#555;margin:8px 0 18px;">
+<b style="color:#333;">📂 여러 개일 때 예시 (폴더 펼친 모습)</b><br>
+<span style="color:#E5A800;">📂 1</span><br>
+&nbsp;&nbsp;├ <span style="color:#1565C0;">글씨 레이어</span> ← 맨 위 (텍스트)<br>
+&nbsp;&nbsp;├ 캐릭터<br>
+&nbsp;&nbsp;└ 채색<br>
+<span style="color:#E5A800;">📂 2</span><br>
+&nbsp;&nbsp;├ <span style="color:#1565C0;">(빈 레이어)</span> ← 텍스트 없을 때<br>
+&nbsp;&nbsp;├ 캐릭터<br>
+&nbsp;&nbsp;└ 채색<br>
+<span style="color:#c0392b;">✕ 가이드·배경 → 눈 끄거나 삭제</span>
 </div>
+
+<div style="font-weight:800;color:#0E9F6E;font-size:13px;margin-bottom:4px;">🟢 카카오 원스톱 <span style="font-weight:600;color:#aaa;">· PNG로 나눠 올리기</span></div>
+• PSD 말고 <b>PNG로 뽑아서</b> 올리기<br>
+• <b>텍스트(위) / 캐릭터 / 텍스트(아래)</b>를 각각 <b>PNG로 분리</b><br>
+• <b>캐릭터 PNG 필수</b> · 텍스트(아래)는 <b>없으면 생략 가능</b><br>
+• 테두리는 <b>텍스트 PNG에만</b> (캐릭터엔 X)<br>
+• 가이드는 <b>반드시 삭제</b>하고 PNG로 저장<br>
+<div style="background:#F0FBF5;border:1.5px dashed #8FD9B6;border-radius:10px;padding:12px 14px;font-size:11px;line-height:1.95;color:#555;margin:8px 0 18px;">
+<b style="color:#333;">🖼 분리 예시</b><br>
+<span style="color:#0E9F6E;">🖼 텍스트 (위)</span> ← 테두리 O<br>
+<span style="color:#0E9F6E;">🖼 캐릭터</span> ← 필수 · 테두리 X<br>
+<span style="color:#0E9F6E;">🖼 텍스트 (아래)</span> ← 테두리 O · 없으면 생략
+</div>
+
+<div style="font-weight:800;color:#03A357;font-size:13px;margin-bottom:4px;">🟠 오지큐 멈티 <span style="font-weight:600;color:#aaa;">· PSD·PNG → 740×640 · 전체 테두리</span></div>
+• PSD를 넣으면 <b>740×640</b>으로 자동 변환 · <b>시안 전체</b>에 흰 테두리<br>
+• <b>카카오용으로 그린 PSD(360·1080)</b>도 자동 리사이징 → 740×640으로 출력<br>
+• <b>PNG</b>를 넣어도 740×640으로 변환되고 <b>시안 전체에 테두리</b> 적용<br>
+• 이모티콘 <b>여러 개</b> → 각각 <b>폴더</b>로 묶고 폴더 이름 <b>숫자로 시작</b> (1, 2 / 01, 02)<br>
+• 이모티콘 <b>1개</b> → 그냥 넣기 (숫자 필요 없음)<br>
+• 가이드·배경 등 필요 없는 레이어는 <b>눈 끄거나 삭제</b><br><br>
+
+<div style="font-weight:800;color:#A855F7;font-size:13px;margin-bottom:4px;">🟣 오지큐 움티 <span style="font-weight:600;color:#aaa;">· PSD → GIF</span></div>
+• PSD 넣으면 <b>GIF</b>로 자동 출력 (PSD 1개 = 움직이는 이모티콘 1개)<br>
+• 각 <b>프레임</b>을 폴더로 묶고 폴더 이름 <b>숫자로 시작</b> (1, 2 / 01, 02) = 재생 순서<br>
+• 테두리는 <b>시안 전체</b>에 적용 (텍스트·빈 레이어 규칙 없음)<br>
+• <b style="color:#c0392b;">GIF는 눈을 꺼도 다 출력돼요 → 가이드는 꼭 삭제!</b>
 </div>
 <div id="popContent2" style="display:none;font-size:12px;color:#555;line-height:1.9;">
 <b style="color:#E91E63;">이 도구는 간단한 이모티콘 제작용입니다.</b><br><br>
@@ -449,10 +511,7 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 • <b>조정 레이어</b> (색조/채도, 커브, 레벨 등)<br>
 • <b>레이어 마스크 · 벡터 마스크</b><br>
 • <b>스마트 오브젝트</b><br>
-• <b>일부 특수 블렌딩 모드</b> (비비드 라이트, 리니어 라이트 등)<br><br>
-<div style="background:#FFF0F3;border-radius:8px;padding:10px 12px;border:1px solid #FFCDD2;">
-<b style="color:#E91E63;">해당 레이어를 병합(래스터화)하여<br>간단하게 정리한 뒤 다시 시도해 주세요.</b>
-</div>
+• <b>일부 특수 블렌딩 모드</b> (비비드 라이트, 리니어 라이트 등)
 </div>
 </div>
 </div>
@@ -498,6 +557,8 @@ function switchPlatform(p) {
   currentPlatform = p;
   const mt = document.getElementById('ogqMainTabCard');
   if (mt) mt.style.display = (p === 'ogq') ? 'block' : 'none';   // 메인·탭은 오지큐에서만
+  const ki = document.getElementById('kakaoIconCard');
+  if (ki) ki.style.display = (p === 'kakao') ? 'block' : 'none'; // 아이콘은 카카오에서만
 }
 // 기존 라벨의 onclick을 그대로 트리거해서 라디오·active·표시 로직 재사용
 function autoPick(name, value) {
@@ -531,7 +592,12 @@ function parseSequence(text) {
 
 /* ── 오지큐 메인·탭 이미지 (ogq-gif-maker 방식 이식) ── */
 let currentPlatform = 'kakao';
-let mainImgCanvas = null, tabImgCanvas = null;
+let mainImgCanvas = null, tabImgCanvas = null, iconImgCanvas = null;
+function refreshRunBtn() {
+  const has = files.length > 0 || !!mainImgCanvas || !!tabImgCanvas || !!iconImgCanvas;
+  const b = document.getElementById('runBtn');
+  if (b) b.disabled = !has;
+}
 function containInto(src, boxW, boxH) {
   const c = document.createElement('canvas'); c.width = boxW; c.height = boxH;
   const s = Math.min(boxW / src.width, boxH / src.height);
@@ -551,28 +617,59 @@ function trimTransparent(src) {
   o.getContext('2d').drawImage(src, minX, minY, cw, ch, 0, 0, cw, ch);
   return o;
 }
-async function buildOgqImage(src, targetW, targetH, border) {
+async function buildOgqImage(src, targetW, targetH, border, color) {
   src = trimTransparent(src);
   border = Math.max(0, border | 0);
   const inner = containInto(src, Math.max(1, targetW - border * 2), Math.max(1, targetH - border * 2));
   if (border === 0) return inner;
-  return await addBorderPng(inner, border, '#ffffff');   // 매직팟 기존 dilation 재사용
+  return await addBorderPng(inner, border, color || '#ffffff');   // 매직팟 기존 dilation 재사용
 }
 function canvasToPngBlob(c) { return new Promise(r => c.toBlob(r, 'image/png')); }
+/* 시안 캔버스를 오지큐 740×640 규격으로 변환 — 비율 유지, 임의 확대 없음 (1080 PSD 변환과 동일 로직) */
+function convertTo740x640(src) {
+  const scaleW = src.width / 740, scaleH = src.height / 640;
+  const is740multiple = Math.abs(scaleW - scaleH) < 0.01 && scaleW > 0;
+  if (is740multiple) return resizeCanvas(src, 740, 640);   // 740×640 배수 → 단순 리사이즈
+  // 그 외(정사각형 등) → 640×640 안에 비율 맞춰 넣고 양쪽 여백 50px
+  const sq = document.createElement('canvas');
+  sq.width = 640; sq.height = 640;
+  const scale = Math.min(640 / src.width, 640 / src.height);
+  const sw = Math.round(src.width * scale), sh = Math.round(src.height * scale);
+  sq.getContext('2d').drawImage(src, Math.round((640 - sw) / 2), Math.round((640 - sh) / 2), sw, sh);
+  const fin = document.createElement('canvas');
+  fin.width = 740; fin.height = 640;
+  fin.getContext('2d').drawImage(sq, Math.round((740 - 640) / 2), 0);
+  return fin;
+}
+/* 오지큐 변환 전 사전 축소 — PSD의 resizePsdLayersNaver와 동일 (긴 변 640 / 740비율이면 740×640). 작으면 그대로 */
+function preResizeForOgq(src) {
+  const scW = src.width / 740, scH = src.height / 640;
+  const is740multiple = Math.abs(scW - scH) < 0.01;
+  const maxDim = Math.max(src.width, src.height);
+  const needsDownscale = is740multiple ? (scW > 1.01) : (maxDim > 640);
+  if (!needsDownscale) return src;
+  if (is740multiple) return resizeCanvas(src, 740, 640);
+  const s = 640 / maxDim;
+  return resizeCanvas(src, Math.round(src.width * s), Math.round(src.height * s));
+}
 function loadMtImage(file, which) {
   const url = URL.createObjectURL(file), img = new Image();
   img.onload = () => {
     const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
     c.getContext('2d').drawImage(img, 0, 0); URL.revokeObjectURL(url);
     if (which === 'main') { mainImgCanvas = c; document.getElementById('mtMainName').textContent = file.name; document.getElementById('mtMainClear').style.display = 'flex'; }
+    else if (which === 'icon') { iconImgCanvas = c; document.getElementById('kakaoIconName').textContent = file.name; document.getElementById('kakaoIconClear').style.display = 'flex'; }
     else { tabImgCanvas = c; document.getElementById('mtTabName').textContent = file.name; document.getElementById('mtTabClear').style.display = 'flex'; }
+    refreshRunBtn();
   };
   img.onerror = () => URL.revokeObjectURL(url);
   img.src = url;
 }
 function clearMt(which) {
   if (which === 'main') { mainImgCanvas = null; document.getElementById('mtMainName').textContent = ''; document.getElementById('mtMainFile').value = ''; document.getElementById('mtMainClear').style.display = 'none'; }
+  else if (which === 'icon') { iconImgCanvas = null; document.getElementById('kakaoIconName').textContent = ''; document.getElementById('kakaoIconFile').value = ''; document.getElementById('kakaoIconClear').style.display = 'none'; }
   else { tabImgCanvas = null; document.getElementById('mtTabName').textContent = ''; document.getElementById('mtTabFile').value = ''; document.getElementById('mtTabClear').style.display = 'none'; }
+  refreshRunBtn();
 }
 function wireMtDrop(dropId, inputId, which) {
   const dz = document.getElementById(dropId), inp = document.getElementById(inputId);
@@ -585,6 +682,7 @@ function wireMtDrop(dropId, inputId, which) {
 }
 wireMtDrop('mtMainDrop', 'mtMainFile', 'main');
 wireMtDrop('mtTabDrop', 'mtTabFile', 'tab');
+wireMtDrop('kakaoIconDrop', 'kakaoIconFile', 'icon');
 
 /* ── 상태 변수 ── */
 let files = [];
@@ -594,7 +692,7 @@ let detectedFrameCount = 0;
 
 /* ── 타겟 옵션: selectTarget()은 하단에 정의 ── */
 // 초기 상태: 카카오 선택 + 나머지 비활성화
-document.addEventListener('DOMContentLoaded', () => selectTarget('top-of-group'));
+document.addEventListener('DOMContentLoaded', () => switchPlatform('kakao'));
 
 /* ── 설정 값 읽기 함수들 ── */
 function getTargetMode() {
@@ -988,11 +1086,22 @@ function applyBorderAlgo(w, h, src, offsets, color) {
 function isGuideOrBg(name) { return /가이드|guide|배경|background/i.test(name || ''); }
 /* 폴더 이름이 숫자로 시작하면 "넘버링된 스티커 폴더" (1, 24, 01, 1번 …) */
 function isNumberedName(name) { return /^\s*\d+/.test(name || ''); }
-/* 맨 위 자식을 끝까지 따라가 실제 최상위 레이어(리프) 찾기 — 폴더로 감싸도·빈 레이어도 인식 */
+/* 맨 위 자식을 끝까지 따라가 실제 최상위 레이어(리프) 찾기 — 폴더로 감싸도·빈 레이어도 인식.
+   숨김(눈 끈) 레이어는 건너뛰어 진짜 맨 위 텍스트를 찾음 (가이드를 맨 위에 두고 눈만 꺼도 OK) */
 function topMostLeaf(node) {
   const kids = node && node.children;
   if (!kids || !kids.length) return node;
-  return topMostLeaf(kids[kids.length - 1]);
+  for (let i = kids.length - 1; i >= 0; i--) {
+    if (!kids[i].hidden) return topMostLeaf(kids[i]);
+  }
+  return topMostLeaf(kids[kids.length - 1]); // 다 숨김이면 맨 위로 폴백
+}
+/* (정지 모드 전용) 그룹 눈을 끄면 안쪽 레이어까지 모두 숨김으로 전파 — 눈 끄기로 가이드 제외 가능하게.
+   GIF(움티)에는 호출하지 않음 → 프레임 폴더 눈 토글이 출력에 영향 주지 않도록 보존 */
+function propagateHidden(node, parentHidden) {
+  const h = parentHidden || !!node.hidden;
+  node.hidden = h;
+  if (node.children) node.children.forEach(c => propagateHidden(c, h));
 }
 /* 스티커 폴더 목록: 숫자 폴더 2개 이상이면 그것들이 스티커, 아니면 [] (= PSD 전체가 1 시안) */
 function stickerFolders(psd) {
@@ -1242,6 +1351,8 @@ function addPreview(canvas, label) {
   if (document.getElementById('previewGrid').children.length >= 5) return;
   const item = document.createElement('div');
   item.className = 'preview-item';
+  item.title = (label || '') + ' — 클릭하면 이 파일만 저장';
+  item.addEventListener('click', () => downloadSinglePreview(canvas, label));
   const pc = document.createElement('canvas');
   const s = Math.min(80 / canvas.width, 80 / canvas.height, 1);
   pc.width = Math.max(1, Math.round(canvas.width * s));
@@ -1290,12 +1401,13 @@ function unwrapAnimationFolder(psd) {
 
 /* ── 메인 실행 ── */
 async function run() {
-  if (!files.length) return;
+  if (!files.length && !mainImgCanvas && !tabImgCanvas && !iconImgCanvas) return;
   const radius = parseInt(document.getElementById('borderSize').value) || 0;
   const color = document.getElementById('borderColor').value;
   const mode = getTargetMode();
   const btn = document.getElementById('runBtn');
   btn.disabled = true;
+  document.getElementById('topDlBtn').disabled = true;
   resultBlobs = [];
   document.getElementById('previewGrid').innerHTML = '';
   document.getElementById('previewArea').style.display = 'none';
@@ -1314,6 +1426,8 @@ async function run() {
         const buf = await file.arrayBuffer();
         const psd = readPsd(buf, { loadThumbnail: false });
         unwrapAnimationFolder(psd);
+        // 정지 모드(카카오 일반·오지큐 멈티)는 그룹 숨김 전파 → 눈 끈 가이드 폴더도 제외. GIF은 제외(프레임 보존)
+        if (mode === 'top-of-group' || mode === 'all-layers') (psd.children || []).forEach(c => propagateHidden(c, false));
         let previews = [];
 
         if (mode === 'top-of-group') {
@@ -1599,27 +1713,7 @@ async function run() {
             const psdBaseName = file.name.replace(/\.psd$/i, '');
             for (let pi = 0; pi < naverPreviews.length; pi++) {
               const src = naverPreviews[pi].canvas;
-              const scaleW = src.width / 740, scaleH = src.height / 640;
-              const is740multiple = Math.abs(scaleW - scaleH) < 0.01 && scaleW > 0;
-              let finalCanvas;
-              if (is740multiple) {
-                // 740×640의 배수 (0.5x, 1x, 2x 등) → 단순 리사이즈
-                finalCanvas = resizeCanvas(src, 740, 640);
-              } else {
-                // 정사각형 등 → 640×640 안에 넣고 양쪽 여백 50px
-                const sq = document.createElement('canvas');
-                sq.width = 640; sq.height = 640;
-                const sqCtx = sq.getContext('2d');
-                const scale = Math.min(640 / src.width, 640 / src.height);
-                const sw = Math.round(src.width * scale);
-                const sh = Math.round(src.height * scale);
-                const sx = Math.round((640 - sw) / 2);
-                const sy = Math.round((640 - sh) / 2);
-                sqCtx.drawImage(src, sx, sy, sw, sh);
-                finalCanvas = document.createElement('canvas');
-                finalCanvas.width = 740; finalCanvas.height = 640;
-                finalCanvas.getContext('2d').drawImage(sq, Math.round((740 - 640) / 2), 0);
-              }
+              const finalCanvas = convertTo740x640(src);
               const pngBlob = await canvasToBlob(finalCanvas);
               const num = String(pi + 1).padStart(2, '0');
               const singleResult740 = (naverPreviews.length === 1);
@@ -1672,7 +1766,14 @@ async function run() {
         srcCanvas.width = img.width;
         srcCanvas.height = img.height;
         srcCanvas.getContext('2d').drawImage(img, 0, 0);
-        const result = await addBorderPng(srcCanvas, radius, color);
+        let result;
+        if (mode === 'all-layers') {
+          // 오지큐 멈티: PSD와 동일 순서 — ①먼저 640으로 축소 → ②테두리 → ③740×640 변환(좌우 투명 여백)
+          const pre = preResizeForOgq(srcCanvas);
+          result = convertTo740x640(await addBorderPng(pre, radius, color));
+        } else {
+          result = await addBorderPng(srcCanvas, radius, color);
+        }
         addPreview(result, file.name);
         const blob = await canvasToBlob(result);
         resultBlobs.push({ name: file.name.replace(/\.png$/i, '_outlined.png'), blob });
@@ -1685,23 +1786,66 @@ async function run() {
       const _base = (files && files.length) ? files[0].name.replace(/\.(psd|png)$/i, '') : 'ogq';
       if (mainImgCanvas) {
         const b = Math.max(0, Math.min(40, parseInt(document.getElementById('mainStroke').value) || 0));
-        resultBlobs.push({ name: _base + '_메인.png', blob: await canvasToPngBlob(await buildOgqImage(mainImgCanvas, 240, 240, b)) });
+        const mc = await buildOgqImage(mainImgCanvas, 240, 240, b);
+        addPreview(mc, _base + '_메인.png');
+        resultBlobs.push({ name: _base + '_메인.png', blob: await canvasToPngBlob(mc) });
       }
       if (tabImgCanvas) {
         const b = Math.max(0, Math.min(40, parseInt(document.getElementById('tabStroke').value) || 0));
-        resultBlobs.push({ name: _base + '_탭.png', blob: await canvasToPngBlob(await buildOgqImage(tabImgCanvas, 96, 74, b)) });
+        const tc = await buildOgqImage(tabImgCanvas, 96, 74, b);
+        addPreview(tc, _base + '_탭.png');
+        resultBlobs.push({ name: _base + '_탭.png', blob: await canvasToPngBlob(tc) });
       }
+    }
+
+    // ── 카카오 아이콘 78×78 (있으면 함께 생성, 테두리 없음) ──
+    if (currentPlatform === 'kakao' && iconImgCanvas) {
+      const _ibase = (files && files.length) ? files[0].name.replace(/\.(psd|png)$/i, '') : 'kakao';
+      const ic = await buildOgqImage(iconImgCanvas, 78, 78, 0);
+      addPreview(ic, _ibase + '_아이콘.png');
+      resultBlobs.push({ name: _ibase + '_아이콘.png', blob: await canvasToPngBlob(ic) });
     }
 
     setStatus('완료! ' + resultBlobs.length + '개 파일 준비됨');
     setProgress(100);
     document.getElementById('previewArea').style.display = 'block';
-    buildDownloadButtons();
+    enableTopDownload();
+    document.getElementById('dlBtnWrap').innerHTML = '<div style="font-size:12px;color:#6b7280;margin-top:10px;text-align:center;">⤓ 미리보기를 클릭하면 그 파일 1장만 저장돼요</div>';
   } catch (err) {
     setStatus('오류: ' + err.message);
     console.error(err);
   }
   btn.disabled = false;
+}
+
+/* ── 상단 다운로드 버튼 (테두리 추가하기 옆) ── */
+function enableTopDownload() {
+  const b = document.getElementById('topDlBtn');
+  const n = resultBlobs.length;
+  b.disabled = n === 0;
+  b.textContent = (n <= 1) ? ('다운로드' + (n ? ' (1개)' : '')) : ('ZIP 다운로드 (' + n + '개)');
+}
+async function downloadResults() {
+  const n = resultBlobs.length;
+  if (!n) return;
+  if (n === 1) { downloadBlob(resultBlobs[0].blob, resultBlobs[0].name.split('/').pop()); return; }
+  const b = document.getElementById('topDlBtn');
+  const prev = b.textContent;
+  b.disabled = true; b.textContent = '압축 중...';
+  try {
+    const zip = new JSZip();
+    for (const r of resultBlobs) zip.file(r.name, await blobToArrayBuffer(r.blob));
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    downloadBlob(zipBlob, 'outlined_' + n + '개.zip');
+  } catch (e) { alert('ZIP 생성 오류: ' + e.message); }
+  b.disabled = false; b.textContent = prev;
+}
+/* 미리보기 썸네일 클릭 → 그 1장만 저장 (캔버스가 곧 출력물) */
+function downloadSinglePreview(canvas, label) {
+  const safe = /\.(png|gif)$/i.test(label || '') ? label : ((label || 'sticker') + '.png');
+  const match = resultBlobs.find(r => r.name === label || r.name.split('/').pop() === safe);
+  if (match) { downloadBlob(match.blob, match.name.split('/').pop()); return; }
+  canvas.toBlob(b => downloadBlob(b, safe), 'image/png');
 }
 
 /* ── 다운로드 버튼 ── */
@@ -1803,17 +1947,13 @@ function selectTarget(mode) {
 function renderFileList() {
   const list = document.getElementById('fileList');
   list.innerHTML = '';
-  if (!files.length) {
-    document.getElementById('runBtn').disabled = true;
-    return;
-  }
   files.forEach((f, idx) => {
     const item = document.createElement('div');
     item.className = 'file-item';
     item.innerHTML = '<span class="fname">' + f.name + '</span><button class="fremove" onclick="removeFile(' + idx + ')">✕</button>';
     list.appendChild(item);
   });
-  document.getElementById('runBtn').disabled = false;
+  refreshRunBtn();
 }
 
 function clearFiles() {
@@ -1839,6 +1979,8 @@ function resetAll() {
   detectedFiles = [];
   document.getElementById('fileInput').value = '';
   document.getElementById('fileList').innerHTML = '';
+  clearMt('main'); clearMt('tab'); clearMt('icon');
+  document.getElementById('topDlBtn').disabled = true;
   document.getElementById('runBtn').disabled = true;
   document.getElementById('previewArea').style.display = 'none';
   document.getElementById('previewGrid').innerHTML = '';
