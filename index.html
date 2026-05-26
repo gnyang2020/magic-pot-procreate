@@ -272,16 +272,15 @@ PSD 1개에 이모티콘 <b>1개</b> → PSD 파일 <b>여러 개</b> 넣기<br>
 </div>
 <div id="ogqGifSettings" style="display:none;margin-top:8px;padding:10px 12px;background:rgba(3,199,90,0.06);border:1px solid rgba(3,199,90,0.15);border-radius:8px;">
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-<span style="font-size:11px;font-weight:600;color:#03C75A;">프레임 속도</span>
-<input type="number" id="ogqGifDelay" value="0.06" min="0.01" max="10" step="0.01" onclick="event.stopPropagation()" style="width:70px;padding:5px 8px;border:2px solid #03C75A;border-radius:8px;font-size:13px;font-weight:700;color:#03C75A;background:#fff;outline:none;">
-<span style="font-size:11px;color:#666;">초/프레임</span>
+<span style="font-size:11px;font-weight:600;color:#03C75A;">프레임 레이트</span>
+<input type="number" id="ogqGifFps" value="18" min="10" max="40" step="1" onclick="event.stopPropagation()" style="width:70px;padding:5px 8px;border:2px solid #03C75A;border-radius:8px;font-size:13px;font-weight:700;color:#03C75A;background:#fff;outline:none;">
+<span style="font-size:11px;color:#666;">fps</span>
 </div>
 <div style="font-size:10.5px;color:#555;line-height:1.7;margin:0;background:#f0faf5;border-radius:6px;padding:8px 10px;">
 <b style="color:#03C75A;">OGQ GIF 자동 변환 규칙</b><br>
-OGQ 특성상 1번 프레임이 앞·뒤로 재생되어야 합니다.<br>
-예) 1, 2, 3 프레임을 넣으면 → <b>1, 2, 2, 3, 3, 1</b>로 자동 변환됩니다.<br><br>
-<b style="color:#D32F2F;">속도는 원하는 값의 절반으로 입력해 주세요.</b><br>
-예) 장당 0.12초를 원하면 → <b>0.06</b> 입력
+OGQ 특성상 1번 프레임이 앞·뒤로 재생됩니다.<br>
+예) 1, 2, 3 프레임 → <b>1, 2, 2, 3, 3, 1</b>로 자동 변환<br>
+입력한 <b>fps</b> 속도에 맞춰 자동 보정돼요. (예: 18fps)
 </div>
 </div>
 <div class="option-notice">
@@ -342,9 +341,9 @@ PSD 1개에 이모티콘 <b>여러 개</b> → PSD 파일 <b>1개</b> / 이모�
 <button type="button" id="gifOnlyModePerFrame" onclick="event.stopPropagation();setGifOnlyMode('perframe')" style="flex:1;padding:6px 10px;border:2px solid #E0E0E0;border-radius:8px;background:#fff;color:#999;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">프레임별 설정</button>
 </div>
 <div id="gifOnlyUniformRow" style="display:flex;align-items:center;gap:8px;">
-<span style="font-size:11px;font-weight:600;color:#AB47BC;">프레임 속도</span>
-<input type="number" id="gifOnlyFrameDelay" value="0.13" min="0.01" max="10" step="0.01" onclick="event.stopPropagation()" style="width:70px;padding:5px 8px;border:2px solid #AB47BC;border-radius:8px;font-size:13px;font-weight:700;color:#AB47BC;background:#fff;outline:none;">
-<span style="font-size:11px;color:#666;">초/프레임</span>
+<span style="font-size:11px;font-weight:600;color:#AB47BC;">프레임 레이트</span>
+<input type="number" id="gifOnlyFps" value="18" min="10" max="40" step="1" onclick="event.stopPropagation()" style="width:70px;padding:5px 8px;border:2px solid #AB47BC;border-radius:8px;font-size:13px;font-weight:700;color:#AB47BC;background:#fff;outline:none;">
+<span style="font-size:11px;color:#666;">fps</span>
 </div>
 <div id="gifOnlyPerFrameArea" style="display:none;">
 <div id="gifOnlyPerFrameList" style="max-height:200px;overflow-y:auto;" onclick="event.stopPropagation()"></div>
@@ -359,8 +358,8 @@ PSD 1개에 이모티콘 <b>여러 개</b> → PSD 파일 <b>1개</b> / 이모�
 <div style="font-size:10.5px;color:#9333ea;margin-top:5px;line-height:1.5;">그림 3장 → <b>122331</b> 입력 시 1·2·2·3·3·1 = 6프레임으로 재배열·반복</div>
 </div>
 <div class="option-notice">
-각 <b>프레임</b>을 폴더로 묶고 폴더 이름을 <b>숫자로 시작</b> (1, 2 / 01, 02)<br>
-PSD 1개 = 움직이는 이모티콘 1개 · 여러 개 넣으면 각각 GIF (2개 이상 ZIP)<br>
+각 <b>프레임</b>을 폴더(또는 레이어)로 나눠두면 <b>순서대로</b> GIF가 돼요 (넘버링 불필요)<br>
+순서 바꾸려면 아래 <b>프레임 시퀀스</b> · PSD 1개 = 움직이는 이모티콘 1개 (여러 개면 각각 GIF, 2개↑ ZIP)<br>
 <b>GIF는 눈 꺼도 출력돼요 → 가이드는 꼭 삭제</b>
 </div>
 </div>
@@ -501,7 +500,7 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 
 <div style="font-weight:800;color:#A855F7;font-size:13px;margin-bottom:4px;">🟣 오지큐 움티 <span style="font-weight:600;color:#aaa;">· PSD → GIF</span></div>
 • PSD 넣으면 <b>GIF</b>로 자동 출력 (PSD 1개 = 움직이는 이모티콘 1개)<br>
-• 각 <b>프레임</b>을 폴더로 묶고 폴더 이름 <b>숫자로 시작</b> (1, 2 / 01, 02) = 재생 순서<br>
+• 각 <b>프레임</b>을 폴더(또는 레이어)로 나눠 넣으면 <b>순서대로 재생</b> (넘버링 불필요 · 순서 변경은 프레임 시퀀스)<br>
 • 테두리는 <b>시안 전체</b>에 적용 (텍스트·빈 레이어 규칙 없음)<br>
 • <b style="color:#c0392b;">GIF는 눈을 꺼도 다 출력돼요 → 가이드는 꼭 삭제!</b>
 </div>
@@ -810,8 +809,10 @@ function getGifSizeMode() {
 }
 
 function getOgqGifDelay() {
-  const val = parseFloat(document.getElementById('ogqGifDelay').value) || 0.06;
-  return Math.round(val * 1000);
+  let fps = parseInt(document.getElementById('ogqGifFps').value) || 18;
+  fps = Math.min(40, Math.max(10, fps));
+  // OGQ는 프레임을 앞뒤로 2배 재생 → 절반 딜레이로 자동 보정해 입력 fps 속도 유지
+  return Math.max(20, Math.round(1000 / fps / 2));
 }
 
 function setGifOnlyMode(mode) {
@@ -835,7 +836,7 @@ function setGifOnlyMode(mode) {
 function populateGifOnlyPerFrameInputs() {
   const list = document.getElementById('gifOnlyPerFrameList');
   const hint = document.getElementById('gifOnlyPerFrameHint');
-  const defaultDelay = document.getElementById('gifOnlyFrameDelay').value || '0.13';
+  const defaultFps = document.getElementById('gifOnlyFps').value || '18';
   list.innerHTML = '';
   if (!detectedFiles.length) { hint.style.display = 'block'; return; }
   hint.style.display = 'none';
@@ -853,24 +854,25 @@ function populateGifOnlyPerFrameInputs() {
       row.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:4px;';
       row.innerHTML =
         '<span style="font-size:11px;color:#555;min-width:60px;font-weight:600;">\ud504\ub808\uc784 ' + (i + 1) + '</span>' +
-        '<input type="number" class="gif-only-per-frame-input" data-file="' + fi + '" data-frame="' + i + '" value="' + defaultDelay + '" min="0.01" max="10" step="0.01" style="width:70px;padding:4px 8px;border:2px solid #AB47BC;border-radius:8px;font-size:12px;font-weight:700;color:#AB47BC;background:#fff;outline:none;">' +
-        '<span style="font-size:11px;color:#666;">\ucd08</span>';
+        '<input type="number" class="gif-only-per-frame-input" data-file="' + fi + '" data-frame="' + i + '" value="' + defaultFps + '" min="10" max="40" step="1" style="width:70px;padding:4px 8px;border:2px solid #AB47BC;border-radius:8px;font-size:12px;font-weight:700;color:#AB47BC;background:#fff;outline:none;">' +
+        '<span style="font-size:11px;color:#666;">fps</span>';
       list.appendChild(row);
     }
   }
 }
 
+function fpsToDelay(fps) { fps = Math.min(40, Math.max(10, fps || 18)); return Math.max(20, Math.round(1000 / fps)); }   // fps(10~40) → ms/프레임
 function getGifOnlyDelays(frameCount, fileIndex) {
   if (gifOnlyMode === 'uniform') {
-    const delay = parseFloat(document.getElementById('gifOnlyFrameDelay').value) || 0.13;
-    return Array(frameCount).fill(Math.round(delay * 1000));
+    const fps = parseInt(document.getElementById('gifOnlyFps').value) || 18;
+    return Array(frameCount).fill(fpsToDelay(fps));
   }
   const inputs = document.querySelectorAll('.gif-only-per-frame-input[data-file="' + fileIndex + '"]');
   const delays = [];
   for (let i = 0; i < frameCount; i++) {
     const input = inputs[i];
-    const val = input ? parseFloat(input.value) || 0.13 : 0.13;
-    delays.push(Math.round(val * 1000));
+    const fps = input ? (parseInt(input.value) || 18) : 18;
+    delays.push(fpsToDelay(fps));
   }
   return delays;
 }
@@ -1108,6 +1110,47 @@ function stickerFolders(psd) {
   const groups = (psd.children || []).filter(c => c.children && c.children.length > 0 && !isGuideOrBg(c.name));
   const numbered = groups.filter(c => isNumberedName(c.name));
   return (numbered.length >= 2) ? numbered : [];
+}
+
+/* ── 프크(프로크리에이트) GIF 프레임 추출 — ogq-gif 프크 모드와 동일 ──
+   PSD 1개 = GIF 1개. 내용 있는 모든 자식(그룹/레이어)을 순서대로 프레임으로 인정 (넘버링·이름 무관). */
+function hasAnyCanvas(node) {
+  if (node && node.canvas) return true;
+  return !!(node && node.children && node.children.some(hasAnyCanvas));
+}
+function getFrameNodes(node) {
+  return (node.children || []).filter(c => c.canvas || (c.children && hasAnyCanvas(c)));
+}
+async function extractGifFrames(psd, radius, color, borderMode, onProgress) {
+  const psdW = psd.width, psdH = psd.height;
+  const nodes = getFrameNodes(psd);
+  const frames = [];
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+    const fname = node.name || ('frame' + (i + 1));
+    if (borderMode === 'text') {
+      // 프레임 맨 위 텍스트에만 테두리(빈 레이어면 스킵) 후 프레임 전체 병합
+      const top = topMostLeaf(node);
+      if (top && top !== node && top.canvas && !isCanvasEmpty(top.canvas)) {
+        await addBorderPsd(top, radius, color, psdW, psdH);
+      }
+      frames.push({ canvas: mergeFolderToCanvas(node, psdW, psdH), name: fname });
+    } else {
+      // 전체 테두리: 프레임 병합 → 외곽선 (PSD 크기 캔버스에 정렬 유지)
+      const leaves = collectLeafLayers(node);
+      if (leaves.length) {
+        const merged = compositeLayersToCanvas(leaves, psdW, psdH);
+        const mLayer = { canvas: merged, left: 0, top: 0, right: psdW, bottom: psdH, name: fname };
+        await addBorderPsd(mLayer, radius, color, psdW, psdH);
+        const full = document.createElement('canvas');
+        full.width = psdW; full.height = psdH;
+        full.getContext('2d').drawImage(mLayer.canvas, mLayer.left || 0, mLayer.top || 0);
+        frames.push({ canvas: full, name: fname });
+      }
+    }
+    if (onProgress) onProgress((i + 1) / nodes.length);
+  }
+  return frames;
 }
 
 async function processPsdTopOfGroup(psd, radius, color, onProgress) {
@@ -1560,32 +1603,12 @@ async function run() {
             }
           }
 
-          if (gifBorderMode === 'text') {
-            /* 텍스트만 테두리 (카카오 방식) */
-            setStatus('텍스트만 테두리 처리 중...');
-            previews = await processPsdTopOfGroup(psd, radius, color, p => {
-              setProgress(p * 100);
-              setStatus('그룹별 최상위 레이어 처리 중: ' + Math.round(p * 100) + '%');
-            });
-            gifFrames = previews.map(p => ({
-              canvas: mergeFolderToCanvas(p.folder, p.psdW, p.psdH),
-              name: p.name
-            }));
-          } else {
-            /* 전체 테두리 (네이버 방식) */
-            setStatus('전체 테두리 처리 중...');
-            previews = await processPsdAllLayers(psd, radius, color, p => {
-              setProgress(p * 100);
-              setStatus('전체 레이어 처리 중: ' + Math.round(p * 100) + '%');
-            });
-            gifFrames = previews.map(p => {
-              const fullW = p.psdW || psd.width, fullH = p.psdH || psd.height;
-              const full = document.createElement('canvas');
-              full.width = fullW; full.height = fullH;
-              full.getContext('2d').drawImage(p.canvas, p.left || 0, p.top || 0);
-              return { canvas: full, name: p.name };
-            });
-          }
+          /* 프크 모드: PSD 1개 = GIF 1개, 내용 있는 모든 자식을 순서대로 프레임으로 (넘버링 불필요) */
+          setStatus(gifBorderMode === 'text' ? '텍스트만 테두리 처리 중...' : '전체 테두리 처리 중...');
+          gifFrames = await extractGifFrames(psd, radius, color, gifBorderMode, p => {
+            setProgress(p * 100);
+            setStatus('프레임 처리 중: ' + Math.round(p * 100) + '%');
+          });
 
           /* 740×640 선택 시 최종 프레임을 740×640으로 변환 */
           if (gifSizeMode === '740') {
