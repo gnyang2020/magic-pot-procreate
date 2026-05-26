@@ -372,6 +372,33 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 <input type="file" id="fileInput" accept="*/*" multiple>
 <div class="file-list" id="fileList"></div>
 
+<!-- 오지큐 메인·탭 이미지 (오지큐 전용) -->
+<div id="ogqMainTabCard" style="display:none;margin-top:18px;">
+<div class="section-title">메인 · 탭 이미지 <span style="color:#9aa1ab;font-weight:600;text-transform:none;letter-spacing:0;">(선택 · PNG 직접 업로드)</span></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+  <div style="flex:1;min-width:200px;">
+    <div class="dropzone" id="mtMainDrop" style="padding:18px 12px;margin-bottom:6px;position:relative;">
+      <button type="button" id="mtMainClear" onclick="event.stopPropagation();clearMt('main')" style="display:none;position:absolute;top:6px;right:8px;width:22px;height:22px;border-radius:50%;background:rgba(17,24,39,.5);color:#fff;border:0;font-size:14px;line-height:1;cursor:pointer;align-items:center;justify-content:center;">×</button>
+      <p style="font-size:13px;font-weight:700;color:#374151;">메인 이미지 PNG</p>
+      <div style="font-size:11px;color:#9aa1ab;margin-top:4px;">240×240 · 비율 유지 · 여백 자동 제거</div>
+      <div id="mtMainName" style="font-size:11px;color:#059669;font-weight:700;margin-top:5px;"></div>
+      <input type="file" id="mtMainFile" accept=".png,image/png" style="display:none;">
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;justify-content:center;font-size:11px;color:#374151;font-weight:600;">흰 테두리 <input type="number" id="mainStroke" value="3" min="0" max="40" style="width:56px;padding:4px 6px;border:1px solid #d1d5db;border-radius:6px;font-family:inherit;"> px</div>
+  </div>
+  <div style="flex:1;min-width:200px;">
+    <div class="dropzone" id="mtTabDrop" style="padding:18px 12px;margin-bottom:6px;position:relative;">
+      <button type="button" id="mtTabClear" onclick="event.stopPropagation();clearMt('tab')" style="display:none;position:absolute;top:6px;right:8px;width:22px;height:22px;border-radius:50%;background:rgba(17,24,39,.5);color:#fff;border:0;font-size:14px;line-height:1;cursor:pointer;align-items:center;justify-content:center;">×</button>
+      <p style="font-size:13px;font-weight:700;color:#374151;">탭 이미지 PNG</p>
+      <div style="font-size:11px;color:#9aa1ab;margin-top:4px;">96×74 · 비율 유지 · 여백 자동 제거</div>
+      <div id="mtTabName" style="font-size:11px;color:#059669;font-weight:700;margin-top:5px;"></div>
+      <input type="file" id="mtTabFile" accept=".png,image/png" style="display:none;">
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;justify-content:center;font-size:11px;color:#374151;font-weight:600;">흰 테두리 <input type="number" id="tabStroke" value="1" min="0" max="40" style="width:56px;padding:4px 6px;border:1px solid #d1d5db;border-radius:6px;font-family:inherit;"> px</div>
+  </div>
+</div>
+</div>
+
 <button class="run-btn" id="runBtn" onclick="run()" disabled>테두리 추가하기</button>
 <div id="status"></div>
 <div class="progress-bar-wrap" id="progressWrap">
@@ -468,6 +495,9 @@ function switchPlatform(p) {
   document.querySelectorAll('#' + rowId + ' .sub-tog').forEach((b, i) => b.classList.toggle('active', i === 0));
   if (p === 'kakao') showPanelOnly('kakao');
   else { showPanelOnly('naver'); autoPick('naver-output', 'png740'); }   // 오지큐 기본 = 멈티(전체 테두리·740 PNG)
+  currentPlatform = p;
+  const mt = document.getElementById('ogqMainTabCard');
+  if (mt) mt.style.display = (p === 'ogq') ? 'block' : 'none';   // 메인·탭은 오지큐에서만
 }
 // 기존 라벨의 onclick을 그대로 트리거해서 라디오·active·표시 로직 재사용
 function autoPick(name, value) {
@@ -498,6 +528,63 @@ function parseSequence(text) {
     : c.split('').map(n => parseInt(n, 10));
   return nums.filter(n => Number.isInteger(n) && n >= 1);
 }
+
+/* ── 오지큐 메인·탭 이미지 (ogq-gif-maker 방식 이식) ── */
+let currentPlatform = 'kakao';
+let mainImgCanvas = null, tabImgCanvas = null;
+function containInto(src, boxW, boxH) {
+  const c = document.createElement('canvas'); c.width = boxW; c.height = boxH;
+  const s = Math.min(boxW / src.width, boxH / src.height);
+  const w = Math.max(1, Math.round(src.width * s)), h = Math.max(1, Math.round(src.height * s));
+  c.getContext('2d').drawImage(src, Math.round((boxW - w) / 2), Math.round((boxH - h) / 2), w, h);
+  return c;
+}
+function trimTransparent(src) {
+  const w = src.width, h = src.height, d = src.getContext('2d').getImageData(0, 0, w, h).data;
+  let minX = w, minY = h, maxX = -1, maxY = -1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    if (d[(y * w + x) * 4 + 3] > 10) { if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; }
+  }
+  if (maxX < minX) return src;
+  const cw = maxX - minX + 1, ch = maxY - minY + 1, o = document.createElement('canvas');
+  o.width = cw; o.height = ch;
+  o.getContext('2d').drawImage(src, minX, minY, cw, ch, 0, 0, cw, ch);
+  return o;
+}
+async function buildOgqImage(src, targetW, targetH, border) {
+  src = trimTransparent(src);
+  border = Math.max(0, border | 0);
+  const inner = containInto(src, Math.max(1, targetW - border * 2), Math.max(1, targetH - border * 2));
+  if (border === 0) return inner;
+  return await addBorderPng(inner, border, '#ffffff');   // 매직팟 기존 dilation 재사용
+}
+function canvasToPngBlob(c) { return new Promise(r => c.toBlob(r, 'image/png')); }
+function loadMtImage(file, which) {
+  const url = URL.createObjectURL(file), img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
+    c.getContext('2d').drawImage(img, 0, 0); URL.revokeObjectURL(url);
+    if (which === 'main') { mainImgCanvas = c; document.getElementById('mtMainName').textContent = file.name; document.getElementById('mtMainClear').style.display = 'flex'; }
+    else { tabImgCanvas = c; document.getElementById('mtTabName').textContent = file.name; document.getElementById('mtTabClear').style.display = 'flex'; }
+  };
+  img.onerror = () => URL.revokeObjectURL(url);
+  img.src = url;
+}
+function clearMt(which) {
+  if (which === 'main') { mainImgCanvas = null; document.getElementById('mtMainName').textContent = ''; document.getElementById('mtMainFile').value = ''; document.getElementById('mtMainClear').style.display = 'none'; }
+  else { tabImgCanvas = null; document.getElementById('mtTabName').textContent = ''; document.getElementById('mtTabFile').value = ''; document.getElementById('mtTabClear').style.display = 'none'; }
+}
+function wireMtDrop(dropId, inputId, which) {
+  const dz = document.getElementById(dropId), inp = document.getElementById(inputId);
+  if (!dz) return;
+  dz.addEventListener('click', () => inp.click());
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => { e.preventDefault(); e.stopPropagation(); dz.classList.remove('drag-over'); if (e.dataTransfer.files[0]) loadMtImage(e.dataTransfer.files[0], which); });
+  inp.addEventListener('change', e => { if (e.target.files[0]) loadMtImage(e.target.files[0], which); });
+}
+wireMtDrop('mtMainDrop', 'mtMainFile', 'main');
+wireMtDrop('mtTabDrop', 'mtTabFile', 'tab');
 
 /* ── 상태 변수 ── */
 let files = [];
@@ -1578,6 +1665,19 @@ async function run() {
         const blob = await canvasToBlob(result);
         resultBlobs.push({ name: file.name.replace(/\.png$/i, '_outlined.png'), blob });
         setProgress(((fi + 1) / files.length) * 100);
+      }
+    }
+
+    // ── 오지큐 메인·탭 이미지 (있으면 함께 생성) ──
+    if (currentPlatform === 'ogq' && (mainImgCanvas || tabImgCanvas)) {
+      const _base = (files && files.length) ? files[0].name.replace(/\.(psd|png)$/i, '') : 'ogq';
+      if (mainImgCanvas) {
+        const b = Math.max(0, Math.min(40, parseInt(document.getElementById('mainStroke').value) || 0));
+        resultBlobs.push({ name: _base + '_메인.png', blob: await canvasToPngBlob(await buildOgqImage(mainImgCanvas, 240, 240, b)) });
+      }
+      if (tabImgCanvas) {
+        const b = Math.max(0, Math.min(40, parseInt(document.getElementById('tabStroke').value) || 0));
+        resultBlobs.push({ name: _base + '_탭.png', blob: await canvasToPngBlob(await buildOgqImage(tabImgCanvas, 96, 74, b)) });
       }
     }
 
