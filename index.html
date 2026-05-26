@@ -989,16 +989,17 @@ async function processPsdTopOfGroup(psd, radius, color, onProgress) {
   const previews = [];
 
   if (folders.length <= 1) {
-    /* PSD 전체가 시안 1개 (폴더 0~1개): 맨 위 리프 레이어에 테두리 → 전체 병합 */
-    const leafLayers = collectLeafLayers(psd);
-    if (leafLayers.length > 0) {
-      const topLayer = leafLayers[leafLayers.length - 1];
-      if (topLayer.canvas && !isCanvasEmpty(topLayer.canvas)) {
-        await addBorderPsd(topLayer, radius, color, psdW, psdH);
-      }
-      previews.push({ folder: psd, name: psd.name || 'merged', outlined: true, psdW, psdH });
-      onProgress(1);
+    /* PSD 전체가 시안 1개 (폴더 0~1개): "실제 최상위 자식"에만 테두리 → 전체 병합.
+       (빈 레이어는 collectLeafLayers에서 빠지므로 그걸로 top을 잡으면 아래 레이어가 테두리됨 → 실제 맨 위 자식을 직접 본다) */
+    const kids = psd.children || [];
+    const topLayer = kids.length ? kids[kids.length - 1] : null;
+    const topIsLeaf = topLayer && (!topLayer.children || topLayer.children.length === 0);
+    if (topIsLeaf && topLayer.canvas && !isCanvasEmpty(topLayer.canvas)) {
+      await addBorderPsd(topLayer, radius, color, psdW, psdH);   // 맨 위가 텍스트(내용 있음)일 때만 테두리
     }
+    // 맨 위가 빈 레이어면 테두리 없이 전체만 병합 (텍스트 없는 시안 규칙)
+    previews.push({ folder: psd, name: psd.name || 'merged', outlined: true, psdW, psdH });
+    onProgress(1);
     return previews;
   }
 
