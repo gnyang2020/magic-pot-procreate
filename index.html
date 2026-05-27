@@ -1214,12 +1214,19 @@ function getCanvasBlendMode(psdBlendMode) {
   return BLEND_MAP[psdBlendMode] || 'source-over';
 }
 
+/* 레이어 불투명도: ag-psd는 0~1(0~255면 정규화). CSP가 1/255로 깨뜨린 값(≤2/255)은 무시(100%). */
+function layerAlpha(op) {
+  if (op == null) return 1;
+  const v = op > 1 ? op / 255 : op;
+  return v <= 2 / 255 ? 1 : v;
+}
+
 /* ── 레이어 1개를 캔버스에 그리기 (불투명도 + 블렌딩 모드) ── */
 function drawLayer(ctx, lyr) {
   if (!lyr.canvas) return;
   const prevAlpha = ctx.globalAlpha;
   const prevBlend = ctx.globalCompositeOperation;
-  ctx.globalAlpha = (lyr.opacity != null) ? (lyr.opacity > 1 ? lyr.opacity / 255 : lyr.opacity) : 1;
+  ctx.globalAlpha = layerAlpha(lyr.opacity);
   ctx.globalCompositeOperation = getCanvasBlendMode(lyr.blendMode);
   ctx.drawImage(lyr.canvas, lyr.left || 0, lyr.top || 0);
   ctx.globalAlpha = prevAlpha;
@@ -1259,13 +1266,13 @@ function compositeLayersToCanvas(layers, psdW, psdH) {
       tmp.height = psdH;
       const tc = tmp.getContext('2d');
       // 1) 베이스 레이어 그리기 (불투명도 적용)
-      tc.globalAlpha = (base.opacity != null) ? (base.opacity > 1 ? base.opacity / 255 : base.opacity) : 1;
+      tc.globalAlpha = layerAlpha(base.opacity);
       tc.drawImage(base.canvas, base.left || 0, base.top || 0);
       tc.globalAlpha = 1;
       // 2) 클리핑된 레이어들을 베이스 알파 안에서만 그리기
       for (const cl of clipped) {
         tc.globalCompositeOperation = 'source-atop';
-        tc.globalAlpha = (cl.opacity != null) ? (cl.opacity > 1 ? cl.opacity / 255 : cl.opacity) : 1;
+        tc.globalAlpha = layerAlpha(cl.opacity);
         tc.drawImage(cl.canvas, cl.left || 0, cl.top || 0);
       }
       tc.globalCompositeOperation = 'source-over';
@@ -1413,16 +1420,67 @@ const gifWorkerB64 = "Ly8gZ2lmLndvcmtlci5qcyAwLjIuMCAtIGh0dHBzOi8vZ2l0aHViLmNvbS
 const gifWorkerBlob = new Blob([atob(gifWorkerB64)], { type: 'application/javascript' });
 const gifWorkerUrl = URL.createObjectURL(gifWorkerBlob);
 
-/* ── GIF 생성 ── */
+/* ── GIF 투명키 자동 선택 (ogq-gif-maker와 동일 로직) ──
+   분홍 볼터치·입속을 진하게 써도 투명 구멍이 안 뚫리도록, 프레임의 불투명 색에서
+   가장 멀리 떨어진 후보색을 GIF당 1개 골라 투명색으로 쓴다. */
+const KEY_CANDIDATES = [
+  [0, 255, 0],    // 초록
+  [0, 255, 255],  // 시안
+  [0, 0, 255],    // 파랑
+  [128, 0, 255],  // 보라
+  [255, 0, 255],  // 마젠타 (최후 후보)
+];
+function pickSafeKeyColor(canvases) {
+  const minDist = KEY_CANDIDATES.map(() => Infinity);
+  for (const cv of canvases) {
+    const d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i + 3] === 0) continue;
+      const r = d[i], g = d[i + 1], b = d[i + 2];
+      for (let k = 0; k < KEY_CANDIDATES.length; k++) {
+        const c = KEY_CANDIDATES[k];
+        const dr = r - c[0], dg = g - c[1], db = b - c[2];
+        const dist = dr * dr + dg * dg + db * db;
+        if (dist < minDist[k]) minDist[k] = dist;
+      }
+    }
+  }
+  let best = 0;
+  for (let k = 1; k < KEY_CANDIDATES.length; k++) if (minDist[k] > minDist[best]) best = k;
+  const [r, g, b] = KEY_CANDIDATES[best];
+  return { r, g, b, int: (r << 16) | (g << 8) | b };
+}
+// 알파 0 영역을 투명키 색으로 채우고 나머지는 불투명으로 (GIF는 반투명 불가). ogq와 동일.
+function applyTransparentKey(canvas, key) {
+  const ctx = canvas.getContext('2d');
+  const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 4) {
+    if (d[i + 3] === 0) { d[i] = key.r; d[i + 1] = key.g; d[i + 2] = key.b; d[i + 3] = 255; }
+    else d[i + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  return canvas;
+}
+
+/* ── GIF 생성 (투명 배경 + 고품질, ogq-gif-maker와 동일 방식) ──
+   투명키는 프레임 사본에만 적용해서 미리보기·단독저장용 원본 캔버스는 보존한다. */
 function createGifFromCanvases(canvases, delays) {
   return new Promise((resolve, reject) => {
+    const key = pickSafeKeyColor(canvases);
     const gif = new GIF({
-      workers: 2,
-      quality: 10,
+      workers: 4,
+      quality: 1,
+      transparent: key.int,
+      dither: false,
       workerScript: gifWorkerUrl
     });
     for (let i = 0; i < canvases.length; i++) {
-      gif.addFrame(canvases[i], { delay: delays[i], copy: true });
+      const clone = document.createElement('canvas');
+      clone.width = canvases[i].width;
+      clone.height = canvases[i].height;
+      clone.getContext('2d').drawImage(canvases[i], 0, 0);
+      gif.addFrame(applyTransparentKey(clone, key), { delay: delays[i], copy: true });
     }
     gif.on('finished', blob => resolve(blob));
     gif.on('error', err => reject(err));
