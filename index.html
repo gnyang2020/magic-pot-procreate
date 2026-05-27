@@ -179,19 +179,14 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 <div class="section-title">테두리 설정</div>
 <div class="setting-row">
 <span class="setting-label">두께</span>
-<input type="number" id="borderSize" value="5" min="0" max="100">
+<input type="number" id="borderSize" value="4" min="0" max="100">
 <span class="unit">px</span>
-<div style="display:inline-flex;gap:4px;margin-left:4px;">
-<button type="button" class="preset-pill" onclick="document.getElementById('borderSize').value=4">4</button>
-<button type="button" class="preset-pill" onclick="document.getElementById('borderSize').value=8">8</button>
-<button type="button" class="preset-pill" onclick="document.getElementById('borderSize').value=12">12</button>
-</div>
 <span class="setting-label" style="min-width:35px;margin-left:10px;">색상</span>
 <input type="color" id="borderColor" value="#FFFFFF">
 <span class="unit">기본: 흰색</span>
 </div>
 <div style="font-size:11px;line-height:1.8;margin-bottom:14px;">
-<span style="color:#333;font-weight:700;">✦ 쥐냥 작가 추천</span> <span style="color:#999;">— 360×360: 4~5px · 740×640: 8px</span><br>
+<span style="color:#333;font-weight:700;">✦ 쥐냥 작가 추천</span> <span style="color:#999;">— 카카오 360: 4px · 오지큐 740: 10px (탭 선택 시 자동 적용)</span><br>
 <span style="color:#D32F2F;font-weight:600;">테두리 두께는 최종 출력 크기 기준으로 선택해 주세요. 큰 PSD는 자동 축소 후 적용됩니다</span>
 </div>
 
@@ -545,6 +540,9 @@ function showPanelOnly(c) {
   if (typeof selectTarget === 'function' && platTargetMap[c]) selectTarget(platTargetMap[c]);
 }
 function switchPlatform(p) {
+  // 이전 플랫폼의 테두리 두께 기억 (탭이 실제 바뀔 때만)
+  const _bs = document.getElementById('borderSize');
+  if (_bs && currentPlatform && currentPlatform !== p) platformBorder[currentPlatform] = parseInt(_bs.value) || platformBorder[currentPlatform];
   document.querySelectorAll('#platformTabs .pill-tab').forEach(t => t.classList.toggle('active', t.dataset.p === p));
   document.getElementById('subKakao').style.display = (p === 'kakao') ? 'flex' : 'none';
   document.getElementById('subOgq').style.display  = (p === 'ogq')   ? 'flex' : 'none';
@@ -554,6 +552,7 @@ function switchPlatform(p) {
   if (p === 'kakao') showPanelOnly('kakao');
   else { showPanelOnly('naver'); autoPick('naver-output', 'png740'); }   // 오지큐 기본 = 멈티(전체 테두리·740 PNG)
   currentPlatform = p;
+  if (_bs) _bs.value = platformBorder[p];   // 새 플랫폼 추천 두께 자동 적용 (카카오 4 / 오지큐 10)
   const mt = document.getElementById('ogqMainTabCard');
   if (mt) mt.style.display = (p === 'ogq') ? 'block' : 'none';   // 메인·탭은 오지큐에서만
   const ki = document.getElementById('kakaoIconCard');
@@ -591,6 +590,7 @@ function parseSequence(text) {
 
 /* ── 오지큐 메인·탭 이미지 (ogq-gif-maker 방식 이식) ── */
 let currentPlatform = 'kakao';
+let platformBorder = { kakao: 4, ogq: 10 };   // 플랫폼별 추천 테두리 두께 (탭 전환 시 자동 적용·기억)
 let mainImgCanvas = null, tabImgCanvas = null, iconImgCanvas = null;
 function refreshRunBtn() {
   const has = files.length > 0 || !!mainImgCanvas || !!tabImgCanvas || !!iconImgCanvas;
@@ -2010,7 +2010,8 @@ function resetAll() {
   document.getElementById('dlBtnWrap').innerHTML = '';
   setStatus('');
   setProgress(0);
-  document.getElementById('borderSize').value = 5;
+  platformBorder = { kakao: 4, ogq: 10 };
+  document.getElementById('borderSize').value = 4;
   document.getElementById('borderColor').value = '#FFFFFF';
   // 타겟 초기화 → 카카오 선택
   selectTarget('top-of-group');
