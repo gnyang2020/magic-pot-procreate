@@ -215,22 +215,12 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 <div class="target-panel active" data-c="kakao">
 <label class="target-option selected kakao-theme" id="opt-top" onclick="selectTarget('top-of-group')">
 <input type="radio" name="target" value="top-of-group" checked>
-<div class="radio-dot"></div>
 <div class="option-text">
-<div class="option-label">카카오 이모티콘 전용 <span class="badge badge-kakao">KAKAO</span></div>
 <div class="option-desc">PSD를 넣으면 PNG로 자동 출력<br>텍스트 레이어에만 아웃라인 적용</div>
 <div style="display:flex;gap:6px;margin-top:8px;">
 <label class="out-toggle kakao kakao-size-btn active" onclick="event.stopPropagation();selectTarget('top-of-group');document.querySelectorAll('.kakao-size-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');">
 <input type="radio" name="kakao-size" value="auto" checked style="accent-color:#E5A800;"> 360 × 360 자동 변환
 </label>
-<label class="out-toggle kakao kakao-size-btn" onclick="event.stopPropagation();selectTarget('top-of-group');document.querySelectorAll('.kakao-size-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');">
-<input type="radio" name="kakao-size" value="original" style="accent-color:#E5A800;"> 원본 사이즈 그대로
-</label>
-</div>
-<div class="option-notice">
-PSD 1개에 이모티콘 <b>여러 개</b> → PSD 파일 <b>1개</b> 넣기<br>
-PSD 1개에 이모티콘 <b>1개</b> → PSD 파일 <b>여러 개</b> 넣기<br>
-가이드·배경은 <b>눈 끄거나 삭제</b>
 </div>
 </div>
 </label>
@@ -238,7 +228,7 @@ PSD 1개에 이모티콘 <b>1개</b> → PSD 파일 <b>여러 개</b> 넣기<br>
 
 <!-- 원스톱 (placeholder) -->
 <div class="target-panel" data-c="onestop">
-<div class="option-notice" style="margin:0;">
+<div class="option-notice" style="margin:0;background:#E0F2FE;border-color:#7DD3FC;color:#0369A1;">
 <b>텍스트(위) / 캐릭터 / 텍스트(아래)</b>로 구분해 PNG 파일 넣기<br>
 캐릭터 PNG는 <b>필수</b> · 테두리는 <b>텍스트에만</b><br>
 가이드는 <b>반드시 삭제</b><br>
@@ -250,39 +240,12 @@ PSD 1개에 이모티콘 <b>1개</b> → PSD 파일 <b>여러 개</b> 넣기<br>
 <div class="target-panel" data-c="naver">
 <label class="target-option naver-theme" id="opt-all" onclick="selectTarget('all-layers')">
 <input type="radio" name="target" value="all-layers">
-<div class="radio-dot"></div>
 <div class="option-text">
-<div class="option-label">네이버 OGQ 이모티콘 전용 <span class="badge badge-naver">NAVER</span></div>
 <div class="option-desc">PSD를 넣으면 PNG로 자동 출력<br>이모티콘 전체에 아웃라인 적용</div>
 <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
-<label class="out-toggle naver naver-out-btn" onclick="event.stopPropagation();selectTarget('all-layers');document.querySelectorAll('.naver-out-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('ogqGifSettings').style.display='none';">
-<input type="radio" name="naver-output" value="png740" style="accent-color:#03C75A;"> 740 × 640 자동 변환
+<label class="out-toggle naver naver-out-btn active" onclick="event.stopPropagation();selectTarget('all-layers');document.querySelectorAll('.naver-out-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');">
+<input type="radio" name="naver-output" value="png740" checked style="accent-color:#03C75A;"> 740 × 640 자동 변환
 </label>
-<label class="out-toggle naver naver-out-btn" onclick="event.stopPropagation();selectTarget('all-layers');document.querySelectorAll('.naver-out-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('ogqGifSettings').style.display='none';">
-<input type="radio" name="naver-output" value="png" style="accent-color:#03C75A;"> 원본 사이즈 그대로
-</label>
-<label class="out-toggle naver naver-out-btn" onclick="event.stopPropagation();selectTarget('all-layers');document.querySelectorAll('.naver-out-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('ogqGifSettings').style.display='block';">
-<input type="radio" name="naver-output" value="ogq-gif" style="accent-color:#03C75A;"> OGQ GIF
-</label>
-</div>
-<div id="ogqGifSettings" style="display:none;margin-top:8px;padding:10px 12px;background:rgba(3,199,90,0.06);border:1px solid rgba(3,199,90,0.15);border-radius:8px;">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-<span style="font-size:11px;font-weight:600;color:#03C75A;">프레임 레이트</span>
-<input type="number" id="ogqGifFps" value="18" min="10" max="40" step="1" onclick="event.stopPropagation()" style="width:70px;padding:5px 8px;border:2px solid #03C75A;border-radius:8px;font-size:13px;font-weight:700;color:#03C75A;background:#fff;outline:none;">
-<span style="font-size:11px;color:#666;">fps</span>
-</div>
-<div style="font-size:10.5px;color:#555;line-height:1.7;margin:0;background:#f0faf5;border-radius:6px;padding:8px 10px;">
-<b style="color:#03C75A;">OGQ GIF 자동 변환 규칙</b><br>
-OGQ 특성상 1번 프레임이 앞·뒤로 재생됩니다.<br>
-예) 1, 2, 3 프레임 → <b>1, 2, 2, 3, 3, 1</b>로 자동 변환<br>
-입력한 <b>fps</b> 속도에 맞춰 자동 보정돼요. (예: 18fps)
-</div>
-</div>
-<div class="option-notice">
-카카오용으로 그린 PSD(360·1080)도 자동으로 <b>740×640</b> 변환<br>
-<b>PNG</b>를 넣어도 740×640 변환 + 시안 전체 테두리<br>
-PSD 1개에 이모티콘 <b>여러 개</b> → PSD 파일 <b>1개</b> / 이모티콘 <b>1개</b> → PSD <b>여러 개</b><br>
-가이드·배경은 <b>눈 끄거나 삭제</b>
 </div>
 </div>
 </label>
@@ -310,14 +273,8 @@ PSD 1개에 이모티콘 <b>여러 개</b> → PSD 파일 <b>1개</b> / 이모�
 <div class="option-desc">PSD를 넣으면 GIF로 자동 출력</div>
 <!-- 1) 사이즈 선택 -->
 <div style="display:flex;gap:6px;margin-top:8px;">
-<label class="out-toggle gif gif-size-btn" onclick="event.stopPropagation();selectTarget('gif-only');document.querySelectorAll('.gif-size-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');">
-<input type="radio" name="gif-size" value="original" style="accent-color:#AB47BC;"> 원본 사이즈
-</label>
-<label class="out-toggle gif gif-size-btn" onclick="event.stopPropagation();selectTarget('gif-only');document.querySelectorAll('.gif-size-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');">
-<input type="radio" name="gif-size" value="360" style="accent-color:#AB47BC;"> 360 × 360
-</label>
-<label class="out-toggle gif gif-size-btn" onclick="event.stopPropagation();selectTarget('gif-only');document.querySelectorAll('.gif-size-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');">
-<input type="radio" name="gif-size" value="740" style="accent-color:#AB47BC;"> 740 × 640
+<label class="out-toggle gif gif-size-btn active" onclick="event.stopPropagation();selectTarget('gif-only');document.querySelectorAll('.gif-size-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');">
+<input type="radio" name="gif-size" value="740" checked style="accent-color:#AB47BC;"> 740 × 640 자동 변환
 </label>
 </div>
 <!-- 2) 테두리 선택 -->
@@ -331,18 +288,10 @@ PSD 1개에 이모티콘 <b>여러 개</b> → PSD 파일 <b>1개</b> / 이모�
 </div>
 <!-- 3) 프레임 속도 -->
 <div id="gifOnlySettings" style="margin-top:8px;padding:10px 12px;background:rgba(171,71,188,0.06);border:1px solid rgba(171,71,188,0.15);border-radius:8px;">
-<div style="display:flex;gap:6px;margin-bottom:8px;">
-<button type="button" id="gifOnlyModeUniform" onclick="event.stopPropagation();setGifOnlyMode('uniform')" style="flex:1;padding:6px 10px;border:2px solid #AB47BC;border-radius:8px;background:#F3E5F5;color:#AB47BC;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">모두 동일</button>
-<button type="button" id="gifOnlyModePerFrame" onclick="event.stopPropagation();setGifOnlyMode('perframe')" style="flex:1;padding:6px 10px;border:2px solid #E0E0E0;border-radius:8px;background:#fff;color:#999;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">프레임별 설정</button>
-</div>
 <div id="gifOnlyUniformRow" style="display:flex;align-items:center;gap:8px;">
 <span style="font-size:11px;font-weight:600;color:#AB47BC;">프레임 레이트</span>
 <input type="number" id="gifOnlyFps" value="18" min="10" max="40" step="1" onclick="event.stopPropagation()" style="width:70px;padding:5px 8px;border:2px solid #AB47BC;border-radius:8px;font-size:13px;font-weight:700;color:#AB47BC;background:#fff;outline:none;">
 <span style="font-size:11px;color:#666;">fps</span>
-</div>
-<div id="gifOnlyPerFrameArea" style="display:none;">
-<div id="gifOnlyPerFrameList" style="max-height:200px;overflow-y:auto;" onclick="event.stopPropagation()"></div>
-<p id="gifOnlyPerFrameHint" style="font-size:10.5px;color:#999;text-align:center;padding:8px 0;">파일을 업로드하면 프레임별 설정이 표시됩니다</p>
 </div>
 </div>
 
@@ -351,11 +300,6 @@ PSD 1개에 이모티콘 <b>여러 개</b> → PSD 파일 <b>1개</b> / 이모�
 <div style="font-size:11px;font-weight:700;color:#AB47BC;margin-bottom:6px;">프레임 시퀀스 <span style="font-size:9.5px;color:#fff;background:#AB47BC;border-radius:4px;padding:1px 5px;">선택</span></div>
 <input type="text" id="gifSequence" placeholder="예: 122331 (비우면 폴더 순서)" onclick="event.stopPropagation()" style="width:100%;padding:6px 10px;border:2px solid #AB47BC;border-radius:8px;font-size:13px;font-family:monospace;color:#6b21a8;background:#fff;outline:none;box-sizing:border-box;">
 <div style="font-size:10.5px;color:#9333ea;margin-top:5px;line-height:1.5;">그림 3장 → <b>122331</b> 입력 시 1·2·2·3·3·1 = 6프레임으로 재배열·반복</div>
-</div>
-<div class="option-notice">
-각 <b>프레임</b>을 폴더(또는 레이어)로 나눠두면 <b>순서대로</b> GIF가 돼요 (넘버링 불필요)<br>
-순서 바꾸려면 아래 <b>프레임 시퀀스</b> · PSD 1개 = 움직이는 이모티콘 1개 (여러 개면 각각 GIF, 2개↑ ZIP)<br>
-<b>GIF는 눈 꺼도 출력돼요 → 가이드는 꼭 삭제</b>
 </div>
 </div>
 </label>
@@ -516,8 +460,8 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 <span class="creator-link-txt">이거 만든 사람이 궁금하다면? ✦</span>
 <span style="font-size:13px;color:rgba(255,255,255,0.5);">→</span>
 </a>
-<a class="review-link" href="https://g-nyang.notion.site/3315488e051b81b0a184c5785b62a996?pvs=105" target="_blank">
-<span class="review-link-txt">MAGIC POT 사용해 보니 어때요? 후기를 남겨 주세요🐭💕</span>
+<a class="review-link" href="https://www.latpeed.com/products/uL32q" target="_blank">
+<span class="review-link-txt">🎨 돈 잘 버는 이모티콘 만들기 클래스 바로가기</span>
 <span style="font-size:12px;color:rgba(255,255,255,0.5);">→</span>
 </a>
 </div>
@@ -2009,7 +1953,6 @@ function selectTarget(mode) {
     document.querySelectorAll('.naver-out-btn').forEach(b => { b.classList.remove('active'); b.querySelector('input').checked = false; });
     document.querySelectorAll('.gif-border-btn').forEach(b => { b.classList.remove('active'); b.querySelector('input').checked = false; });
     document.querySelectorAll('.gif-size-btn').forEach(b => { b.classList.remove('active'); b.querySelector('input').checked = false; });
-    document.getElementById('ogqGifSettings').style.display = 'none';
     // 새 탭의 첫 번째 토글만 활성화
     if (mode === 'top-of-group') {
       const s = document.querySelector('.kakao-size-btn'); if (s) { s.classList.add('active'); s.querySelector('input').checked = true; }
@@ -2074,10 +2017,7 @@ function resetAll() {
   // 타겟 초기화 → 카카오 선택
   selectTarget('top-of-group');
   // GIF 설정 초기화
-  document.getElementById('ogqGifSettings').style.display = 'none';
   gifOnlyMode = 'uniform';
-  document.getElementById('gifOnlyPerFrameList').innerHTML = '';
-  document.getElementById('gifOnlyPerFrameHint').style.display = 'block';
 }
 </script>
 </body>
