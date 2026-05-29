@@ -424,7 +424,10 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 
 <div style="font-weight:800;color:#A855F7;font-size:13px;margin-bottom:4px;">🟣 오지큐 움티 <span style="font-weight:600;color:#aaa;">· PSD → GIF</span></div>
 • PSD 넣으면 <b>GIF</b>로 자동 출력 (PSD 1개 = 움직이는 이모티콘 1개)<br>
-• 각 <b>프레임</b>을 폴더(또는 레이어)로 나눠 넣으면 <b>순서대로 재생</b> (넘버링 불필요 · 순서 변경은 프레임 시퀀스)<br>
+• 각 <b>프레임</b>을 <b>폴더</b>로 나눠 넣으면 그 순서대로 재생<br>
+• 폴더 이름이 모두 <b>숫자로 시작</b>(1, 2 / 01, 02 등)이면 <b>숫자 순으로 자동 정렬</b> · 그 외엔 PSD 레이어 순서<br>
+• 프크 PSD의 <b>맨 아래 배경 레이어는 자동 제외</b> (폴더 밖이면 무조건)<br>
+• 순서 직접 지정은 <b>프레임 시퀀스</b>(예: 122331)<br>
 • 테두리는 <b>시안 전체</b>에 적용 (텍스트·빈 레이어 규칙 없음)<br>
 • <b style="color:#c0392b;">GIF는 눈을 꺼도 다 출력돼요 → 가이드는 꼭 삭제!</b>
 </div>
@@ -1050,7 +1053,15 @@ function hasAnyCanvas(node) {
   return !!(node && node.children && node.children.some(hasAnyCanvas));
 }
 function getFrameNodes(node) {
-  return (node.children || []).filter(c => c.canvas || (c.children && hasAnyCanvas(c)));
+  // 프레임 = 내용 있는 "폴더(그룹)"만. 최상위 단일 레이어(배경 등)는 자동 제외 + 가이드/배경 이름 제외
+  const folders = (node.children || []).filter(c =>
+    c.children && c.children.length > 0 && hasAnyCanvas(c) && !isGuideOrBg(c.name)
+  );
+  // 폴더 이름이 모두 숫자로 시작 (1, 2 / 01, 02 등) → 이름 숫자 순으로 정렬해 프레임 순서로 사용
+  if (folders.length >= 2 && folders.every(f => isNumberedName(f.name))) {
+    return [...folders].sort((a, b) => parseInt(a.name, 10) - parseInt(b.name, 10));
+  }
+  return folders;   // 그 외엔 PSD 레이어 순서 유지
 }
 async function extractGifFrames(psd, radius, color, borderMode, onProgress) {
   const psdW = psd.width, psdH = psd.height;
