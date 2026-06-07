@@ -250,6 +250,11 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 <!-- 원스톱 (시트 PNG 3장 → 카카오 360 + 오지큐 740 자동 추출) -->
 <div class="target-panel" data-c="onestop">
 
+<!-- 초기화 버튼 (원스톱 전용 · 공통 드롭존을 숨긴 대신 슬롯·아이콘·결과를 한 번에 비움) -->
+<div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+<button type="button" onclick="clearInputsForTabSwitch()" style="background:#EEEEEE;border:1px solid #DDD;border-radius:6px;font-size:10px;color:#888;cursor:pointer;font-weight:600;font-family:inherit;padding:4px 10px;transition:all 0.15s;">초기화</button>
+</div>
+
 <!-- 3슬롯 그리드 -->
 <div class="onestop-slots">
   <!-- 텍스트 위 -->
@@ -257,7 +262,6 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
     <div class="slot-head"><span>📝 텍스트 위</span><span class="slot-badge opt">선택</span></div>
     <div class="slot-hint">그림 위에 올라갈 글자<br>(테두리 자동)</div>
     <div class="slot-drop" data-slot="textTop">
-      <button type="button" class="slot-clear" onclick="event.stopPropagation();clearOnestopSlot('textTop')">×</button>
       <div class="ico">📝</div>
       <div class="ph">PNG 드롭/클릭</div>
       <div class="name" data-slot-name="textTop"></div>
@@ -269,7 +273,6 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
     <div class="slot-head"><span>🐱 캐릭터</span><span class="slot-badge req">필수</span></div>
     <div class="slot-hint">그림 본체 시트 1장<br>(6×6 그리드)</div>
     <div class="slot-drop" data-slot="character">
-      <button type="button" class="slot-clear" onclick="event.stopPropagation();clearOnestopSlot('character')">×</button>
       <div class="ico">🐱</div>
       <div class="ph">PNG 드롭/클릭</div>
       <div class="name" data-slot-name="character"></div>
@@ -281,7 +284,6 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
     <div class="slot-head"><span>📝 텍스트 아래</span><span class="slot-badge opt">선택</span></div>
     <div class="slot-hint">그림 뒤로 갈 글자<br>(테두리 자동)</div>
     <div class="slot-drop" data-slot="textBottom">
-      <button type="button" class="slot-clear" onclick="event.stopPropagation();clearOnestopSlot('textBottom')">×</button>
       <div class="ico">📝</div>
       <div class="ph">PNG 드롭/클릭</div>
       <div class="name" data-slot-name="textBottom"></div>
@@ -364,7 +366,8 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 </div>
 </div>
 
-<!-- 파일 업로드 (맨 아래) -->
+<!-- 파일 업로드 (맨 아래) · 원스톱 모드에선 3슬롯을 쓰므로 숨김 -->
+<div id="fileUploadSection">
 <div style="display:flex;align-items:center;justify-content:space-between;">
 <div class="section-title" style="margin-bottom:0;">파일 업로드</div>
 <button type="button" onclick="clearFiles()" style="background:#EEEEEE;border:1px solid #DDD;border-radius:6px;font-size:10px;color:#888;cursor:pointer;font-weight:600;font-family:inherit;padding:4px 10px;transition:all 0.15s;">전체 삭제</button>
@@ -378,6 +381,7 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 </div>
 <input type="file" id="fileInput" accept="*/*" multiple>
 <div class="file-list" id="fileList"></div>
+</div><!-- /fileUploadSection -->
 
 <!-- 오지큐 메인·탭 이미지 (오지큐 전용) -->
 <div id="ogqMainTabCard" style="display:none;margin-top:18px;">
@@ -542,6 +546,9 @@ const platTargetMap = { kakao: 'top-of-group', naver: 'all-layers', gif: 'gif-on
 function showPanelOnly(c) {
   document.querySelectorAll('.target-panel').forEach(p => p.classList.toggle('active', p.dataset.c === c));
   if (typeof selectTarget === 'function' && platTargetMap[c]) selectTarget(platTargetMap[c]);
+  // 원스톱은 3슬롯으로 따로 받으므로 공통 '파일 업로드' 드롭존을 숨김 (그 외 모드는 표시)
+  const fu = document.getElementById('fileUploadSection');
+  if (fu) fu.style.display = (c === 'onestop') ? 'none' : 'block';
 }
 function switchPlatform(p) {
   const _changed = currentPlatform && currentPlatform !== p;   // 탭이 실제로 바뀌는지
@@ -877,6 +884,12 @@ async function runOnestop() {
     const num = String(i + 1).padStart(2, '0');
     kakaoPngs.push({ name: num + '.png', blob: await canvasToBlob(k), canvas: k });
     setProgress(40 + (i + 1) / total * 50);
+  }
+
+  // 카카오 아이콘 78×78 — '아이콘 칸'에 PNG를 넣었을 때만 카카오 ZIP에 '아이콘.png'로 포함
+  if (iconImgCanvas) {
+    const ic = await buildOgqImage(iconImgCanvas, 78, 78, 0);
+    kakaoPngs.push({ name: '아이콘.png', blob: await canvasToPngBlob(ic), canvas: ic });
   }
 
   setStatus('카카오 ' + kakaoPngs.length + '장 추출 완료 · 오지큐는 아래 "변환하기"로');
