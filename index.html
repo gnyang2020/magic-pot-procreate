@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MAGIC POT</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
@@ -139,6 +141,27 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 .preview-item { cursor: pointer; border-radius: 10px; padding: 4px; transition: background 0.12s, transform 0.1s; }
 .preview-item:hover { background: #F0FDF9; transform: translateY(-2px); }
 .preview-item:active { transform: scale(0.95); }
+/* 원스톱 패널 (3슬롯 시트 업로드) */
+.onestop-out-row { display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin:6px 0 12px; }
+.onestop-out-row .out-toggle { padding:6px 12px; font-size:11px; }
+.onestop-slots { display:grid; grid-template-columns:1fr; gap:10px; }
+@media (min-width:520px) { .onestop-slots { grid-template-columns:1fr 1fr 1fr; } }
+.onestop-slot { border:1.5px solid #E5E7EB; border-radius:12px; padding:10px; background:#FAFBFC; transition:border-color .15s, background .15s; }
+.onestop-slot.required { border-color:#FECACA; background:#FEF2F2; }
+.onestop-slot.filled { border-color:#A7F3D0; background:#F0FDF4; }
+.onestop-slot.filled.required { border-color:#34D399; background:#ECFDF5; }
+.onestop-slot .slot-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; font-size:12px; font-weight:700; color:#374151; }
+.onestop-slot .slot-badge { font-size:9.5px; padding:2px 7px; border-radius:99px; font-weight:800; }
+.onestop-slot .slot-badge.opt { background:#F3F4F6; color:#6B7280; }
+.onestop-slot .slot-badge.req { background:#FEE2E2; color:#B91C1C; }
+.onestop-slot .slot-hint { font-size:10px; color:#6B7280; line-height:1.5; margin-bottom:8px; }
+.onestop-slot .slot-drop { position:relative; border:1.5px dashed #CBD5E1; border-radius:10px; padding:18px 10px; text-align:center; cursor:pointer; background:#fff; transition:all .15s; }
+.onestop-slot .slot-drop:hover, .onestop-slot .slot-drop.over { border-color:#10B981; background:#F0FDF4; }
+.onestop-slot .slot-drop .ico { font-size:22px; }
+.onestop-slot .slot-drop .ph { font-size:10.5px; color:#9CA3AF; margin-top:3px; }
+.onestop-slot .slot-drop .name { font-size:10.5px; color:#059669; font-weight:700; margin-top:5px; word-break:break-all; }
+.onestop-slot .slot-clear { display:none; position:absolute; top:5px; right:6px; width:20px; height:20px; border-radius:50%; background:rgba(17,24,39,.5); color:#fff; border:0; font-size:13px; line-height:1; cursor:pointer; align-items:center; justify-content:center; }
+.onestop-slot.filled .slot-clear { display:flex; }
 .reset-row { display: flex; justify-content: flex-end; margin-top: 20px; }
 .reset-btn { padding: 10px 20px; background: #fff; color: #bbb; border: 1.5px solid #E0E0E0; border-radius: 10px; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; }
 .reset-btn:hover { background: #FFF0F0; color: #E53935; border-color: #E53935; }
@@ -160,14 +183,16 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 .popup-tab.active { border-color: #FFCDD2; background: #FFF0F3; color: #E91E63; }
 /* 푸터 */
 .footer-links { width: 100%; max-width: 540px; margin-top: 4px; }
-.creator-link { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; padding:15px 20px; background:#F0FDF9; border:1px solid #A7F3D0; border-radius:14px; cursor:pointer; transition:all 0.2s; text-decoration:none; }
+/* 강의(돈잘콘) = 메인 CTA: 보라 채움으로 가장 눈에 띄게 */
+.review-link { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; padding:16px 20px; background:linear-gradient(135deg,#A855F7,#C77DFF); border:none; border-radius:14px; cursor:pointer; transition:all 0.2s; text-decoration:none; box-shadow:0 6px 18px rgba(168,85,247,0.35); }
+.review-link { transition: transform 0.1s cubic-bezier(0.34,1.56,0.64,1), filter 0.2s; }
+.review-link:active { filter:brightness(1.06); transform: scale(1.06); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+.review-link-txt { font-size:14.5px; color:#fff; font-weight:800; letter-spacing:0.02em; }
+/* 작가 링크 = 보조: 회색으로 톤다운 */
+.creator-link { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:10px; padding:13px 20px; background:#F4F5F6; border:1px solid #E5E7EB; border-radius:14px; cursor:pointer; transition:all 0.2s; text-decoration:none; }
 .creator-link { transition: transform 0.1s cubic-bezier(0.34,1.56,0.64,1), background 0.2s; }
-.creator-link:active { background:#DCFCE7; transform: scale(1.06); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-.creator-link-txt { font-size:14px; color:#059669; font-weight:700; letter-spacing:0.02em; }
-.review-link { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:10px; padding:14px 20px; background:#F4F5F6; border:1px solid #E5E7EB; border-radius:14px; cursor:pointer; transition:all 0.2s; text-decoration:none; }
-.review-link { transition: transform 0.1s cubic-bezier(0.34,1.56,0.64,1), background 0.2s; }
-.review-link:active { background:#E5E7EB; transform: scale(1.06); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-.review-link-txt { font-size:13px; color:#6b7280; font-weight:600; letter-spacing:0.02em; }
+.creator-link:active { background:#E5E7EB; transform: scale(1.06); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.creator-link-txt { font-size:13px; color:#6b7280; font-weight:600; letter-spacing:0.02em; }
 .product-name { text-align: center; margin-top: 16px; padding: 12px 0 4px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 1.5px; }
 .copyright { text-align: center; font-size: 10px; color: #222; padding: 6px 0 0; letter-spacing: 0.3px; line-height: 1.8; }
 </style>
@@ -222,14 +247,60 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 </label>
 </div>
 
-<!-- 원스톱 (placeholder) -->
+<!-- 원스톱 (시트 PNG 3장 → 카카오 360 + 오지큐 740 자동 추출) -->
 <div class="target-panel" data-c="onestop">
-<div class="option-notice" style="margin:0;background:#E0F2FE;border-color:#7DD3FC;color:#0369A1;">
-<b>텍스트(위) / 캐릭터 / 텍스트(아래)</b>로 구분해 PNG 파일 넣기<br>
-캐릭터 PNG는 <b>필수</b> · 테두리는 <b>텍스트에만</b><br>
-가이드는 <b>반드시 삭제</b><br>
-<span style="color:#999;">🛠️ 슬롯 업로드는 곧 추가됩니다.</span>
+
+<!-- 3슬롯 그리드 -->
+<div class="onestop-slots">
+  <!-- 텍스트 위 -->
+  <div class="onestop-slot" data-slot="textTop">
+    <div class="slot-head"><span>📝 텍스트 위</span><span class="slot-badge opt">선택</span></div>
+    <div class="slot-hint">그림 위에 올라갈 글자<br>(테두리 자동)</div>
+    <div class="slot-drop" data-slot="textTop">
+      <button type="button" class="slot-clear" onclick="event.stopPropagation();clearOnestopSlot('textTop')">×</button>
+      <div class="ico">📝</div>
+      <div class="ph">PNG 드롭/클릭</div>
+      <div class="name" data-slot-name="textTop"></div>
+      <input type="file" accept=".png,image/png" style="display:none" data-slot-input="textTop">
+    </div>
+  </div>
+  <!-- 캐릭터 -->
+  <div class="onestop-slot required" data-slot="character">
+    <div class="slot-head"><span>🐱 캐릭터</span><span class="slot-badge req">필수</span></div>
+    <div class="slot-hint">그림 본체 시트 1장<br>(6×6 그리드)</div>
+    <div class="slot-drop" data-slot="character">
+      <button type="button" class="slot-clear" onclick="event.stopPropagation();clearOnestopSlot('character')">×</button>
+      <div class="ico">🐱</div>
+      <div class="ph">PNG 드롭/클릭</div>
+      <div class="name" data-slot-name="character"></div>
+      <input type="file" accept=".png,image/png" style="display:none" data-slot-input="character">
+    </div>
+  </div>
+  <!-- 텍스트 아래 -->
+  <div class="onestop-slot" data-slot="textBottom">
+    <div class="slot-head"><span>📝 텍스트 아래</span><span class="slot-badge opt">선택</span></div>
+    <div class="slot-hint">그림 뒤로 갈 글자<br>(테두리 자동)</div>
+    <div class="slot-drop" data-slot="textBottom">
+      <button type="button" class="slot-clear" onclick="event.stopPropagation();clearOnestopSlot('textBottom')">×</button>
+      <div class="ico">📝</div>
+      <div class="ph">PNG 드롭/클릭</div>
+      <div class="name" data-slot-name="textBottom"></div>
+      <input type="file" accept=".png,image/png" style="display:none" data-slot-input="textBottom">
+    </div>
+  </div>
 </div>
+
+<!-- ZIP 파일명 -->
+<div style="margin-top:10px;">
+<input type="text" id="onestopZipName" placeholder="ZIP 파일명 (비워두면 캐릭터 파일명)" style="width:100%;padding:7px 10px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:12px;font-family:inherit;outline:none;">
+</div>
+
+<div class="option-notice" style="margin-top:10px;background:#FEF7E0;border-color:#FCD34D;color:#92400E;font-size:11px;">
+시트 1장에 32개 이모티콘이 6×6 그리드로 배치된 PNG를 넣어주세요 (소스 도구 좌표 그대로 사용).<br>
+캐릭터만 넣어도 됩니다. 텍스트 위/아래는 선택.<br>
+🖍️ <b>그림+글자 전체에 테두리를 원하면</b> 캐릭터와 글자를 합친 <b>PNG 1장</b>을 만들어 <b>텍스트 위·캐릭터 두 칸에 똑같이</b> 넣어주세요.
+</div>
+
 </div>
 
 <!-- 네이버 -->
@@ -406,6 +477,7 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 • <b>텍스트(위) / 캐릭터 / 텍스트(아래)</b>를 각각 <b>PNG로 분리</b><br>
 • <b>캐릭터 PNG 필수</b> · 텍스트(아래)는 <b>없으면 생략 가능</b><br>
 • 테두리는 <b>텍스트 PNG에만</b> (캐릭터엔 X)<br>
+• <b>그림+글자 전체</b>에 테두리 원하면 → 합친 <b>PNG 1장</b>을 <b>텍스트 위·캐릭터</b> 두 칸에 똑같이 넣기<br>
 • 가이드는 <b>반드시 삭제</b>하고 PNG로 저장<br>
 <div style="background:#F0FBF5;border:1.5px dashed #8FD9B6;border-radius:10px;padding:12px 14px;font-size:11px;line-height:1.95;color:#555;margin:8px 0 18px;">
 <b style="color:#333;">🖼 분리 예시</b><br>
@@ -444,13 +516,13 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 </div>
 
 <div class="footer-links">
+<a class="review-link" href="https://www.latpeed.com/products/uL32q" target="_blank">
+<span class="review-link-txt">돈 잘 버는 이모티콘 만드는 법이 궁금하다면? 돈잘콘 클래스 추천 ✦</span>
+<span style="font-size:13px;color:rgba(255,255,255,0.9);">→</span>
+</a>
 <a class="creator-link" href="https://g-nyang.notion.site/G-NYANG-3305488e051b8132b492c45ee041f102" target="_blank">
 <span class="creator-link-txt">이거 만든 사람이 궁금하다면? ✦</span>
-<span style="font-size:13px;color:rgba(255,255,255,0.5);">→</span>
-</a>
-<a class="review-link" href="https://www.latpeed.com/products/uL32q" target="_blank">
-<span class="review-link-txt">🎨 돈 잘 버는 이모티콘 만들기 클래스 바로가기</span>
-<span style="font-size:12px;color:rgba(255,255,255,0.5);">→</span>
+<span style="font-size:12px;color:#9ca3af;">→</span>
 </a>
 </div>
 <div class="product-name">✦ MAGIC POT ✦</div>
@@ -472,6 +544,7 @@ function showPanelOnly(c) {
   if (typeof selectTarget === 'function' && platTargetMap[c]) selectTarget(platTargetMap[c]);
 }
 function switchPlatform(p) {
+  const _changed = currentPlatform && currentPlatform !== p;   // 탭이 실제로 바뀌는지
   // 이전 플랫폼의 테두리 두께 기억 (탭이 실제 바뀔 때만)
   const _bs = document.getElementById('borderSize');
   if (_bs && currentPlatform && currentPlatform !== p) platformBorder[currentPlatform] = parseInt(_bs.value) || platformBorder[currentPlatform];
@@ -491,6 +564,25 @@ function switchPlatform(p) {
   if (mt) mt.style.display = (p === 'ogq') ? 'block' : 'none';   // 메인·탭은 오지큐에서만
   const ki = document.getElementById('kakaoIconCard');
   if (ki) ki.style.display = (p === 'kakao') ? 'block' : 'none'; // 아이콘은 카카오에서만
+  if (_changed) clearInputsForTabSwitch();   // 카카오 ↔ 오지큐 전환 시 업로드·결과 초기화
+}
+/* 카카오 ↔ 오지큐 탭을 실제로 바꿀 때 업로드/결과만 비움 (테두리 두께·타겟 설정은 유지) */
+function clearInputsForTabSwitch() {
+  files = [];
+  const fin = document.getElementById('fileInput'); if (fin) fin.value = '';
+  if (typeof renderFileList === 'function') renderFileList();
+  clearMt('main'); clearMt('tab'); clearMt('icon');                 // 메인·탭·아이콘 이미지
+  ['textTop', 'character', 'textBottom'].forEach(clearOnestopSlot);  // 원스톱 슬롯
+  if (typeof detectedFiles !== 'undefined') detectedFiles = [];
+  if (typeof detectedFrameCount !== 'undefined') detectedFrameCount = 0;
+  resultBlobs = [];
+  const pa = document.getElementById('previewArea'); if (pa) pa.style.display = 'none';
+  const pg = document.getElementById('previewGrid'); if (pg) pg.innerHTML = '';
+  const dw = document.getElementById('dlBtnWrap'); if (dw) dw.innerHTML = '';
+  const tb = document.getElementById('topDlBtn'); if (tb) tb.disabled = true;
+  if (typeof setStatus === 'function') setStatus('');
+  if (typeof setProgress === 'function') setProgress(0);
+  if (typeof refreshRunBtn === 'function') refreshRunBtn();
 }
 // 기존 라벨의 onclick을 그대로 트리거해서 라디오·active·표시 로직 재사용
 function autoPick(name, value) {
@@ -506,6 +598,7 @@ function pickSub(btn, p, sub) {
   else if (p === 'kakao' && sub === 'onestop') showPanelOnly('onestop');
   else if (p === 'ogq' && sub === 'meomti')    { showPanelOnly('naver'); autoPick('naver-output', 'png740'); }      // 멈티 = 전체 테두리 + 740 PNG
   else if (p === 'ogq' && sub === 'umti')      { showPanelOnly('gif'); autoPick('gif-size', '740'); autoPick('gif-border', 'all'); }  // 움티 = 전체 테두리 + 740 GIF
+  if (typeof refreshRunBtn === 'function') refreshRunBtn();
 }
 /* ── 프레임 시퀀스 (122331 → 1·2·2·3·3·1 재배열·반복) ── */
 function getGifSequence() {
@@ -527,7 +620,9 @@ let currentPlatform = 'kakao';
 let platformBorder = { kakao: 4, ogq: 10 };   // 플랫폼별 추천 테두리 두께 (탭 전환 시 자동 적용·기억)
 let mainImgCanvas = null, tabImgCanvas = null, iconImgCanvas = null;
 function refreshRunBtn() {
-  const has = files.length > 0 || !!mainImgCanvas || !!tabImgCanvas || !!iconImgCanvas;
+  const onestopReady = (typeof onestopSlots !== 'undefined') && onestopSlots.character && onestopSlots.character.bitmap
+    && (typeof isOnestopActive === 'function') && isOnestopActive();
+  const has = files.length > 0 || !!mainImgCanvas || !!tabImgCanvas || !!iconImgCanvas || onestopReady;
   const b = document.getElementById('runBtn');
   if (b) b.disabled = !has;
 }
@@ -574,15 +669,18 @@ function convertTo740x640(src) {
   fin.getContext('2d').drawImage(sq, Math.round((740 - 640) / 2), 0);
   return fin;
 }
-/* 오지큐 변환 전 사전 축소 — PSD의 resizePsdLayersNaver와 동일 (긴 변 640 / 740비율이면 740×640). 작으면 그대로 */
+/* 오지큐 변환 전 사전 크기 맞춤 — 입력이 작으면 확대·크면 축소해 항상 640 기준으로 먼저 맞춘 뒤 테두리.
+   (안 그러면 작은 입력은 테두리를 작게 그린 뒤 740으로 확대돼 테두리가 두꺼워짐) */
 function preResizeForOgq(src) {
   const scW = src.width / 740, scH = src.height / 640;
   const is740multiple = Math.abs(scW - scH) < 0.01;
   const maxDim = Math.max(src.width, src.height);
-  const needsDownscale = is740multiple ? (scW > 1.01) : (maxDim > 640);
-  if (!needsDownscale) return src;
-  if (is740multiple) return resizeCanvas(src, 740, 640);
+  if (is740multiple) {
+    if (Math.abs(scW - 1) < 0.001) return src;   // 이미 740×640 (1배)
+    return resizeCanvas(src, 740, 640);
+  }
   const s = 640 / maxDim;
+  if (Math.abs(s - 1) < 0.001) return src;        // 이미 긴 변이 640
   return resizeCanvas(src, Math.round(src.width * s), Math.round(src.height * s));
 }
 function loadMtImage(file, which) {
@@ -616,6 +714,284 @@ function wireMtDrop(dropId, inputId, which) {
 wireMtDrop('mtMainDrop', 'mtMainFile', 'main');
 wireMtDrop('mtTabDrop', 'mtTabFile', 'tab');
 wireMtDrop('kakaoIconDrop', 'kakaoIconFile', 'icon');
+
+/* ── 원스톱 (3시트 → 카카오 360 + 오지큐 740 자동 추출) — 소스 도구 onestop-png-maker-procreate 포팅 ── */
+const ACTIVE_PRESET = {
+  canvas: { w: 2700, h: 2700 },
+  size: 360,
+  coords: [
+    {x:62,y:60},   {x:505,y:60},   {x:948,y:60},   {x:1392,y:60},   {x:1835,y:60},   {x:2278,y:60},
+    {x:62,y:503},  {x:505,y:503},  {x:948,y:503},  {x:1392,y:503},  {x:1835,y:503},  {x:2278,y:503},
+    {x:62,y:947},  {x:505,y:947},  {x:948,y:947},  {x:1392,y:947},  {x:1835,y:947},  {x:2278,y:947},
+    {x:62,y:1390}, {x:505,y:1390}, {x:948,y:1390}, {x:1392,y:1390}, {x:1835,y:1390}, {x:2278,y:1390},
+    {x:62,y:1834}, {x:505,y:1834}, {x:948,y:1834}, {x:1392,y:1834}, {x:1835,y:1834}, {x:2278,y:1834},
+    {x:62,y:2277}, {x:505,y:2277}, {x:948,y:2277}, {x:1392,y:2277}, {x:1835,y:2277}, {x:2278,y:2277},
+  ],
+};
+const onestopSlots = {
+  textTop:    { bitmap: null, fileName: '' },
+  character:  { bitmap: null, fileName: '' },
+  textBottom: { bitmap: null, fileName: '' },
+};
+let onestopState = null;   // 만들기 후 보관: { rawComp, ratioW, ratioH, baseName, kakaoPngs, ogqPngs }
+
+function isOnestopActive() {
+  return currentPlatform === 'kakao' && !!document.querySelector('.target-panel[data-c="onestop"].active');
+}
+/* 알파 디스크 dilation — 텍스트/실루엣을 thickness만큼 확장한 색 실루엣 반환 (원본은 미포함) */
+function makeStrokeCanvas(bitmap, thickness, color) {
+  const w = bitmap.width, h = bitmap.height;
+  const sil = document.createElement('canvas');
+  sil.width = w; sil.height = h;
+  const sctx = sil.getContext('2d');
+  sctx.drawImage(bitmap, 0, 0);
+  sctx.globalCompositeOperation = 'source-in';
+  sctx.fillStyle = color;
+  sctx.fillRect(0, 0, w, h);
+  const out = document.createElement('canvas');
+  out.width = w; out.height = h;
+  const octx = out.getContext('2d');
+  const t = Math.max(1, thickness);
+  const t2 = t * t;
+  for (let dx = -t; dx <= t; dx++) {
+    for (let dy = -t; dy <= t; dy++) {
+      if (dx*dx + dy*dy <= t2) octx.drawImage(sil, dx, dy);
+    }
+  }
+  return out;
+}
+async function loadOnestopSlot(slot, file) {
+  if (!file) return;
+  try {
+    const bmp = await createImageBitmap(file);
+    onestopSlots[slot] = { bitmap: bmp, fileName: file.name.replace(/\.png$/i, '') };
+    const card = document.querySelector('.onestop-slot[data-slot="' + slot + '"]');
+    if (card) card.classList.add('filled');
+    const nameEl = document.querySelector('[data-slot-name="' + slot + '"]');
+    if (nameEl) nameEl.textContent = file.name;
+    refreshRunBtn();
+  } catch (e) {
+    alert('PNG 로드 실패: ' + e.message);
+  }
+}
+function clearOnestopSlot(slot) {
+  onestopSlots[slot] = { bitmap: null, fileName: '' };
+  const card = document.querySelector('.onestop-slot[data-slot="' + slot + '"]');
+  if (card) card.classList.remove('filled');
+  const nameEl = document.querySelector('[data-slot-name="' + slot + '"]');
+  if (nameEl) nameEl.textContent = '';
+  const input = document.querySelector('[data-slot-input="' + slot + '"]');
+  if (input) input.value = '';
+  refreshRunBtn();
+}
+(function wireOnestopSlots() {
+  ['textTop', 'character', 'textBottom'].forEach(slot => {
+    const drop = document.querySelector('.slot-drop[data-slot="' + slot + '"]');
+    const input = document.querySelector('[data-slot-input="' + slot + '"]');
+    if (!drop || !input) return;
+    drop.addEventListener('click', e => { if (e.target.tagName !== 'BUTTON') input.click(); });
+    drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+    drop.addEventListener('drop', e => {
+      e.preventDefault(); e.stopPropagation();
+      drop.classList.remove('over');
+      if (e.dataTransfer.files[0]) loadOnestopSlot(slot, e.dataTransfer.files[0]);
+    });
+    input.addEventListener('change', e => { if (e.target.files[0]) loadOnestopSlot(slot, e.target.files[0]); });
+  });
+})();
+/* 360 칸 raw → 640 업스케일 → dilation(두께·색상 인자) → 740×640 가운데 (좌우 50px 투명 여백) */
+async function buildOnestopOgqCanvas(raw360, thickness, color) {
+  const sz = 640;
+  const scaled = document.createElement('canvas');
+  scaled.width = sz; scaled.height = sz;
+  const sctx = scaled.getContext('2d');
+  sctx.imageSmoothingEnabled = true; sctx.imageSmoothingQuality = 'high';
+  sctx.drawImage(raw360, 0, 0, sz, sz);
+  let bordered = scaled;
+  if (thickness > 0) {
+    const stroke = makeStrokeCanvas(scaled, thickness, color || '#ffffff');
+    const out = document.createElement('canvas');
+    out.width = sz; out.height = sz;
+    const octx = out.getContext('2d');
+    octx.drawImage(stroke, 0, 0);
+    octx.drawImage(scaled, 0, 0);
+    bordered = out;
+  }
+  return convertTo740x640(bordered);
+}
+/* 원스톱 실행 — 합성 → 36칸 자르기 → 카카오 PNG 세트. 오지큐는 별도 변환 버튼으로 */
+async function runOnestop() {
+  if (!onestopSlots.character.bitmap) { alert('캐릭터 시트는 필수입니다.'); return; }
+  const color = document.getElementById('borderColor').value || '#ffffff';
+  const kakaoT = (platformBorder && platformBorder.kakao) || 4;
+  const character = onestopSlots.character.bitmap;
+  const W = character.width, H = character.height;
+
+  setStatus('합성 중...');
+  setProgress(10);
+
+  // 합성 캔버스 두 개: 카카오용(텍스트 테두리 포함) + 오지큐용(raw, 변환 시 사용)
+  const kakaoComp = document.createElement('canvas');
+  const rawComp = document.createElement('canvas');
+  kakaoComp.width = rawComp.width = W;
+  kakaoComp.height = rawComp.height = H;
+  const kctx = kakaoComp.getContext('2d');
+  const rctx = rawComp.getContext('2d');
+
+  // 1) 텍스트 아래 → 2) 캐릭터 → 3) 텍스트 위 (kakao엔 텍스트 테두리, raw는 텍스트만)
+  if (onestopSlots.textBottom.bitmap) {
+    if (kakaoT > 0) kctx.drawImage(makeStrokeCanvas(onestopSlots.textBottom.bitmap, kakaoT, color), 0, 0);
+    kctx.drawImage(onestopSlots.textBottom.bitmap, 0, 0);
+    rctx.drawImage(onestopSlots.textBottom.bitmap, 0, 0);
+  }
+  kctx.drawImage(character, 0, 0);
+  rctx.drawImage(character, 0, 0);
+  if (onestopSlots.textTop.bitmap) {
+    if (kakaoT > 0) kctx.drawImage(makeStrokeCanvas(onestopSlots.textTop.bitmap, kakaoT, color), 0, 0);
+    kctx.drawImage(onestopSlots.textTop.bitmap, 0, 0);
+    rctx.drawImage(onestopSlots.textTop.bitmap, 0, 0);
+  }
+  setProgress(40);
+
+  const ratioW = W / ACTIVE_PRESET.canvas.w;
+  const ratioH = H / ACTIVE_PRESET.canvas.h;
+  if (Math.abs(ratioW - ratioH) > 0.01) {
+    console.warn('원스톱: 시트 가로/세로 비율이 프리셋(2700×2700)과 달라 박스가 어긋날 수 있어요.');
+  }
+  const total = ACTIVE_PRESET.coords.length;
+
+  const customZip = (document.getElementById('onestopZipName').value || '').trim();
+  const baseName = (customZip || onestopSlots.character.fileName || 'onestop')
+    .replace(/[\/\\:*?"<>|]/g, '_').replace(/\.zip$/i, '');
+
+  const kakaoPngs = [];
+  for (let i = 0; i < total; i++) {
+    const c = ACTIVE_PRESET.coords[i];
+    const sx = Math.round(c.x * ratioW), sy = Math.round(c.y * ratioH);
+    const sw = Math.round(ACTIVE_PRESET.size * ratioW), sh = Math.round(ACTIVE_PRESET.size * ratioH);
+    const k = document.createElement('canvas');
+    k.width = sw; k.height = sh;
+    k.getContext('2d').drawImage(kakaoComp, sx, sy, sw, sh, 0, 0, sw, sh);
+    if (isCanvasEmpty(k)) { setProgress(40 + (i + 1) / total * 50); continue; }
+    const num = String(i + 1).padStart(2, '0');
+    kakaoPngs.push({ name: num + '.png', blob: await canvasToBlob(k), canvas: k });
+    setProgress(40 + (i + 1) / total * 50);
+  }
+
+  setStatus('카카오 ' + kakaoPngs.length + '장 추출 완료 · 오지큐는 아래 "변환하기"로');
+  setProgress(100);
+
+  // 상태 저장: rawComp + 좌표 비율 → 오지큐 변환 시 재사용
+  onestopState = { rawComp, ratioW, ratioH, baseName, kakaoPngs, ogqPngs: null };
+
+  resultBlobs = kakaoPngs.map(p => ({ name: '카카오_' + p.name, blob: p.blob }));
+
+  document.getElementById('previewGrid').innerHTML = '';
+  kakaoPngs.slice(0, 5).forEach((p, i) => addPreview(p.canvas, String(i + 1)));
+  document.getElementById('previewArea').style.display = 'block';
+
+  buildOnestopDownloadButtons();
+  // 상단 [ZIP 다운로드] 버튼을 카카오 ZIP로 활성화 (PSD 모드 진입 시 enableTopDownload가 복원)
+  const top = document.getElementById('topDlBtn');
+  top.disabled = !kakaoPngs.length;
+  top.textContent = kakaoPngs.length ? ('💾 카카오 ZIP 다운로드 (' + kakaoPngs.length + '장)') : 'ZIP 다운로드';
+  top.onclick = downloadOnestopKakaoZip;
+}
+async function downloadOnestopKakaoZip() {
+  if (!onestopState || !onestopState.kakaoPngs || !onestopState.kakaoPngs.length) return;
+  const btn = document.getElementById('topDlBtn');
+  btn.disabled = true;
+  const old = btn.textContent;
+  btn.textContent = '압축 중...';
+  try {
+    const zip = new JSZip();
+    for (const p of onestopState.kakaoPngs) zip.file(p.name, await blobToArrayBuffer(p.blob));
+    const z = await zip.generateAsync({ type: 'blob' });
+    downloadBlob(z, onestopState.baseName + '.zip');
+  } catch (e) { alert('ZIP 생성 오류: ' + e.message); }
+  btn.disabled = false; btn.textContent = old;
+}
+/* 오지큐 변환: 저장된 rawComp + 입력 두께·색상으로 740×640 PNG 세트 생성 */
+async function convertOnestopToOgq() {
+  if (!onestopState) return;
+  const btn = document.getElementById('onestopConvertBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '변환 중...'; }
+  const thickness = Math.max(0, Math.min(40, parseInt(document.getElementById('onestopOgqStroke').value) || 10));
+  const color = document.getElementById('onestopOgqColor').value || '#FFFFFF';
+  const { rawComp, ratioW, ratioH, kakaoPngs } = onestopState;
+  const total = ACTIVE_PRESET.coords.length;
+
+  setStatus('오지큐 변환 중...');
+  setProgress(10);
+  const ogqPngs = [];
+  for (let i = 0; i < total; i++) {
+    const c = ACTIVE_PRESET.coords[i];
+    const sx = Math.round(c.x * ratioW), sy = Math.round(c.y * ratioH);
+    const sw = Math.round(ACTIVE_PRESET.size * ratioW), sh = Math.round(ACTIVE_PRESET.size * ratioH);
+    const r = document.createElement('canvas');
+    r.width = sw; r.height = sh;
+    r.getContext('2d').drawImage(rawComp, sx, sy, sw, sh, 0, 0, sw, sh);
+    if (isCanvasEmpty(r)) { setProgress(10 + (i + 1) / total * 85); continue; }
+    const num = String(i + 1).padStart(2, '0');
+    const ogq = await buildOnestopOgqCanvas(r, thickness, color);
+    ogqPngs.push({ name: num + '.png', blob: await canvasToBlob(ogq), canvas: ogq });
+    setProgress(10 + (i + 1) / total * 85);
+  }
+  setProgress(100);
+  setStatus('오지큐 변환 완료! ' + ogqPngs.length + '장 (테두리 ' + thickness + 'px)');
+
+  onestopState.ogqPngs = ogqPngs;
+  resultBlobs = [
+    ...kakaoPngs.map(p => ({ name: '카카오_' + p.name, blob: p.blob })),
+    ...ogqPngs.map(p => ({ name: '오지큐_' + p.name, blob: p.blob })),
+  ];
+  buildOnestopDownloadButtons();
+}
+/* 미리보기 영역 버튼: 카카오 ZIP + (변환 후) 오지큐 ZIP + 오지큐 변환 입력행 */
+function buildOnestopDownloadButtons() {
+  const wrap = document.getElementById('dlBtnWrap');
+  wrap.innerHTML = '';
+  if (!onestopState) return;
+  const { baseName, kakaoPngs, ogqPngs } = onestopState;
+
+  const makeZipBtn = (label, pngs, fileName, bg) => {
+    const btn = document.createElement('button');
+    btn.className = 'dl-btn';
+    btn.textContent = '💾 ' + label + ' ZIP 다운로드 (' + pngs.length + '장)';
+    btn.style.marginTop = '8px';
+    if (bg) btn.style.background = bg;
+    btn.onclick = async () => {
+      btn.disabled = true;
+      const old = btn.textContent;
+      btn.textContent = '압축 중...';
+      try {
+        const zip = new JSZip();
+        for (const p of pngs) zip.file(p.name, await blobToArrayBuffer(p.blob));
+        const z = await zip.generateAsync({ type: 'blob' });
+        downloadBlob(z, fileName);
+      } catch (e) { alert('ZIP 생성 오류: ' + e.message); }
+      btn.disabled = false; btn.textContent = old;
+    };
+    return btn;
+  };
+
+  // 카카오 ZIP은 상단 [ZIP 다운로드] 버튼에서 처리 (여기는 오지큐만)
+  if (ogqPngs && ogqPngs.length) wrap.appendChild(makeZipBtn('오지큐', ogqPngs, baseName + '_오지큐.zip',
+    'linear-gradient(135deg, #03C75A, #34D399)'));
+
+  // 오지큐 변환 입력행 (두께 + 색상 + 변환 버튼)
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;padding:10px 12px;background:#F0FBF5;border:1.5px dashed #8FD9B6;border-radius:10px;';
+  row.innerHTML =
+    '<span style="font-size:11px;font-weight:700;color:#0E9F6E;">오지큐 테두리</span>' +
+    '<input type="number" id="onestopOgqStroke" value="10" min="0" max="40" style="width:60px;padding:5px 8px;border:1.5px solid #8FD9B6;border-radius:6px;font-size:12px;font-weight:700;color:#0E9F6E;background:#fff;font-family:inherit;">' +
+    '<span style="font-size:11px;color:#6b7280;">px</span>' +
+    '<input type="color" id="onestopOgqColor" value="#FFFFFF" style="width:32px;height:28px;padding:0;border:1.5px solid #8FD9B6;border-radius:6px;cursor:pointer;background:#fff;">' +
+    '<button type="button" id="onestopConvertBtn" class="dl-btn" style="flex:1;min-width:160px;margin:0;padding:8px 12px;font-size:12px;background:linear-gradient(135deg,#6366F1,#818CF8);">🔄 ' + (ogqPngs && ogqPngs.length ? '오지큐 다시 변환' : '오지큐 ZIP 변환하기') + '</button>';
+  wrap.appendChild(row);
+  document.getElementById('onestopConvertBtn').onclick = convertOnestopToOgq;
+}
 
 /* ── 상태 변수 ── */
 let files = [];
@@ -897,7 +1273,8 @@ async function detectAllFrameCounts() {
       const psd = window.agPsd.readPsd(buf, { loadThumbnail: false, skipLayerImageData: true });
       unwrapAnimationFolder(psd);
       const folders = (psd.children || []).filter(c => c.children && c.children.length > 0 && !isGuideOrBg(c.name));
-      const layers = (psd.children || []).filter(c => !c.children || c.children.length === 0);
+      // 폴더 없을 때(프크 납작 레이어): 단일 레이어 중 가이드/배경 이름은 제외해 실제 프레임 수와 맞춤
+      const layers = (psd.children || []).filter(c => (!c.children || c.children.length === 0) && !isGuideOrBg(c.name));
       const count = folders.length > 0 ? folders.length : layers.length;
       detectedFiles.push({ name: file.name, frameCount: count });
     } catch (e) {
@@ -1061,7 +1438,15 @@ function getFrameNodes(node) {
   if (folders.length >= 2 && folders.every(f => isNumberedName(f.name))) {
     return [...folders].sort((a, b) => parseInt(a.name, 10) - parseInt(b.name, 10));
   }
-  return folders;   // 그 외엔 PSD 레이어 순서 유지
+  if (folders.length) return folders;   // 폴더로 묶인 경우: PSD 레이어 순서 그대로
+
+  // 폴더가 하나도 없으면(프로크리에이트 애니처럼 프레임이 납작한 단일 레이어들) →
+  // 내용 있는 최상위 레이어를 "쌓인 순서 그대로" 각각 한 프레임으로 사용.
+  // (이름이 겹쳐도 OK — 정렬하지 않고 PSD 순서 유지. 가이드/배경·빈 레이어만 제외)
+  return (node.children || []).filter(c =>
+    c.canvas && (!c.children || c.children.length === 0) &&
+    !isGuideOrBg(c.name) && !isCanvasEmpty(c.canvas)
+  );
 }
 async function extractGifFrames(psd, radius, color, borderMode, onProgress) {
   const psdW = psd.width, psdH = psd.height;
@@ -1444,7 +1829,7 @@ function unwrapAnimationFolder(psd) {
 
 /* ── 메인 실행 ── */
 async function run() {
-  if (!files.length && !mainImgCanvas && !tabImgCanvas && !iconImgCanvas) return;
+  if (!files.length && !mainImgCanvas && !tabImgCanvas && !iconImgCanvas && !isOnestopActive()) return;
   const radius = parseInt(document.getElementById('borderSize').value) || 0;
   const color = document.getElementById('borderColor').value;
   const mode = getTargetMode();
@@ -1455,6 +1840,14 @@ async function run() {
   document.getElementById('previewGrid').innerHTML = '';
   document.getElementById('previewArea').style.display = 'none';
   setProgress(1);
+
+  // 원스톱 모드: PSD/PNG 무시하고 슬롯 시트로 카카오/오지큐 추출 (별도 흐름)
+  if (isOnestopActive()) {
+    try { await runOnestop(); }
+    catch (e) { setStatus('오류: ' + e.message); console.error(e); }
+    btn.disabled = false;
+    return;
+  }
 
   try {
     let psdFileIndex = 0; // 프레임별 설정에서 몇 번째 PSD인지 추적
@@ -1479,10 +1872,10 @@ async function run() {
           const kakaoAutoResize = (getKakaoSizeMode() === 'auto');
           const psdW = psd.width, psdH = psd.height;
 
-          /* PNG 출력 + 자동축소 → 먼저 360으로 축소 후 테두리 처리 (성능 최적화) */
-          if (kakaoOutput === 'png' && kakaoAutoResize && (psdW > 360 || psdH > 360)) {
+          /* 자동변환(PNG·PSD 공통) → 먼저 360으로 맞춘 뒤(확대·축소 모두) 테두리 → 테두리 두께 일정 */
+          if (kakaoAutoResize && Math.abs(360 / Math.max(psdW, psdH) - 1) > 0.001) {
             const scale = 360 / Math.max(psdW, psdH);
-            setStatus('큰 PSD 축소 중 (' + psdW + '×' + psdH + ' → 360×360)...');
+            setStatus('PSD 크기 맞춤 (' + psdW + '×' + psdH + ' → 360×360)...');
             psd.width = Math.round(psdW * scale);
             psd.height = Math.round(psdH * scale);
             function resizePsdLayersKakaoPre(node) {
@@ -1533,24 +1926,7 @@ async function run() {
             }
             setStatus('완성! ' + mergedCanvases.length + '장 PNG 변환 완료');
           } else {
-            if (kakaoAutoResize && (psdW > 360 || psdH > 360)) {
-              const scale = 360 / Math.max(psdW, psdH);
-              psd.width = Math.round(psdW * scale);
-              psd.height = Math.round(psdH * scale);
-              function resizePsdLayers(node) {
-                if (node.canvas) {
-                  const lw = (node.right || 0) - (node.left || 0);
-                  const lh = (node.bottom || 0) - (node.top || 0);
-                  node.canvas = resizeCanvas(node.canvas, Math.max(1, Math.round(lw * scale)), Math.max(1, Math.round(lh * scale)));
-                  node.left = Math.round((node.left || 0) * scale);
-                  node.top = Math.round((node.top || 0) * scale);
-                  node.right = Math.round((node.right || 0) * scale);
-                  node.bottom = Math.round((node.bottom || 0) * scale);
-                }
-                if (node.children) node.children.forEach(resizePsdLayers);
-              }
-              psd.children.forEach(resizePsdLayers);
-            }
+            // PSD 출력: 위 사전 리사이즈에서 이미 360으로 맞춘 뒤 테두리를 둘렀으므로 추가 리사이즈 불필요
             delete psd.canvas;
             const outBuf = writePsd(psd);
             const blob = new Blob([outBuf], { type: 'image/vnd.adobe.photoshop' });
@@ -1564,10 +1940,10 @@ async function run() {
           const gifSizeMode = getGifSizeMode();
           let gifFrames = [];
 
-          /* 사이즈 변환: 360 또는 740×640 선택 시 PSD를 먼저 축소 */
-          if (gifSizeMode === '360' && (psd.width > 360 || psd.height > 360)) {
+          /* 사이즈 변환: 360 또는 740×640 선택 시, 테두리 전에 PSD를 목표 크기로 먼저 맞춤(확대·축소 모두) */
+          if (gifSizeMode === '360' && Math.abs(360 / Math.max(psd.width, psd.height) - 1) > 0.001) {
             const scale = 360 / Math.max(psd.width, psd.height);
-            setStatus('PSD 축소 중 (' + psd.width + '×' + psd.height + ' → 360×360)...');
+            setStatus('PSD 크기 맞춤 (' + psd.width + '×' + psd.height + ' → 360×360)...');
             psd.width = Math.round(psd.width * scale); psd.height = Math.round(psd.height * scale);
             function resizeGifPsd360(node) {
               if (node.canvas) {
@@ -1580,15 +1956,17 @@ async function run() {
             }
             psd.children.forEach(resizeGifPsd360);
           } else if (gifSizeMode === '740') {
+            // 740 모드: PSD를 항상 640 기준으로 먼저 맞춘 뒤(작으면 확대·크면 축소) 테두리 적용.
+            // 안 그러면 작은 PSD(예: 360)는 테두리를 먼저 작게 그린 뒤 740으로 확대돼 테두리가 두꺼워짐.
             const maxDim = Math.max(psd.width, psd.height);
-            if (maxDim > 640) {
-              const scW = psd.width / 740, scH = psd.height / 640;
-              const is740m = Math.abs(scW - scH) < 0.01;
-              let targetW, targetH;
-              if (is740m) { targetW = 740; targetH = 640; }
-              else { const s = 640 / maxDim; targetW = Math.round(psd.width * s); targetH = Math.round(psd.height * s); }
-              const scale = targetW / psd.width;
-              setStatus('PSD 축소 중 (' + psd.width + '×' + psd.height + ' → ' + targetW + '×' + targetH + ')...');
+            const scW = psd.width / 740, scH = psd.height / 640;
+            const is740m = Math.abs(scW - scH) < 0.01;
+            let targetW, targetH;
+            if (is740m) { targetW = 740; targetH = 640; }
+            else { const s = 640 / maxDim; targetW = Math.round(psd.width * s); targetH = Math.round(psd.height * s); }
+            const scale = targetW / psd.width;
+            if (Math.abs(scale - 1) > 0.001) {   // 크기가 다를 때만 (확대·축소 모두)
+              setStatus('PSD 크기 맞춤 (' + psd.width + '×' + psd.height + ' → ' + targetW + '×' + targetH + ')...');
               psd.width = targetW; psd.height = targetH;
               function resizeGifPsd740(node) {
                 if (node.canvas) {
@@ -1653,25 +2031,25 @@ async function run() {
           /* ── 네이버 모드 ── */
           const naverOutput = getNaverOutputMode();
 
-          /* 740×640 자동변환 → 먼저 축소 후 테두리 처리 (성능 최적화) */
+          /* 740×640 변환: 입력 크기와 무관하게 먼저 목표 크기(740×640 기준)로 맞춘 뒤 테두리 → 테두리 두께 일정
+             (작으면 확대·크면 축소. 안 그러면 작은 PSD는 테두리를 작게 그린 뒤 확대돼 두꺼워짐) */
           let preResized = false;
           if (naverOutput === 'png740' || naverOutput === 'ogq-gif') {
             const scW = psd.width / 740, scH = psd.height / 640;
             const is740multiple = Math.abs(scW - scH) < 0.01;
             const maxDim = Math.max(psd.width, psd.height);
-            const needsDownscale = is740multiple ? (scW > 1.01) : (maxDim > 640);
-            if (needsDownscale) {
-              let targetW, targetH;
-              if (is740multiple) {
-                targetW = 740; targetH = 640;
-              } else {
-                // 정사각형 등: 긴 변을 640에 맞춤
-                const scale = 640 / maxDim;
-                targetW = Math.round(psd.width * scale);
-                targetH = Math.round(psd.height * scale);
-              }
-              const scale = targetW / psd.width;
-              setStatus('큰 PSD 축소 중 (' + psd.width + '×' + psd.height + ' → ' + targetW + '×' + targetH + ')...');
+            let targetW, targetH;
+            if (is740multiple) {
+              targetW = 740; targetH = 640;
+            } else {
+              // 정사각형 등: 긴 변을 640에 맞춤
+              const scale = 640 / maxDim;
+              targetW = Math.round(psd.width * scale);
+              targetH = Math.round(psd.height * scale);
+            }
+            const scale = targetW / psd.width;
+            if (Math.abs(scale - 1) > 0.001) {   // 크기가 다를 때만 (확대·축소 모두)
+              setStatus('PSD 크기 맞춤 (' + psd.width + '×' + psd.height + ' → ' + targetW + '×' + targetH + ')...');
               psd.width = targetW;
               psd.height = targetH;
               function resizePsdLayersNaver(node) {
@@ -1847,6 +2225,7 @@ function enableTopDownload() {
   const n = resultBlobs.length;
   b.disabled = n === 0;
   b.textContent = (n <= 1) ? ('다운로드' + (n ? ' (1개)' : '')) : ('ZIP 다운로드 (' + n + '개)');
+  b.onclick = downloadResults;   // 원스톱에서 바뀌었을 수 있는 핸들러 복원
 }
 async function downloadResults() {
   const n = resultBlobs.length;
