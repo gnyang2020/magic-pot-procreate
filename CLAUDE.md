@@ -5,8 +5,8 @@ Outline Maker "MAGIC POT" — 이모티콘 작가를 위한 아웃라인 자동 
 (구 이름: 알라메 / alrame-beta — 2026-04-16에 매직팟으로 리네임, Fredoka 폰트 적용)
 
 ## 현재 상태
-- ✅ GitHub 연동 (gnyang2020/magic-pot, 구 URL alrame-beta는 자동 리다이렉트)
-- ✅ Vercel / GitHub Pages 배포
+- ✅ GitHub 연동 (gnyang2020/magic-pot-procreate, 구 URL magic-pot·alrame-beta는 자동 리다이렉트)
+- ✅ Vercel 배포 (magic-pot-procreate.vercel.app) / GitHub Pages
 - 🔧 dev 브랜치에서 작업 중
 
 ## 중요 원칙
@@ -19,8 +19,8 @@ Outline Maker "MAGIC POT" — 이모티콘 작가를 위한 아웃라인 자동 
 - 완성되면 main에 머지 후 Vercel 자동 배포
 
 ## GitHub 정보
-- 레포: gnyang2020/magic-pot (구 alrame-beta, rename됨)
-- 배포: Vercel + GitHub Pages
+- 레포: gnyang2020/magic-pot-procreate (구 magic-pot ← alrame-beta, 순차 rename됨)
+- 배포: Vercel (magic-pot-procreate.vercel.app) + GitHub Pages
 
 ## 자주 쓰는 스킬
 - commit-commands : 커밋/푸시할 때
