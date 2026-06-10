@@ -3,6 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 돈잘콘 임베드 전용 가드: 돈잘콘 안에서 열렸을 때만 작동. 직접 링크/외부 임베드 차단 (로컬 개발은 예외) -->
+<script>
+(function () {
+  var selfHost = location.hostname;
+  // 로컬 개발(localhost)이나 file:// 직접 실행은 검사하지 않음 (개발 편의)
+  if (!selfHost || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(selfHost)) return;
+  function parentOrigin() {
+    try {
+      var ao = location.ancestorOrigins;            // Chrome/Safari: 부모 프레임 origin 직접 제공
+      if (ao && ao.length) return ao[0];
+      if (document.referrer) return new URL(document.referrer).origin; // 그 외 브라우저 폴백
+    } catch (e) {}
+    return '';
+  }
+  var inIframe = window.self !== window.top;
+  var pHost = '';
+  try { pHost = new URL(parentOrigin()).hostname; } catch (e) {}
+  var allowed = inIframe && (
+    /^donjalcon(-[a-z0-9-]+)?\.vercel\.app$/i.test(pHost) ||  // 돈잘콘 프로덕션 + 프리뷰 배포
+    /^(localhost|127\.0\.0\.1)$/.test(pHost)                  // 돈잘콘 로컬 개발 임베드
+  );
+  if (allowed) return;
+  // 차단: 직접 열었으면 돈잘콘으로 이동, 다른 곳에 임베드됐으면 안내만 표시
+  var dest = 'https://donjalcon.vercel.app/tools/magic-pot';
+  if (window.top === window.self) { location.replace(dest); return; }
+  try { window.stop(); } catch (e) {}
+  document.documentElement.innerHTML =
+    '<head><meta charset="utf-8"></head>' +
+    '<body style="margin:0;font-family:-apple-system,system-ui,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;background:#f5f5f5;color:#1a1a1a;text-align:center;padding:24px">' +
+    '<div><div style="font-size:18px;font-weight:800;margin-bottom:8px">돈잘콘 전용 도구입니다</div>' +
+    '<div style="font-size:14px;color:#666;margin-bottom:20px">매직팟은 돈잘콘에서 로그인 후 이용할 수 있어요.</div>' +
+    '<a href="' + dest + '" target="_top" style="display:inline-block;background:#1a1a1a;color:#fff;padding:12px 20px;border-radius:10px;font-weight:700;text-decoration:none;font-size:14px">돈잘콘에서 열기</a>' +
+    '</div></body>';
+})();
+</script>
 <title>MAGIC POT</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
