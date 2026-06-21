@@ -292,13 +292,6 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 <button type="button" onclick="clearInputsForTabSwitch()" style="background:#EEEEEE;border:1px solid #DDD;border-radius:6px;font-size:10px;color:#888;cursor:pointer;font-weight:600;font-family:inherit;padding:4px 10px;transition:all 0.15s;">전체 삭제</button>
 </div>
 
-<!-- 오지큐 스티커 테두리 두께 (오지큐 원스톱에서만 · 5~12, 기본 8) -->
-<div id="onestopOgqBorderRow" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:10px 12px;background:#F0FBF5;border:1.5px dashed #8FD9B6;border-radius:10px;">
-  <span style="font-size:11px;font-weight:700;color:#0E9F6E;width:100%;">스티커 테두리 <span style="color:#6b7280;font-weight:600;">(메인 3 · 탭 1은 자동)</span></span>
-  <div id="ogqStkBtns" style="display:flex;gap:5px;flex-wrap:wrap;"></div>
-  <span style="font-size:11px;color:#0E9F6E;font-weight:700;">px</span>
-</div>
-
 <!-- 3슬롯 그리드 -->
 <div class="onestop-slots">
   <!-- 텍스트 위 -->
@@ -403,8 +396,12 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 <!-- 프레임 시퀀스 (움티) -->
 <div style="margin-top:8px;padding:10px 12px;background:rgba(171,71,188,0.06);border:1px solid rgba(171,71,188,0.15);border-radius:8px;">
 <div style="font-size:11px;font-weight:700;color:#AB47BC;margin-bottom:6px;">프레임 시퀀스 <span style="font-size:9.5px;color:#fff;background:#AB47BC;border-radius:4px;padding:1px 5px;">선택</span></div>
-<input type="text" id="gifSequence" placeholder="예: 122331 (비우면 폴더 순서)" onclick="event.stopPropagation()" style="width:100%;padding:6px 10px;border:2px solid #AB47BC;border-radius:8px;font-size:13px;font-family:monospace;color:#6b21a8;background:#fff;outline:none;box-sizing:border-box;">
-<div style="font-size:10.5px;color:#9333ea;margin-top:5px;line-height:1.5;">그림 3장 → <b>122331</b> 입력 시 1·2·2·3·3·1 = 6프레임으로 재배열·반복</div>
+<input type="text" id="gifSequence" placeholder="시퀀스 · 예: 122331 (비우면 폴더 순서)" onclick="event.stopPropagation()" style="width:100%;padding:6px 10px;border:2px solid #AB47BC;border-radius:8px;font-size:13px;font-family:monospace;color:#6b21a8;background:#fff;outline:none;box-sizing:border-box;">
+<label style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:#7e22ce;font-weight:700;cursor:pointer;" onclick="event.stopPropagation()">
+  <input type="checkbox" id="gifSeqPerFile" onchange="toggleGifSeqPerFile()" style="accent-color:#AB47BC;width:15px;height:15px;"> PSD마다 다른 시퀀스 쓰기
+</label>
+<div id="gifSeqList" style="margin-top:8px;display:none;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;"></div>
+<div style="font-size:10.5px;color:#9333ea;margin-top:5px;line-height:1.5;"><b>122331</b> = 1·2·2·3·3·1 재배열·반복. 체크하면 PSD마다 칸이 생겨 따로 입력할 수 있어요(비우면 위 공통값).</div>
 </div>
 </div>
 </label>
@@ -630,6 +627,7 @@ function switchPlatform(p) {
 /* 카카오 ↔ 오지큐 탭을 실제로 바꿀 때 업로드/결과만 비움 (테두리 두께·타겟 설정은 유지) */
 function clearInputsForTabSwitch() {
   files = [];
+  if (typeof gifSeqByFile !== 'undefined') gifSeqByFile = {};
   const fin = document.getElementById('fileInput'); if (fin) fin.value = '';
   if (typeof renderFileList === 'function') renderFileList();
   clearMt('main'); clearMt('tab'); clearMt('icon');                 // 메인·탭·아이콘 이미지
@@ -664,9 +662,53 @@ function pickSub(btn, p, sub) {
   if (typeof refreshRunBtn === 'function') refreshRunBtn();
 }
 /* ── 프레임 시퀀스 (122331 → 1·2·2·3·3·1 재배열·반복) ── */
-function getGifSequence() {
-  const el = document.getElementById('gifSequence');
-  return el ? el.value : '';
+let gifSeqByFile = {};   // 파일명 → 시퀀스 문자열 (PSD별 다른 시퀀스 체크 시)
+function isGifSeqPerFile() {
+  const cb = document.getElementById('gifSeqPerFile');
+  return !!(cb && cb.checked);
+}
+/* name 주면 그 PSD 전용 시퀀스(비었으면 공통값), 없으면 공통값 */
+function getGifSequence(name) {
+  const common = (document.getElementById('gifSequence') || {}).value || '';
+  if (isGifSeqPerFile() && name && gifSeqByFile[name] && gifSeqByFile[name].trim()) {
+    return gifSeqByFile[name];
+  }
+  return common;
+}
+/* 체크박스 토글: 켜면 PSD별 입력칸 노출 */
+function toggleGifSeqPerFile() {
+  const list = document.getElementById('gifSeqList');
+  if (list) list.style.display = isGifSeqPerFile() ? 'flex' : 'none';
+  renderGifSeqInputs();
+}
+/* 업로드된 PSD 목록으로 파일별 시퀀스 입력칸 생성 (값은 gifSeqByFile에 보존) */
+function renderGifSeqInputs() {
+  const list = document.getElementById('gifSeqList');
+  if (!list) return;
+  if (!isGifSeqPerFile()) { list.innerHTML = ''; return; }
+  const psds = (files || []).filter(f => /\.psd$/i.test(f.name));
+  list.innerHTML = '';
+  if (!psds.length) {
+    list.innerHTML = '<div style="font-size:10.5px;color:#9aa1ab;">PSD를 올리면 파일별 시퀀스 칸이 생깁니다.</div>';
+    return;
+  }
+  psds.forEach(f => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:6px;';
+    const label = document.createElement('span');
+    label.textContent = f.name.replace(/\.psd$/i, '');
+    label.title = f.name;
+    label.style.cssText = 'font-size:10.5px;color:#6b21a8;flex:0 0 36%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;';
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = gifSeqByFile[f.name] || '';
+    inp.placeholder = '비우면 공통값';
+    inp.onclick = e => e.stopPropagation();
+    inp.oninput = () => { gifSeqByFile[f.name] = inp.value; };
+    inp.style.cssText = 'flex:1;min-width:0;padding:5px 8px;border:1.5px solid #C77DFF;border-radius:6px;font-size:12px;font-family:monospace;color:#6b21a8;background:#fff;outline:none;';
+    row.appendChild(label); row.appendChild(inp);
+    list.appendChild(row);
+  });
 }
 function parseSequence(text) {
   if (!text) return null;
@@ -902,33 +944,7 @@ async function buildOnestopOgqCanvas(raw360, thickness, color) {
   }
   return convertTo740x640(bordered);
 }
-let ogqStickerStroke = 8;   // 오지큐 스티커 테두리 두께 (토글 5~12, 기본 8)
-function buildOgqStkButtons() {
-  const wrap = document.getElementById('ogqStkBtns');
-  if (!wrap || wrap.children.length) return;
-  for (let v = 5; v <= 12; v++) {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'ogqstk-btn';
-    b.dataset.stk = v;
-    b.textContent = v;
-    b.style.cssText = 'min-width:30px;padding:5px 0;border-radius:8px;border:1.5px solid #8FD9B6;background:#fff;color:#0E9F6E;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;';
-    b.onclick = () => setOgqStickerStroke(v);
-    wrap.appendChild(b);
-  }
-  setOgqStickerStroke(ogqStickerStroke);
-}
-function setOgqStickerStroke(v) {
-  ogqStickerStroke = v;
-  document.querySelectorAll('#ogqStkBtns .ogqstk-btn').forEach(b => {
-    const on = parseInt(b.dataset.stk) === v;
-    b.classList.toggle('active', on);
-    b.style.background = on ? '#0E9F6E' : '#fff';
-    b.style.color = on ? '#fff' : '#0E9F6E';
-    b.style.borderColor = on ? '#0E9F6E' : '#8FD9B6';
-  });
-}
-buildOgqStkButtons();
+/* 오지큐 원스톱 스티커 테두리 = 공통 '테두리 두께'(borderSize) 사용. 메인 3·탭 1은 자동 고정. */
 
 /* 원스톱/미니 패널을 현재 플랫폼·모드에 맞게 구성 */
 function configOnestopPanel() {
@@ -945,9 +961,7 @@ function configOnestopPanel() {
   if (charHead) charHead.textContent = mini ? '🎨 미니 가이드' : '🐱 캐릭터';
   if (charHint) charHint.innerHTML = mini ? '미니 가이드 시트 1장<br>(6×8 = 48칸)' : '그림 본체 시트 1장<br>(6×6 그리드)';
   // 오지큐 스티커 테두리 토글: 오지큐 원스톱에서만
-  const ob = document.getElementById('onestopOgqBorderRow');
-  if (ob) ob.style.display = (ogq && !mini) ? 'flex' : 'none';
-  // 테두리 두께 행: 미니는 테두리가 없으니 숨김
+  // 테두리 두께 행: 미니는 테두리가 없으니 숨김 (오지큐 원스톱은 이 공통 두께를 스티커에 사용)
   const br = document.getElementById('borderRow');
   if (br) br.style.display = mini ? 'none' : '';
   // 원스톱에선 수동 아이콘/메인·탭 카드 항상 숨김 (자동 추출로 대체)
@@ -958,7 +972,7 @@ function configOnestopPanel() {
   if (notice) notice.innerHTML = mini
     ? '🎨 <b>미니</b> — 미니 가이드(6×8=48칸)를 넣으면 그림 있는 칸만 <b>180×180</b>으로 번호 붙여 자동 추출합니다. (텍스트·테두리·아이콘 없음)'
     : ogq
-      ? '🟢 <b>오지큐 원스톱</b> — 캐릭터 시트(6×6) 1장을 넣으면 1~34번=스티커(740×640), <b>35번=메인</b>(240×240), <b>36번=탭</b>(96×74)으로 자동 추출됩니다. 흰 테두리 자동(스티커 8·메인 3·탭 1).<br>텍스트 위/아래는 선택.'
+      ? '🟢 <b>오지큐 원스톱</b> — 캐릭터 시트(6×6) 1장을 넣으면 1~34번=스티커(740×640), <b>35번=메인</b>(240×240), <b>36번=탭</b>(96×74)으로 자동 추출됩니다. <b>전체 테두리</b> 자동 (스티커=위 「테두리 두께」 · 메인 3 · 탭 1).<br>오지큐는 글자까지 전체에 테두리라, <b>카카오에 쓴 PNG 3장</b>(텍스트위/캐릭터/텍스트아래)을 <b>그대로 넣어도 모두 합쳐진 뒤</b> 처리됩니다. 이미 합친 PNG라면 <b>캐릭터 칸 1장만</b> 넣어도 OK.'
       : '🟡 <b>카카오 원스톱</b> — 캐릭터 시트(6×6) 1장을 넣으면 1~34번=시안, <b>36번=아이콘</b>(78×78)으로 자동 추출됩니다. <b>35번은 오지큐 메인 칸이라 카카오에선 제외</b>됩니다.<br>텍스트 위/아래는 선택, 글자에 테두리 자동.';
 }
 
@@ -1089,6 +1103,7 @@ async function runOnestop() {
 async function runOnestopOgq() {
   if (!onestopSlots.character.bitmap) { alert('캐릭터 시트는 필수입니다.'); return; }
   const color = document.getElementById('borderColor').value || '#ffffff';
+  const stickerStroke = parseInt(document.getElementById('borderSize').value) || 8;   // 공통 테두리 두께
   const character = onestopSlots.character.bitmap;
   const W = character.width, H = character.height;
   setStatus('오지큐 추출 중...'); setProgress(10);
@@ -1114,7 +1129,7 @@ async function runOnestopOgq() {
     const cell = cropCell(rawComp, i, ratioW, ratioH);
     if (isCanvasEmpty(cell)) continue;
     seq++;
-    const ogq = await buildOnestopOgqCanvas(cell, ogqStickerStroke, color);
+    const ogq = await buildOnestopOgqCanvas(cell, stickerStroke, color);
     ogqPngs.push({ name: String(seq).padStart(2, '0') + '.png', blob: await canvasToBlob(ogq), canvas: ogq });
   }
   // 35 = 메인, 36 = 탭
@@ -2118,6 +2133,7 @@ async function run() {
 
   try {
     let psdFileIndex = 0; // 프레임별 설정에서 몇 번째 PSD인지 추적
+    const seqWarnings = []; // 시퀀스에 없는 프레임 번호를 넣은 경우 모아서 알림
     for (let fi = 0; fi < files.length; fi++) {
       const file = files[fi];
       const isPSD = file.name.toLowerCase().endsWith('.psd');
@@ -2278,12 +2294,17 @@ async function run() {
             setStatus('GIF 생성 중...');
             let gifCanvases = gifFrames.map(p => p.canvas);
             let delays = getGifOnlyDelays(gifCanvases.length, psdFileIndex);
-            // 프레임 시퀀스 적용 (입력 시 그 순서로 재배열·반복)
-            const seq = parseSequence(getGifSequence());
+            // 프레임 시퀀스 적용 (PSD별 시퀀스 우선, 없으면 공통값)
+            const seq = parseSequence(getGifSequence(file.name));
             if (seq && seq.length) {
-              const sc = [], sd = [];
+              const sc = [], sd = [], missing = new Set();
               for (const idx of seq) {
                 if (idx >= 1 && idx <= gifCanvases.length) { sc.push(gifCanvases[idx - 1]); sd.push(delays[idx - 1]); }
+                else missing.add(idx);
+              }
+              if (missing.size) {
+                seqWarnings.push('• ' + file.name.replace(/\.psd$/i, '') + ' — 없는 프레임 ' +
+                  [...missing].sort((a, b) => a - b).join('·') + ' 무시 (이 PSD는 ' + gifCanvases.length + '프레임)');
               }
               if (sc.length) { gifCanvases = sc; delays = sd; }
             }
@@ -2476,6 +2497,9 @@ async function run() {
 
     setStatus('완료! ' + resultBlobs.length + '개 파일 준비됨');
     setProgress(100);
+    if (seqWarnings.length) {
+      alert('⚠️ 시퀀스에 없는 프레임 번호가 있어 일부 무시됐어요:\n\n' + seqWarnings.join('\n'));
+    }
     document.getElementById('previewArea').style.display = 'block';
     enableTopDownload();
     document.getElementById('dlBtnWrap').innerHTML = '<div style="font-size:12px;color:#6b7280;margin-top:10px;text-align:center;">⤓ 미리보기를 클릭하면 그 파일 1장만 저장돼요</div>';
@@ -2622,10 +2646,12 @@ function renderFileList() {
     list.appendChild(item);
   });
   refreshRunBtn();
+  if (typeof renderGifSeqInputs === 'function') renderGifSeqInputs();   // PSD별 시퀀스 칸 갱신
 }
 
 function clearFiles() {
   files = [];
+  gifSeqByFile = {};
   document.getElementById('fileInput').value = '';
   renderFileList();
   document.getElementById('previewArea').style.display = 'none';
