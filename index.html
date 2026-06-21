@@ -397,11 +397,7 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 <div style="margin-top:8px;padding:10px 12px;background:rgba(171,71,188,0.06);border:1px solid rgba(171,71,188,0.15);border-radius:8px;">
 <div style="font-size:11px;font-weight:700;color:#AB47BC;margin-bottom:6px;">프레임 시퀀스 <span style="font-size:9.5px;color:#fff;background:#AB47BC;border-radius:4px;padding:1px 5px;">선택</span></div>
 <input type="text" id="gifSequence" placeholder="시퀀스 · 예: 122331 (비우면 폴더 순서)" onclick="event.stopPropagation()" style="width:100%;padding:6px 10px;border:2px solid #AB47BC;border-radius:8px;font-size:13px;font-family:monospace;color:#6b21a8;background:#fff;outline:none;box-sizing:border-box;">
-<label style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:#7e22ce;font-weight:700;cursor:pointer;" onclick="event.stopPropagation()">
-  <input type="checkbox" id="gifSeqPerFile" onchange="toggleGifSeqPerFile()" style="accent-color:#AB47BC;width:15px;height:15px;"> PSD마다 다른 시퀀스 쓰기
-</label>
-<div id="gifSeqList" style="margin-top:8px;display:none;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;"></div>
-<div style="font-size:10.5px;color:#9333ea;margin-top:5px;line-height:1.5;"><b>122331</b> = 1·2·2·3·3·1 재배열·반복. 체크하면 PSD마다 칸이 생겨 따로 입력할 수 있어요(비우면 위 공통값).</div>
+<div style="font-size:10.5px;color:#9333ea;margin-top:5px;line-height:1.5;"><b>시퀀스를 비워두면 → 폴더(레이어) 순서 그대로</b> GIF가 됩니다. 순서를 바꾸거나 반복하려면 입력 — <b>122331</b> = 1·2·2·3·3·1 재배열·반복.</div>
 </div>
 </div>
 </label>
@@ -557,8 +553,7 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 • 각 <b>프레임</b>을 <b>폴더</b>로 나눠 넣으면 그 순서대로 재생<br>
 • 폴더 이름이 모두 <b>숫자로 시작</b>(1, 2 / 01, 02 등)이면 <b>숫자 순으로 자동 정렬</b> · 그 외엔 PSD 레이어 순서<br>
 • 프크 PSD의 <b>맨 아래 배경 레이어는 자동 제외</b> (폴더 밖이면 무조건)<br>
-• 순서 직접 지정은 <b>프레임 시퀀스</b>(예: 122331 → 1·2·2·3·3·1)<br>
-• PSD 여러 개면 <b>「PSD마다 다른 시퀀스」 체크</b> → 파일별로 따로 입력 (비우면 공통값)<br>
+• 순서 직접 지정은 <b>프레임 시퀀스</b>(예: 122331 → 1·2·2·3·3·1) · <b>비우면 폴더 순서 그대로</b><br>
 • 시퀀스에 <b>없는 프레임 번호</b>(예: 3프레임인데 4)는 <b>무시</b> · 끝나면 경고로 알려줌<br>
 • 테두리는 <b>시안 전체</b>에 적용 (텍스트·빈 레이어 규칙 없음)<br>
 • <b style="color:#c0392b;">GIF는 눈을 꺼도 다 출력돼요 → 가이드는 꼭 삭제!</b>
@@ -638,7 +633,6 @@ function switchPlatform(p) {
 /* 카카오 ↔ 오지큐 탭을 실제로 바꿀 때 업로드/결과만 비움 (테두리 두께·타겟 설정은 유지) */
 function clearInputsForTabSwitch() {
   files = [];
-  if (typeof gifSeqByFile !== 'undefined') gifSeqByFile = {};
   const fin = document.getElementById('fileInput'); if (fin) fin.value = '';
   if (typeof renderFileList === 'function') renderFileList();
   clearMt('main'); clearMt('tab'); clearMt('icon');                 // 메인·탭·아이콘 이미지
@@ -673,53 +667,9 @@ function pickSub(btn, p, sub) {
   if (typeof refreshRunBtn === 'function') refreshRunBtn();
 }
 /* ── 프레임 시퀀스 (122331 → 1·2·2·3·3·1 재배열·반복) ── */
-let gifSeqByFile = {};   // 파일명 → 시퀀스 문자열 (PSD별 다른 시퀀스 체크 시)
-function isGifSeqPerFile() {
-  const cb = document.getElementById('gifSeqPerFile');
-  return !!(cb && cb.checked);
-}
-/* name 주면 그 PSD 전용 시퀀스(비었으면 공통값), 없으면 공통값 */
-function getGifSequence(name) {
-  const common = (document.getElementById('gifSequence') || {}).value || '';
-  if (isGifSeqPerFile() && name && gifSeqByFile[name] && gifSeqByFile[name].trim()) {
-    return gifSeqByFile[name];
-  }
-  return common;
-}
-/* 체크박스 토글: 켜면 PSD별 입력칸 노출 */
-function toggleGifSeqPerFile() {
-  const list = document.getElementById('gifSeqList');
-  if (list) list.style.display = isGifSeqPerFile() ? 'flex' : 'none';
-  renderGifSeqInputs();
-}
-/* 업로드된 PSD 목록으로 파일별 시퀀스 입력칸 생성 (값은 gifSeqByFile에 보존) */
-function renderGifSeqInputs() {
-  const list = document.getElementById('gifSeqList');
-  if (!list) return;
-  if (!isGifSeqPerFile()) { list.innerHTML = ''; return; }
-  const psds = (files || []).filter(f => /\.psd$/i.test(f.name));
-  list.innerHTML = '';
-  if (!psds.length) {
-    list.innerHTML = '<div style="font-size:10.5px;color:#9aa1ab;">PSD를 올리면 파일별 시퀀스 칸이 생깁니다.</div>';
-    return;
-  }
-  psds.forEach(f => {
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:6px;';
-    const label = document.createElement('span');
-    label.textContent = f.name.replace(/\.psd$/i, '');
-    label.title = f.name;
-    label.style.cssText = 'font-size:10.5px;color:#6b21a8;flex:0 0 36%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;';
-    const inp = document.createElement('input');
-    inp.type = 'text';
-    inp.value = gifSeqByFile[f.name] || '';
-    inp.placeholder = '비우면 공통값';
-    inp.onclick = e => e.stopPropagation();
-    inp.oninput = () => { gifSeqByFile[f.name] = inp.value; };
-    inp.style.cssText = 'flex:1;min-width:0;padding:5px 8px;border:1.5px solid #C77DFF;border-radius:6px;font-size:12px;font-family:monospace;color:#6b21a8;background:#fff;outline:none;';
-    row.appendChild(label); row.appendChild(inp);
-    list.appendChild(row);
-  });
+function getGifSequence() {
+  const el = document.getElementById('gifSequence');
+  return el ? el.value : '';
 }
 function parseSequence(text) {
   if (!text) return null;
@@ -2305,8 +2255,8 @@ async function run() {
             setStatus('GIF 생성 중...');
             let gifCanvases = gifFrames.map(p => p.canvas);
             let delays = getGifOnlyDelays(gifCanvases.length, psdFileIndex);
-            // 프레임 시퀀스 적용 (PSD별 시퀀스 우선, 없으면 공통값)
-            const seq = parseSequence(getGifSequence(file.name));
+            // 프레임 시퀀스 적용 (입력 시 그 순서로 재배열·반복, 비우면 폴더 순서)
+            const seq = parseSequence(getGifSequence());
             if (seq && seq.length) {
               const sc = [], sd = [], missing = new Set();
               for (const idx of seq) {
@@ -2657,12 +2607,10 @@ function renderFileList() {
     list.appendChild(item);
   });
   refreshRunBtn();
-  if (typeof renderGifSeqInputs === 'function') renderGifSeqInputs();   // PSD별 시퀀스 칸 갱신
 }
 
 function clearFiles() {
   files = [];
-  gifSeqByFile = {};
   document.getElementById('fileInput').value = '';
   renderFileList();
   document.getElementById('previewArea').style.display = 'none';
