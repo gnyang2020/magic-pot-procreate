@@ -504,7 +504,8 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 <div style="font-weight:800;color:#E5A800;font-size:13px;margin-bottom:4px;">🟡 카카오 일반 <span style="font-weight:600;color:#aaa;">· PSD → PNG · 텍스트만 테두리</span></div>
 • <b>PSD 1개</b>에 이모티콘을 넣어 작업하세요.<br>
 • <b>이모티콘마다 폴더로 분류</b> (1개만 그려도 폴더로!)<br>
-• 폴더 이름은 <b>자유</b> — 결과는 자동으로 <b>01 02 03…</b> (이름을 01 02 03으로 하면 그 순서대로 나옴)<br>
+• 폴더 이름은 <b>자유</b> — PSD <b>맨 아래 폴더 = 01</b>, 위로 올라가며 02 03… 자동 번호<br>
+• 출력 파일명: <b>파일명_01.png</b>, 파일명_02.png …<br>
 • 각 폴더 <b>맨 위 레이어 = 텍스트</b> → 그 텍스트에만 흰 테두리<br>
 • 텍스트 없는 이모티콘은 맨 위에 <b>빈 레이어</b><br>
 • 가이드·배경 등 필요 없는 레이어는 <b>눈 끄거나 삭제</b><br>
@@ -521,19 +522,21 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 <span style="color:#c0392b;">✕ 가이드·배경 → 눈 끄거나 삭제</span>
 </div>
 
-<div style="font-weight:800;color:#0E9F6E;font-size:13px;margin-bottom:4px;">🟢 카카오 원스톱 <span style="font-weight:600;color:#aaa;">· PNG로 나눠 올리기</span></div>
-• PSD 말고 <b>PNG로 뽑아서</b> 올리기<br>
-• <b>텍스트(위) / 캐릭터 / 텍스트(아래)</b>를 각각 <b>PNG로 분리</b><br>
-• <b>캐릭터 PNG 필수</b> · 텍스트(아래)는 <b>없으면 생략 가능</b><br>
-• 테두리는 <b>텍스트 PNG에만</b> (캐릭터엔 X)<br>
-• <b>그림+글자 전체</b>에 테두리 원하면 → 합친 <b>PNG 1장</b>을 <b>텍스트 위·캐릭터</b> 두 칸에 똑같이 넣기<br>
-• 가이드는 <b>반드시 삭제</b>하고 PNG로 저장<br>
-<div style="background:#F0FBF5;border:1.5px dashed #8FD9B6;border-radius:10px;padding:12px 14px;font-size:11px;line-height:1.95;color:#555;margin:8px 0 18px;">
-<b style="color:#333;">🖼 분리 예시</b><br>
-<span style="color:#0E9F6E;">🖼 텍스트 (위)</span> ← 테두리 O<br>
-<span style="color:#0E9F6E;">🖼 캐릭터</span> ← 필수 · 테두리 X<br>
-<span style="color:#0E9F6E;">🖼 텍스트 (아래)</span> ← 테두리 O · 없으면 생략
+<div style="font-weight:800;color:#0E9F6E;font-size:13px;margin-bottom:4px;">🟢 카카오 원스톱 <span style="font-weight:600;color:#aaa;">· 6×6 시트 → 시안+아이콘 자동</span></div>
+• 캐릭터 = 이모티콘을 <b>6×6 그리드</b>로 배치한 <b>시트 PNG 1장</b> (필수)<br>
+• 텍스트 위/아래는 <b>선택</b> · 글자에 흰 테두리 자동 (캐릭터엔 X)<br>
+• <b>1~34칸 = 시안</b>, <b>36칸 = 아이콘</b>(78×78) 자동 추출<br>
+• <b>35칸은 오지큐 메인 칸</b>이라 카카오에선 <b>제외</b><br>
+• 그림+글자 전체에 테두리 원하면 → 합친 PNG를 <b>텍스트 위·캐릭터</b> 두 칸에 똑같이<br>
+• 가이드 레이어는 <b>눈 끄거나 삭제</b><br>
+<div style="background:#F0FBF5;border:1.5px dashed #8FD9B6;border-radius:10px;padding:12px 14px;font-size:11px;line-height:1.95;color:#555;margin:8px 0 12px;">
+<b style="color:#333;">🖼 3슬롯</b> — 텍스트(위) <span style="color:#0E9F6E;">테두리 O</span> · 캐릭터 시트 <span style="color:#0E9F6E;">필수</span> · 텍스트(아래) <span style="color:#0E9F6E;">테두리 O·생략 가능</span>
 </div>
+
+<div style="font-weight:800;color:#E5A800;font-size:13px;margin-bottom:4px;">🎨 카카오 미니 <span style="font-weight:600;color:#aaa;">· 6×8 미니 가이드 → 180×180</span></div>
+• <b>미니 가이드</b>(6×8 = 48칸) 시트 PNG 1장<br>
+• 그림 있는 칸만 <b>180×180</b>으로 번호 붙여 자동 추출<br>
+• 텍스트·테두리·아이콘 없음 (단순 추출)<br><br>
 
 <div style="font-weight:800;color:#03A357;font-size:13px;margin-bottom:4px;">🟠 오지큐 멈티 <span style="font-weight:600;color:#aaa;">· PSD·PNG → 740×640 · 전체 테두리</span></div>
 • PSD를 넣으면 <b>740×640</b>으로 자동 변환 · <b>시안 전체</b>에 흰 테두리<br>
@@ -543,12 +546,20 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 • 이모티콘 <b>1개</b> → 그냥 넣기 (숫자 필요 없음)<br>
 • 가이드·배경 등 필요 없는 레이어는 <b>눈 끄거나 삭제</b><br><br>
 
+<div style="font-weight:800;color:#0E9F6E;font-size:13px;margin-bottom:4px;">🟢 오지큐 원스톱 <span style="font-weight:600;color:#aaa;">· 6×6 시트 → 스티커+메인+탭</span></div>
+• 캐릭터 시트 1장 (<b>카카오와 같은 6×6 시트</b> 그대로 OK)<br>
+• <b>1~34칸=스티커</b>(740×640), <b>35칸=메인</b>(240×240), <b>36칸=탭</b>(96×74) 자동<br>
+• <b>전체 테두리</b> 자동 — 스티커=위 「테두리 두께」 · 메인 3 · 탭 1<br>
+• 카카오용 3장(텍스트위/캐릭터/텍스트아래) 그대로 넣어도 <b>합쳐져</b> 처리 · 합친 1장은 <b>캐릭터 칸</b>에만<br><br>
+
 <div style="font-weight:800;color:#A855F7;font-size:13px;margin-bottom:4px;">🟣 오지큐 움티 <span style="font-weight:600;color:#aaa;">· PSD → GIF</span></div>
 • PSD 넣으면 <b>GIF</b>로 자동 출력 (PSD 1개 = 움직이는 이모티콘 1개)<br>
 • 각 <b>프레임</b>을 <b>폴더</b>로 나눠 넣으면 그 순서대로 재생<br>
 • 폴더 이름이 모두 <b>숫자로 시작</b>(1, 2 / 01, 02 등)이면 <b>숫자 순으로 자동 정렬</b> · 그 외엔 PSD 레이어 순서<br>
 • 프크 PSD의 <b>맨 아래 배경 레이어는 자동 제외</b> (폴더 밖이면 무조건)<br>
-• 순서 직접 지정은 <b>프레임 시퀀스</b>(예: 122331)<br>
+• 순서 직접 지정은 <b>프레임 시퀀스</b>(예: 122331 → 1·2·2·3·3·1)<br>
+• PSD 여러 개면 <b>「PSD마다 다른 시퀀스」 체크</b> → 파일별로 따로 입력 (비우면 공통값)<br>
+• 시퀀스에 <b>없는 프레임 번호</b>(예: 3프레임인데 4)는 <b>무시</b> · 끝나면 경고로 알려줌<br>
 • 테두리는 <b>시안 전체</b>에 적용 (텍스트·빈 레이어 규칙 없음)<br>
 • <b style="color:#c0392b;">GIF는 눈을 꺼도 다 출력돼요 → 가이드는 꼭 삭제!</b>
 </div>
