@@ -1359,19 +1359,14 @@ function populateGifOnlyPerFrameInputs() {
 }
 
 function fpsToDelay(fps) { fps = Math.min(40, Math.max(10, fps || 18)); return Math.max(20, Math.round(1000 / fps)); }   // fps(10~40) → ms/프레임
-function getGifOnlyDelays(frameCount, fileIndex) {
-  if (gifOnlyMode === 'uniform') {
-    const fps = parseInt(document.getElementById('gifOnlyFps').value) || 18;
-    return Array(frameCount).fill(fpsToDelay(fps));
-  }
-  const inputs = document.querySelectorAll('.gif-only-per-frame-input[data-file="' + fileIndex + '"]');
-  const delays = [];
-  for (let i = 0; i < frameCount; i++) {
-    const input = inputs[i];
-    const fps = input ? (parseInt(input.value) || 18) : 18;
-    delays.push(fpsToDelay(fps));
-  }
-  return delays;
+function getGifOnlyFps() {
+  let fps = parseInt(document.getElementById('gifOnlyFps').value);
+  if (!Number.isFinite(fps)) fps = 18;
+  return Math.min(40, Math.max(10, fps));
+}
+function getGifOnlyDelays(frameCount) {
+  // 항상 균일(uniform): 설정한 fps 하나를 전체 프레임에 동일 적용 (시퀀스 유무 무관)
+  return Array(frameCount).fill(fpsToDelay(getGifOnlyFps()));
 }
 
 /* ── OGQ 스타일 프레임 배치: 1→2,2→3,3→...N,N→1 ── */
@@ -2301,7 +2296,7 @@ async function run() {
           if (gifFrames.length > 0) {
             setStatus('GIF 생성 중...');
             let gifCanvases = gifFrames.map(p => p.canvas);
-            let delays = getGifOnlyDelays(gifCanvases.length, psdFileIndex);
+            let delays = getGifOnlyDelays(gifCanvases.length);
             // 프레임 시퀀스 적용 (입력 시 그 순서로 재배열·반복, 비우면 폴더 순서)
             const seq = parseSequence(getGifSequence());
             if (seq && seq.length) {
@@ -2319,7 +2314,7 @@ async function run() {
             const gifBlob = await createGifFromCanvases(gifCanvases, delays);
             const gifName = file.name.replace(/\.psd$/i, '_outlined.gif');
             resultBlobs.push({ name: gifName, blob: gifBlob });
-            setStatus('완성! GIF 생성 완료 (' + gifFrames.length + '프레임)');
+            setStatus('완성! GIF 생성 완료 (' + gifCanvases.length + '프레임 · ' + getGifOnlyFps() + 'fps)');
             psdFileIndex++;
           }
 
