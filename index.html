@@ -389,7 +389,7 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 <div id="gifOnlySettings" style="margin-top:8px;padding:10px 12px;background:rgba(171,71,188,0.06);border:1px solid rgba(171,71,188,0.15);border-radius:8px;">
 <div id="gifOnlyUniformRow" style="display:flex;align-items:center;gap:8px;">
 <span style="font-size:11px;font-weight:600;color:#AB47BC;">프레임 레이트</span>
-<input type="number" id="gifOnlyFps" value="18" min="10" max="40" step="1" onclick="event.stopPropagation()" style="width:70px;padding:5px 8px;border:2px solid #AB47BC;border-radius:8px;font-size:13px;font-weight:700;color:#AB47BC;background:#fff;outline:none;">
+<input type="number" id="gifOnlyFps" value="18" min="1" max="40" step="1" onclick="event.stopPropagation()" style="width:70px;padding:5px 8px;border:2px solid #AB47BC;border-radius:8px;font-size:13px;font-weight:700;color:#AB47BC;background:#fff;outline:none;">
 <span style="font-size:11px;color:#666;">fps</span>
 </div>
 </div>
@@ -1358,11 +1358,11 @@ function populateGifOnlyPerFrameInputs() {
   }
 }
 
-function fpsToDelay(fps) { fps = Math.min(40, Math.max(10, fps || 18)); return Math.max(20, Math.round(1000 / fps)); }   // fps(10~40) → ms/프레임
+function fpsToDelay(fps) { fps = Math.min(40, Math.max(1, fps || 18)); return Math.max(20, Math.round(1000 / fps)); }   // fps(1~40) → ms/프레임 (낮을수록 느림)
 function getGifOnlyFps() {
   let fps = parseInt(document.getElementById('gifOnlyFps').value);
   if (!Number.isFinite(fps)) fps = 18;
-  return Math.min(40, Math.max(10, fps));
+  return Math.min(40, Math.max(1, fps));
 }
 function getGifOnlyDelays(frameCount) {
   // 항상 균일(uniform): 설정한 fps 하나를 전체 프레임에 동일 적용 (시퀀스 유무 무관)
