@@ -602,6 +602,8 @@ function clearInputsForTabSwitch() {
   if (typeof renderFileList === 'function') renderFileList();
   clearMt('main'); clearMt('tab'); clearMt('icon');                 // 메인·탭·아이콘 이미지
   ['textTop', 'character', 'textBottom'].forEach(clearOnestopSlot);  // 원스톱 슬롯
+  const zn = document.getElementById('onestopZipName'); if (zn) zn.value = '';   // 파일명 입력칸
+  const gs = document.getElementById('gifSequence'); if (gs) gs.value = '';      // 움티 시퀀스 입력칸
   if (typeof detectedFiles !== 'undefined') detectedFiles = [];
   if (typeof detectedFrameCount !== 'undefined') detectedFrameCount = 0;
   resultBlobs = [];
@@ -621,8 +623,10 @@ function autoPick(name, value) {
   if (lab) lab.click(); else el.checked = true;
 }
 function pickSub(btn, p, sub) {
+  const wasActive = btn.classList.contains('active');   // 같은 탭 재클릭이면 리셋 안 함
   btn.parentElement.querySelectorAll('.sub-tog').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  if (!wasActive && typeof clearInputsForTabSwitch === 'function') clearInputsForTabSwitch();  // 서브탭 이동 시 업로드·결과 초기화
   if (p === 'kakao' && sub === 'ilban')        showPanelOnly('kakao');
   else if (p === 'kakao' && sub === 'onestop') { showPanelOnly('onestop'); setOnestopMode('normal'); }
   else if (p === 'kakao' && sub === 'mini')    { showPanelOnly('onestop'); setOnestopMode('mini'); }
