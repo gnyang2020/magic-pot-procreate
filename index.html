@@ -333,6 +333,11 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
   </div>
 </div>
 
+<!-- 파일명 (원스톱·미니 전용 — 3슬롯이라 출력 이름을 직접 지정) -->
+<div style="margin-top:10px;">
+<input type="text" id="onestopZipName" placeholder="파일명 (비워두면 캐릭터 파일명)" style="width:100%;padding:7px 10px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:12px;font-family:inherit;outline:none;box-sizing:border-box;">
+</div>
+
 <div class="option-notice" id="onestopNotice" style="margin-top:10px;background:#FEF7E0;border-color:#FCD34D;color:#92400E;font-size:11px;">
 시트 1장에 32개 이모티콘이 6×6 그리드로 배치된 PNG를 넣어주세요 (소스 도구 좌표 그대로 사용).<br>
 캐릭터만 넣어도 됩니다. 텍스트 위/아래는 선택.<br>
@@ -893,7 +898,8 @@ async function runOnestopMini() {
   setStatus('미니 추출 중...'); setProgress(10);
   const ratioW = W / MINI_PRESET.canvas.w, ratioH = H / MINI_PRESET.canvas.h;
   const total = MINI_PRESET.coords.length;
-  const baseName = (onestopSlots.character.fileName || 'mini')
+  const customZip = (document.getElementById('onestopZipName')?.value || '').trim();
+  const baseName = (customZip || onestopSlots.character.fileName || 'mini')
     .normalize('NFC').replace(/[\/\\:*?"<>|]/g, '_').replace(/\.zip$/i, '');
 
   const kakaoPngs = [];
@@ -960,7 +966,8 @@ async function runOnestop() {
 
   const ratioW = W / ACTIVE_PRESET.canvas.w, ratioH = H / ACTIVE_PRESET.canvas.h;
   const total = ACTIVE_PRESET.coords.length, ICON = total - 1, MAIN = total - 2;
-  const baseName = (onestopSlots.character.fileName || 'onestop')
+  const customZip = (document.getElementById('onestopZipName')?.value || '').trim();
+  const baseName = (customZip || onestopSlots.character.fileName || 'onestop')
     .normalize('NFC').replace(/[\/\\:*?"<>|]/g, '_').replace(/\.zip$/i, '');
 
   const kakaoPngs = [];
@@ -1013,7 +1020,8 @@ async function runOnestopOgq() {
 
   const ratioW = W / ACTIVE_PRESET.canvas.w, ratioH = H / ACTIVE_PRESET.canvas.h;
   const total = ACTIVE_PRESET.coords.length, ICON = total - 1, MAIN = total - 2;
-  const baseName = (onestopSlots.character.fileName || 'onestop')
+  const customZip = (document.getElementById('onestopZipName')?.value || '').trim();
+  const baseName = (customZip || onestopSlots.character.fileName || 'onestop')
     .normalize('NFC').replace(/[\/\\:*?"<>|]/g, '_').replace(/\.zip$/i, '');
 
   const ogqPngs = [];
