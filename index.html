@@ -1681,9 +1681,15 @@ function getFrameNodes(node) {
   const folders = (node.children || []).filter(c =>
     c.children && c.children.length > 0 && hasAnyCanvas(c) && !isGuideOrBg(c.name) && !isExtraFolder(c.name)
   );
-  // 폴더 이름이 모두 숫자로 시작 (1, 2 / 01, 02 등) → 이름 숫자 순으로 정렬해 프레임 순서로 사용
+  // 폴더 이름이 모두 숫자로 시작 (1, 2 / 01, 02 등) → 번호순 정렬해 프레임 순서로 사용.
+  // 단, 번호가 '모두 고유'할 때만 정렬. 중복 번호(예: 1·2·3·4·3·4·1)는 의도된 반복 시퀀스이므로
+  // 정렬하면 순서가 망가짐 → 이 경우 PSD 쌓인 순서 그대로 보존.
   if (folders.length >= 2 && folders.every(f => isNumberedName(f.name))) {
-    return [...folders].sort((a, b) => parseInt(a.name, 10) - parseInt(b.name, 10));
+    const nums = folders.map(f => parseInt(f.name, 10));
+    if (new Set(nums).size === nums.length) {
+      return [...folders].sort((a, b) => parseInt(a.name, 10) - parseInt(b.name, 10));
+    }
+    // 중복 있으면 정렬 안 함 → 아래 PSD 순서 반환
   }
   if (folders.length) return folders;   // 폴더로 묶인 경우: PSD 레이어 순서 그대로
 
