@@ -333,11 +333,6 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
   </div>
 </div>
 
-<!-- ZIP 파일명 -->
-<div style="margin-top:10px;">
-<input type="text" id="onestopZipName" placeholder="ZIP 파일명 (비워두면 캐릭터 파일명)" style="width:100%;padding:7px 10px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:12px;font-family:inherit;outline:none;">
-</div>
-
 <div class="option-notice" id="onestopNotice" style="margin-top:10px;background:#FEF7E0;border-color:#FCD34D;color:#92400E;font-size:11px;">
 시트 1장에 32개 이모티콘이 6×6 그리드로 배치된 PNG를 넣어주세요 (소스 도구 좌표 그대로 사용).<br>
 캐릭터만 넣어도 됩니다. 텍스트 위/아래는 선택.<br>
@@ -464,7 +459,7 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 • 출력 파일명: <b>파일명_01.png</b>, 파일명_02.png …<br>
 • 각 폴더 <b>맨 위 레이어 = 텍스트</b> → 그 텍스트에만 흰 테두리<br>
 • 텍스트 없는 이모티콘은 맨 위에 <b>빈 레이어</b><br>
-• <b style="color:#0E9F6E;">📌 폴더명 '아이콘'(또는 '탭')</b> → <b>아이콘 78×78</b> 자동 생성 (따로 안 올려도 됨)<br>
+• <b style="color:#0E9F6E;">📌 폴더명 또는 PSD/PNG 파일명에 '아이콘'(또는 '탭')</b> → <b>아이콘 78×78</b> 자동 생성 (따로 안 올려도 됨)<br>
 • 가이드·배경 등 필요 없는 레이어는 <b>눈 끄거나 삭제</b><br>
 <div style="background:#FFFBEF;border:1.5px dashed #E5C766;border-radius:10px;padding:12px 14px;font-size:11px;line-height:1.95;color:#555;margin:8px 0 18px;">
 <b style="color:#333;">📂 예시 (폴더 펼친 모습)</b><br>
@@ -502,7 +497,7 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 • 이모티콘 <b>여러 개</b> → 각각 <b>폴더</b>로 묶기 · 폴더 이름은 <b>자유</b> — PSD <b>맨 아래 폴더 = 01</b>, 위로 올라가며 02 03… 자동 번호<br>
 • 이모티콘 <b>1개</b> → 그냥 넣기<br>
 • 출력 파일명: <b>파일명_01.png</b>, 파일명_02.png … (카카오와 동일)<br>
-• <b style="color:#03A357;">📌 PSD 폴더명 또는 PNG 파일명에 '메인'</b> → <b>메인 240×240</b>, <b style="color:#03A357;">'탭'(또는 '아이콘')</b> → <b>탭 96×74</b> 자동 생성 (슬롯 없이 이름만 맞추면 확대·테두리 자동)<br>
+• <b style="color:#03A357;">📌 PSD 폴더명·파일명 또는 PNG 파일명에 '메인'</b> → <b>메인 240×240</b>, <b style="color:#03A357;">'탭'(또는 '아이콘')</b> → <b>탭 96×74</b> 자동 생성 (따로 떨어진 '메인.psd'·'탭.psd'도 OK · 이름만 맞추면 확대·테두리 자동)<br>
 • 가이드·배경 등 필요 없는 레이어는 <b>눈 끄거나 삭제</b><br>
 <div style="background:#EFFaf4;border:1.5px dashed #8FD9B6;border-radius:10px;padding:10px 13px;font-size:11px;line-height:1.9;color:#555;margin:8px 0 14px;">
 <b style="color:#333;">💡 PSD 하나로 카카오·오지큐 둘 다</b><br>
@@ -898,9 +893,8 @@ async function runOnestopMini() {
   setStatus('미니 추출 중...'); setProgress(10);
   const ratioW = W / MINI_PRESET.canvas.w, ratioH = H / MINI_PRESET.canvas.h;
   const total = MINI_PRESET.coords.length;
-  const customZip = (document.getElementById('onestopZipName').value || '').trim();
-  const baseName = (customZip || onestopSlots.character.fileName || 'mini')
-    .replace(/[\/\\:*?"<>|]/g, '_').replace(/\.zip$/i, '');
+  const baseName = (onestopSlots.character.fileName || 'mini')
+    .normalize('NFC').replace(/[\/\\:*?"<>|]/g, '_').replace(/\.zip$/i, '');
 
   const kakaoPngs = [];
   let seq = 0;
@@ -919,7 +913,7 @@ async function runOnestopMini() {
     octx.imageSmoothingEnabled = true; octx.imageSmoothingQuality = 'high';
     octx.drawImage(cut, 0, 0, MINI_OUT, MINI_OUT);
     seq++;
-    kakaoPngs.push({ name: String(seq).padStart(2, '0') + '.png', blob: await canvasToBlob(out), canvas: out });
+    kakaoPngs.push({ name: baseName + '_' + String(seq).padStart(2, '0') + '.png', blob: await canvasToBlob(out), canvas: out });
   }
   setProgress(100);
   setStatus('미니 ' + kakaoPngs.length + '장 추출 완료 (180×180)');
@@ -966,9 +960,8 @@ async function runOnestop() {
 
   const ratioW = W / ACTIVE_PRESET.canvas.w, ratioH = H / ACTIVE_PRESET.canvas.h;
   const total = ACTIVE_PRESET.coords.length, ICON = total - 1, MAIN = total - 2;
-  const customZip = (document.getElementById('onestopZipName').value || '').trim();
-  const baseName = (customZip || onestopSlots.character.fileName || 'onestop')
-    .replace(/[\/\\:*?"<>|]/g, '_').replace(/\.zip$/i, '');
+  const baseName = (onestopSlots.character.fileName || 'onestop')
+    .normalize('NFC').replace(/[\/\\:*?"<>|]/g, '_').replace(/\.zip$/i, '');
 
   const kakaoPngs = [];
   let seq = 0;
@@ -1020,9 +1013,8 @@ async function runOnestopOgq() {
 
   const ratioW = W / ACTIVE_PRESET.canvas.w, ratioH = H / ACTIVE_PRESET.canvas.h;
   const total = ACTIVE_PRESET.coords.length, ICON = total - 1, MAIN = total - 2;
-  const customZip = (document.getElementById('onestopZipName').value || '').trim();
-  const baseName = (customZip || onestopSlots.character.fileName || 'onestop')
-    .replace(/[\/\\:*?"<>|]/g, '_').replace(/\.zip$/i, '');
+  const baseName = (onestopSlots.character.fileName || 'onestop')
+    .normalize('NFC').replace(/[\/\\:*?"<>|]/g, '_').replace(/\.zip$/i, '');
 
   const ogqPngs = [];
   let seq = 0;
@@ -2101,6 +2093,8 @@ async function run() {
     const seqWarnings = []; // 시퀀스에 없는 프레임 번호를 넣은 경우 모아서 알림
     // PSD 안 '메인/아이콘/탭' 폴더에서 자동 추출한 캔버스 (첫 PSD가 우선). 전역 슬롯을 덮지 않아 누수 없음
     const autoExtras = { main: null, tab: null, icon: null };
+    // PNG로 넣은 메인/탭/아이콘의 원본 파일명 기억 (오지큐 멈티 PNG는 넣은 그대로 출력). PSD 소스면 null → _base 규칙 사용
+    const autoExtrasName = { main: null, tab: null, icon: null };
     const pngSkipped = []; // 카카오 일반에서 거부된 평면 PNG 파일명 (글자 테두리 불가)
     for (let fi = 0; fi < files.length; fi++) {
       const file = files[fi];
@@ -2115,6 +2109,25 @@ async function run() {
         unwrapAnimationFolder(psd);
         // 정지 모드(카카오 일반·오지큐 멈티)는 그룹 숨김 전파 → 눈 끈 가이드 폴더도 제외. GIF은 제외(프레임 보존)
         if (mode === 'top-of-group' || mode === 'all-layers') (psd.children || []).forEach(c => propagateHidden(c, false));
+
+        /* PSD '파일명'이 '메인'/'아이콘'/'탭'이면 PSD 전체를 합쳐 그 역할로 라우팅
+           (PNG 파일명 방식과 동일 — 따로 떨어진 '메인.psd'·'아이콘.psd'도 인식. 폴더 추출보다 우선) */
+        if (mode === 'top-of-group' || mode === 'all-layers') {
+          const psdRole = classifyExtraFolder(file.name.replace(/\.psd$/i, ''));
+          if (psdRole) {
+            const mergedPsd = mergeFolderToCanvas(psd, psd.width, psd.height);   // 보이는 레이어 전부 합침(숨김 제외)
+            if (mergedPsd && !isCanvasEmpty(mergedPsd)) {
+              if (currentPlatform === 'ogq') {
+                if (psdRole === 'main') { if (!autoExtras.main) autoExtras.main = mergedPsd; }
+                else if (!autoExtras.tab) autoExtras.tab = mergedPsd;          // icon·tab·iconTab → 탭
+              } else if (currentPlatform === 'kakao') {
+                if (psdRole !== 'main' && !autoExtras.icon) autoExtras.icon = mergedPsd;  // 메인은 카카오 무시
+              }
+            }
+            setProgress(((fi + 1) / files.length) * 100);
+            continue;   // 스티커로는 처리하지 않음
+          }
+        }
 
         /* PSD 안 메인/아이콘/탭 폴더 자동 추출 (사전 리사이즈 전 = 원본 해상도). 첫 PSD가 우선 */
         if (mode === 'top-of-group' || mode === 'all-layers') {
@@ -2368,7 +2381,7 @@ async function run() {
             const delay = getOgqGifDelay();
             const ogq = rearrangeForOGQ(gifCanvases, delay);
             const gifBlob = await createGifFromCanvases(ogq.canvases, ogq.delays);
-            const gifName = file.name.replace(/\.psd$/i, '_ogq.gif');
+            const gifName = file.name.normalize('NFC').replace(/\.psd$/i, '') + '_01.gif';   // psd파일명_01.gif
             resultBlobs.push({ name: gifName, blob: gifBlob });
             setStatus('완성! OGQ GIF 생성 완료 (' + ogq.canvases.length + '프레임)');
             psdFileIndex++;
@@ -2438,11 +2451,12 @@ async function run() {
         const pngRole = (mode === 'top-of-group' || mode === 'all-layers')
           ? classifyExtraFolder(file.name.replace(/\.png$/i, '')) : null;
         if (pngRole) {
+          const pngNameNFC = file.name.normalize('NFC');   // 넣은 그대로 출력용
           if (currentPlatform === 'ogq') {
-            if (pngRole === 'main') { if (!autoExtras.main) autoExtras.main = srcCanvas; }
-            else if (!autoExtras.tab) autoExtras.tab = srcCanvas;          // icon·tab·iconTab → 탭
+            if (pngRole === 'main') { if (!autoExtras.main) { autoExtras.main = srcCanvas; autoExtrasName.main = pngNameNFC; } }
+            else if (!autoExtras.tab) { autoExtras.tab = srcCanvas; autoExtrasName.tab = pngNameNFC; }   // icon·tab·iconTab → 탭
           } else if (currentPlatform === 'kakao') {
-            if (pngRole !== 'main' && !autoExtras.icon) autoExtras.icon = srcCanvas;  // 메인은 카카오 무시
+            if (pngRole !== 'main' && !autoExtras.icon) { autoExtras.icon = srcCanvas; autoExtrasName.icon = pngNameNFC; }  // 메인은 카카오 무시
           }
           setProgress(((fi + 1) / files.length) * 100);
           continue;   // 스티커로는 처리하지 않음
@@ -2480,13 +2494,15 @@ async function run() {
       const _base = (files && files.length) ? extraOutputBase(files[0].name, 'ogq') : 'ogq';
       if (effMain) {
         const mc = await buildOgqImage(effMain, 240, 240, 3);   // 메인 테두리 3 고정 (오지큐 원스톱과 동일)
-        addPreview(mc, _base + '_메인.png');
-        resultBlobs.push({ name: _base + '_메인.png', blob: await canvasToPngBlob(mc) });
+        const mname = autoExtrasName.main || (_base + '_메인.png');   // PNG 소스면 넣은 파일명 그대로
+        addPreview(mc, mname);
+        resultBlobs.push({ name: mname, blob: await canvasToPngBlob(mc) });
       }
       if (effTab) {
         const tc = await buildOgqImage(effTab, 96, 74, 1);      // 탭 테두리 1 고정
-        addPreview(tc, _base + '_탭.png');
-        resultBlobs.push({ name: _base + '_탭.png', blob: await canvasToPngBlob(tc) });
+        const tname = autoExtrasName.tab || (_base + '_탭.png');
+        addPreview(tc, tname);
+        resultBlobs.push({ name: tname, blob: await canvasToPngBlob(tc) });
       }
     }
 
@@ -2494,8 +2510,9 @@ async function run() {
     if (currentPlatform === 'kakao' && effIcon) {
       const _ibase = (files && files.length) ? extraOutputBase(files[0].name, 'kakao') : 'kakao';
       const ic = await buildOgqImage(effIcon, 78, 78, 0);
-      addPreview(ic, _ibase + '_아이콘.png');
-      resultBlobs.push({ name: _ibase + '_아이콘.png', blob: await canvasToPngBlob(ic) });
+      const iname = autoExtrasName.icon || (_ibase + '_아이콘.png');   // PNG 소스면 넣은 파일명 그대로
+      addPreview(ic, iname);
+      resultBlobs.push({ name: iname, blob: await canvasToPngBlob(ic) });
     }
 
     setStatus('완료! ' + resultBlobs.length + '개 파일 준비됨');
