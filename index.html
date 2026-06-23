@@ -1022,13 +1022,13 @@ async function runOnestop() {
     if (i === ICON) {                          // 36번 = 아이콘 (78×78, 꽉 차게)
       if (!isCanvasEmpty(k)) {
         const ic = await buildOgqImage(k, 78, 78, 0);
-        kakaoPngs.push({ name: '아이콘.png', blob: await canvasToPngBlob(ic), canvas: ic });
+        kakaoPngs.push({ name: baseName + '_아이콘.png', blob: await canvasToPngBlob(ic), canvas: ic });
       }
       continue;
     }
     if (isCanvasEmpty(k)) continue;
     seq++;
-    kakaoPngs.push({ name: String(seq).padStart(2, '0') + '.png', blob: await canvasToBlob(k), canvas: k });
+    kakaoPngs.push({ name: baseName + '_' + String(seq).padStart(2, '0') + '.png', blob: await canvasToBlob(k), canvas: k });
   }
 
   setStatus('카카오 ' + kakaoPngs.length + '장 추출 완료'); setProgress(100);
@@ -1076,18 +1076,18 @@ async function runOnestopOgq() {
     if (isCanvasEmpty(cell)) continue;
     seq++;
     const ogq = await buildOnestopOgqCanvas(cell, stickerStroke, color);
-    ogqPngs.push({ name: String(seq).padStart(2, '0') + '.png', blob: await canvasToBlob(ogq), canvas: ogq });
+    ogqPngs.push({ name: baseName + '_' + String(seq).padStart(2, '0') + '.png', blob: await canvasToBlob(ogq), canvas: ogq });
   }
   // 35 = 메인, 36 = 탭
   const mainCell = cropCell(rawComp, MAIN, ratioW, ratioH);
   if (!isCanvasEmpty(mainCell)) {
     const mc = await buildOgqImage(mainCell, 240, 240, 3, color);
-    ogqPngs.push({ name: '메인.png', blob: await canvasToPngBlob(mc), canvas: mc });
+    ogqPngs.push({ name: baseName + '_메인.png', blob: await canvasToPngBlob(mc), canvas: mc });
   }
   const tabCell = cropCell(rawComp, ICON, ratioW, ratioH);
   if (!isCanvasEmpty(tabCell)) {
     const tc = await buildOgqImage(tabCell, 96, 74, 1, color);
-    ogqPngs.push({ name: '탭.png', blob: await canvasToPngBlob(tc), canvas: tc });
+    ogqPngs.push({ name: baseName + '_탭.png', blob: await canvasToPngBlob(tc), canvas: tc });
   }
 
   setStatus('오지큐 ' + ogqPngs.length + '장 추출 완료'); setProgress(100);
