@@ -135,6 +135,20 @@ input[type=color] { width: 40px; height: 34px; border: 2px solid #DDD; border-ra
 .target-panel.active { display: block; }
 /* 안내사항 */
 .option-notice { font-size: 10.5px; color: #777; background: #FAFAFA; border: 1.5px dashed #CCC; border-radius: 8px; padding: 10px 12px; margin-top: 10px; line-height: 1.7; }
+/* 메모리 부족 안내 박스 — 수강생이 스스로 해결 → 안 되면 문의처 */
+#helpBox { display: none; margin-top: 14px; background: #FFF8F0; border: 1.5px solid #FFD8A8; border-radius: 12px; padding: 16px 18px; text-align: left; line-height: 1.75; }
+#helpBox .hb-title { font-size: 14px; font-weight: 800; color: #C2410C; margin-bottom: 4px; }
+#helpBox .hb-sub { font-size: 11.5px; color: #9A6B3F; margin-bottom: 12px; }
+#helpBox ol { margin: 0 0 14px 0; padding-left: 20px; font-size: 12.5px; color: #444; }
+#helpBox li { margin-bottom: 8px; font-weight: 600; }
+#helpBox li span { display: block; font-weight: 500; color: #777; font-size: 11.5px; margin-top: 2px; }
+#helpBox .hb-contact { border-top: 1.5px dashed #FFD8A8; padding-top: 12px; font-size: 12px; color: #555; }
+#helpBox .hb-contact b { color: #C2410C; }
+#helpBox .hb-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+/* a와 button 높이를 맞추려면 box-sizing·line-height·테두리를 통일해야 한다 */
+#helpBox .hb-btn { flex: 1 1 140px; box-sizing: border-box; display: block; text-align: center; padding: 12px; border-radius: 10px; font-size: 12.5px; font-weight: 700; line-height: 1.2; text-decoration: none; background: #F97316; color: #fff; border: 1.5px solid #F97316; font-family: inherit; cursor: pointer; }
+#helpBox .hb-btn.ghost { background: #fff; color: #C2410C; border: 1.5px solid #FFD8A8; }
+#helpBox .hb-diag { margin-top: 10px; font-size: 10.5px; color: #A08060; word-break: break-all; }
 /* 출력 토글 */
 .out-toggle { flex:1; display:flex; align-items:center; gap:5px; padding:6px 10px; border:2px solid #E0E0E0; border-radius:8px; cursor:pointer; font-size:11px; font-weight:600; color:#555; background:#fff; transition: transform 0.1s cubic-bezier(0.34,1.56,0.64,1), border-color 0.15s, background 0.15s; }
 .out-toggle:active { transform: scale(1.06); }
@@ -435,6 +449,7 @@ PNG 여러 장 · PSD 여러 개 가능<br>PNG + PSD 혼합 불가
 <div class="progress-bar-wrap" id="progressWrap">
 <div class="progress-bar" id="progressBar"></div>
 </div>
+<div id="helpBox"></div>
 </div>
 <div class="card" id="previewArea">
 <div class="section-title">미리보기 (처음 5장)</div>
@@ -1479,16 +1494,81 @@ function estimatePsdMemoryMB(buf) {
 /* 기기별 대략적인 캔버스 메모리 한계 (아이패드·아이폰 사파리가 훨씬 빡빡하다) */
 function memoryBudgetMB() { return isIOS() ? 320 : 1500; }
 
-/* 브라우저 메모리 부족 에러는 원문이 영어라 뭘 해야 할지 알 수 없다 → 대처법으로 바꿔준다 */
-function friendlyError(err) {
+/* 브라우저 메모리 부족 에러는 원문이 영어라 뭘 해야 할지 알 수 없다 → 짧은 한 줄로 바꿔준다.
+   (자세한 대처법은 아래 showHelpBox()가 화면에 펼쳐 보여준다. #status는 한 줄짜리라 여러 줄이 뭉개짐) */
+function isMemoryError(err) {
   const m = (err && err.message) || String(err);
-  if (/memory|allocation|out of memory|알 수 없는 오류가 발생/i.test(m)) {
-    return '기기 메모리가 부족해요. 아래를 시도해 보세요\n'
-         + '① 사파리 다른 탭 닫고 다시 실행\n'
-         + '② 스티커를 12개씩 나눠서 두 번에 처리\n'
-         + '③ PSD 캔버스 크기를 줄여서 다시 내보내기';
+  return /memory|allocation|out of memory/i.test(m);
+}
+function friendlyError(err) {
+  if (isMemoryError(err)) return '기기 메모리가 부족해서 멈췄어요 — 아래 안내를 봐주세요';
+  return (err && err.message) || String(err);
+}
+
+/* 마지막 작업 정보 — 문의 메일에 자동으로 담아 보낸다 (진영님이 원인 파악하기 쉽게) */
+let lastDiag = { file: '', estMB: 0, sizeMB: 0, stickers: 0, error: '' };
+
+const CONTACT_EMAIL = 'gnyang2020@naver.com';
+
+function hideHelpBox() { const b = document.getElementById('helpBox'); if (b) b.style.display = 'none'; }
+
+/* 메모리 문제 안내 — ① 스스로 해결할 수 있는 순서 ② 그래도 안 되면 문의처 */
+function showHelpBox(mode) {
+  const box = document.getElementById('helpBox');
+  if (!box) return;
+  const failed = (mode === 'failed');   // 'failed' = 실제로 터짐 / 'toobig' = 미리 경고
+
+  const diagLines = [
+    '[매직팟 진단 정보]',
+    '파일: ' + (lastDiag.file || '-'),
+    '파일 크기: ' + (lastDiag.sizeMB || '-') + 'MB / 필요 메모리(추정): ' + (lastDiag.estMB || '-') + 'MB',
+    '기기: ' + navigator.userAgent,
+    '증상: ' + (lastDiag.error || (failed ? '처리 중 멈춤' : '용량 경고')),
+    '',
+    '(위 내용은 그대로 두고 아래에 상황을 적어주세요)',
+    ''
+  ].join('\n');
+  const mailto = 'mailto:' + CONTACT_EMAIL
+    + '?subject=' + encodeURIComponent('[매직팟] 메모리 오류 문의')
+    + '&body=' + encodeURIComponent(diagLines);
+
+  box.innerHTML =
+    '<div class="hb-title">' + (failed ? '메모리가 부족해서 멈췄어요' : '이 PSD는 기기에 좀 버거워요') + '</div>'
+    + '<div class="hb-sub">그림이 잘못된 게 아니에요. 아이패드가 한 번에 처리할 수 있는 양을 넘어선 것뿐이라,'
+    + ' 아래 순서대로 하면 대부분 해결됩니다.</div>'
+    + '<ol>'
+    + '<li>사파리를 완전히 껐다가 다시 켜기'
+    + '<span>홈으로 나가는 게 아니라, 앱을 위로 밀어 완전히 종료 후 다시 실행해 주세요. 이것만으로 되는 경우가 많아요.</span></li>'
+    + '<li>스티커를 반으로 나눠서 두 번에 올리기'
+    + '<span>24개면 12개씩 PSD 2개로 나눠주세요. 결과물은 똑같이 나옵니다.</span></li>'
+    + '<li>그래도 안 되면 PSD 캔버스 크기 줄여서 다시 내보내기'
+    + '<span>프로크리에이트에서 740×640(오지큐) / 360×360(카카오)으로 맞춰 내보내면 훨씬 가벼워져요.</span></li>'
+    + '</ol>'
+    + '<div class="hb-contact">'
+    + '<b>세 가지 다 해봤는데도 안 되나요?</b><br>편하신 쪽으로 알려주세요. 어떤 파일인지 같이 보내주시면 더 빨라요.'
+    + '<div class="hb-btns">'
+    + '<a class="hb-btn" href="' + mailto + '">메일로 문의하기</a>'
+    + '<button class="hb-btn ghost" onclick="copyDiag()">진단 정보 복사</button>'
+    + '</div>'
+    + '<div class="hb-diag">단톡방에 물어보실 땐 위 &lsquo;진단 정보 복사&rsquo;를 눌러 같이 붙여넣어 주세요 · 메일 '
+    + CONTACT_EMAIL + '</div>'
+    + '</div>';
+  box.style.display = 'block';
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* 단톡방에 붙여넣을 수 있게 진단 정보만 클립보드로 */
+async function copyDiag() {
+  const t = '[매직팟 오류] ' + (lastDiag.file || '-')
+    + ' / 파일 ' + (lastDiag.sizeMB || '-') + 'MB · 필요 메모리 약 ' + (lastDiag.estMB || '-') + 'MB'
+    + ' / ' + (lastDiag.error || '처리 중 멈춤')
+    + ' / ' + navigator.userAgent;
+  try {
+    await navigator.clipboard.writeText(t);
+    alert('복사했어요! 단톡방에 붙여넣어 주세요.');
+  } catch (e) {
+    prompt('아래 내용을 길게 눌러 복사해 주세요', t);
   }
-  return m;
 }
 
 /* ── 캔버스 리사이즈 ── */
@@ -2480,6 +2560,7 @@ async function run() {
   btn.disabled = true;
   document.getElementById('topDlBtn').disabled = true;
   resultBlobs = [];
+  hideHelpBox();
   document.getElementById('previewGrid').innerHTML = '';
   document.getElementById('previewArea').style.display = 'none';
   setProgress(1);
@@ -2487,7 +2568,9 @@ async function run() {
   // 원스톱 모드: PSD/PNG 무시하고 슬롯 시트로 카카오/오지큐 추출 (별도 흐름)
   if (isOnestopActive()) {
     try { await runOnestop(); }
-    catch (e) { setStatus('오류: ' + friendlyError(e)); console.error(e); }
+    catch (e) { setStatus('오류: ' + friendlyError(e));
+      if (isMemoryError(e)) { lastDiag.error = e.message; showHelpBox('failed'); }
+      console.error(e); }
     btn.disabled = false;
     return;
   }
@@ -2514,6 +2597,11 @@ async function run() {
            PSD가 아주 크면 아래 readPsd가 레이어를 펼치는 순간 바로 메모리가 터진다 */
         const _estMB = estimatePsdMemoryMB(buf);
         const _budgetMB = memoryBudgetMB();
+        lastDiag = {
+          file: file.name, estMB: _estMB,
+          sizeMB: Math.round(file.size / 1048576),
+          stickers: 0, error: ''
+        };
         if (_estMB > _budgetMB) {
           const ok = confirm(
             '⚠️ ' + file.name + '\n\n'
@@ -2526,8 +2614,10 @@ async function run() {
             + '그래도 진행할까요?'
           );
           if (!ok) {
-            setStatus('취소됨 — 스티커를 나눠서 다시 올려주세요');
+            setStatus('취소됨 — 아래 안내를 봐주세요');
             setProgress(0);
+            lastDiag.error = '용량이 커서 사용자가 취소함';
+            showHelpBox('toobig');
             btn.disabled = false;
             return;
           }
@@ -3005,6 +3095,7 @@ async function run() {
     document.getElementById('dlBtnWrap').innerHTML = '<div style="font-size:12px;color:#6b7280;margin-top:10px;text-align:center;">⤓ 미리보기를 클릭하면 그 파일 1장만 저장돼요</div>';
   } catch (err) {
     setStatus('오류: ' + friendlyError(err));
+    if (isMemoryError(err)) { lastDiag.error = err.message; showHelpBox('failed'); }
     console.error(err);
   }
   btn.disabled = false;
