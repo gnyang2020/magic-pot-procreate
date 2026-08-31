@@ -1491,8 +1491,6 @@ function estimatePsdMemoryMB(buf) {
     return Math.round(px * 4 / 1048576);
   } catch (e) { return 0; }   // 계산 실패하면 0 → 그냥 진행
 }
-/* 기기별 대략적인 캔버스 메모리 한계 (아이패드·아이폰 사파리가 훨씬 빡빡하다) */
-function memoryBudgetMB() { return isIOS() ? 320 : 1500; }
 
 /* 브라우저 메모리 부족 에러는 원문이 영어라 뭘 해야 할지 알 수 없다 → 짧은 한 줄로 바꿔준다.
    (자세한 대처법은 아래 showHelpBox()가 화면에 펼쳐 보여준다. #status는 한 줄짜리라 여러 줄이 뭉개짐) */
@@ -1539,8 +1537,9 @@ function showHelpBox(mode) {
     + '<ol>'
     + '<li>사파리를 완전히 껐다가 다시 켜기'
     + '<span>홈으로 나가는 게 아니라, 앱을 위로 밀어 완전히 종료 후 다시 실행해 주세요. 이것만으로 되는 경우가 많아요.</span></li>'
-    + '<li>스티커를 반으로 나눠서 두 번에 올리기'
-    + '<span>24개면 12개씩 PSD 2개로 나눠주세요. 결과물은 똑같이 나옵니다.</span></li>'
+    + '<li>프로크리에이트에서 스티커 폴더별로 레이어 합치기'
+    + '<span>프크는 내보낼 때 레이어 한 장 한 장을 캔버스 전체 크기로 펼쳐서, 레이어 수가 곧 메모리가 돼요.'
+    + ' 폴더 안 레이어를 1장으로 합쳐 다시 내보내면 가장 확실합니다.</span></li>'
     + '<li>그래도 안 되면 PSD 캔버스 크기 줄여서 다시 내보내기'
     + '<span>프로크리에이트에서 740×640(오지큐) / 360×360(카카오)으로 맞춰 내보내면 훨씬 가벼워져요.</span></li>'
     + '</ol>'
@@ -1672,6 +1671,32 @@ function isCanvasEmpty(canvas) {
   for (let i = 3; i < data.length; i += 4) {
     if (data[i] > 10) return false;
   }
+  return true;
+}
+
+/* ── 결과물이 전부 비었는지 검사 (메모리 부족 사후 감지) ──
+   아이패드 사파리는 메모리가 부족해도 에러를 던지지 않고 캔버스 내용만 조용히 비운다.
+   그대로 두면 '여백만 있는 파일'이 성공한 척 저장돼 버린다 (2026-08 수강생 사례).
+   정상일 땐 첫 파일에서 바로 내용이 잡혀 끝나므로 평소 비용은 사실상 없다. */
+async function allResultsBlank(blobs) {
+  const cv = document.createElement('canvas');
+  const ctx = cv.getContext('2d', { willReadFrequently: true });
+  for (const item of blobs) {
+    let bmp;
+    try { bmp = await createImageBitmap(item.blob); }
+    catch (e) { freeCanvas(cv); return false; }   // 못 읽으면 판단 보류 → 정상 취급
+    const s = Math.min(256 / bmp.width, 256 / bmp.height, 1);   // 축소해서 검사 (알파는 살아남음)
+    cv.width = Math.max(1, Math.round(bmp.width * s));
+    cv.height = Math.max(1, Math.round(bmp.height * s));
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    ctx.drawImage(bmp, 0, 0, cv.width, cv.height);
+    if (bmp.close) bmp.close();
+    const d = ctx.getImageData(0, 0, cv.width, cv.height).data;
+    for (let i = 3; i < d.length; i += 4) {
+      if (d[i] > 2) { freeCanvas(cv); return false; }   // 내용 있는 파일 하나라도 발견 → 정상
+    }
+  }
+  freeCanvas(cv);
   return true;
 }
 
@@ -2593,35 +2618,17 @@ async function run() {
         const { readPsd, writePsd } = window.agPsd;
         const buf = await file.arrayBuffer();
 
-        /* ── 사전 점검 ── 터지고 나서 영문 에러를 보여주는 대신, 읽기 전에 미리 알려준다.
-           PSD가 아주 크면 아래 readPsd가 레이어를 펼치는 순간 바로 메모리가 터진다 */
+        /* ── 메모리 추정 ── 예전엔 여기서 기준치를 넘으면 confirm으로 막았는데, 실측해보니
+           기준치가 실제 한계보다 훨씬 보수적이라 멀쩡히 되는 파일까지 겁을 줬다.
+           (2026-08: 592MB 추정 PSD가 아이패드에서 정상 처리됨)
+           → 이제 막지 않고 그냥 진행한다. 실패는 아래 allResultsBlank()가 사후에 잡는다.
+           추정치는 문의 메일용 진단 정보로만 남긴다. */
         const _estMB = estimatePsdMemoryMB(buf);
-        const _budgetMB = memoryBudgetMB();
         lastDiag = {
           file: file.name, estMB: _estMB,
           sizeMB: Math.round(file.size / 1048576),
           stickers: 0, error: ''
         };
-        if (_estMB > _budgetMB) {
-          const ok = confirm(
-            '⚠️ ' + file.name + '\n\n'
-            + '이 PSD는 브라우저 메모리가 약 ' + _estMB + 'MB 필요해요.\n'
-            + (isIOS() ? '아이패드·아이폰' : '이 기기') + '에서는 ' + _budgetMB + 'MB쯤이 한계라 도중에 멈출 가능성이 높습니다.\n\n'
-            + '※ 파일 크기(' + Math.round(file.size / 1048576) + 'MB)와 다릅니다 — PSD는 압축돼 있어서\n'
-            + '   브라우저에서 펼치면 15~25배로 커져요.\n\n'
-            + '권장: 스티커를 반으로 나눠 PSD 2개로 올리기\n'
-            + '      (또는 PSD 캔버스 크기를 줄여 다시 내보내기)\n\n'
-            + '그래도 진행할까요?'
-          );
-          if (!ok) {
-            setStatus('취소됨 — 아래 안내를 봐주세요');
-            setProgress(0);
-            lastDiag.error = '용량이 커서 사용자가 취소함';
-            showHelpBox('toobig');
-            btn.disabled = false;
-            return;
-          }
-        }
         setStatus('읽는 중: ' + file.name + ' (메모리 약 ' + _estMB + 'MB)...');
 
         // skipCompositeImageData: PSD 전체 합성 이미지(psd.canvas)는 어차피 안 쓰고 출력 전에 지운다.
@@ -3080,6 +3087,25 @@ async function run() {
     const _oversize = await shrinkPngsUnderLimit(resultBlobs, _limit);
     if (_oversize.length) {
       alert('⚠️ 개당 용량 ' + Math.round(_limit / 1024) + 'KB 초과 — 색을 줄여봤지만 못 맞춘 파일:\n\n' + _oversize.join('\n') + '\n\n(이 파일들은 직접 확인 필요)');
+    }
+
+    /* ── 사후 검사 ── 파일은 만들어졌는데 내용이 전부 비었다면 메모리 부족이다.
+       빈 파일을 저장시키지 말고, 재시도하면 대부분 된다는 걸 알려준다. */
+    if (resultBlobs.length && await allResultsBlank(resultBlobs)) {
+      resultBlobs = [];
+      document.getElementById('previewGrid').innerHTML = '';
+      document.getElementById('previewArea').style.display = 'none';
+      setStatus('메모리 부족 — 내용이 비어서 저장하지 않았어요');
+      setProgress(0);
+      lastDiag.error = '결과가 전부 비어 있음 (메모리 부족)';
+      showHelpBox('failed');
+      enableTopDownload();
+      alert('⚠️ 메모리가 부족해서 그림이 사라졌어요.\n\n'
+        + '빈 파일이 저장되는 걸 막았습니다.\n\n'
+        + '다른 앱과 사파리 탭을 닫고 다시 시도해 주세요 —\n'
+        + '대부분 재시도하면 정상으로 나옵니다.');
+      btn.disabled = false;
+      return;
     }
 
     setStatus('완료! ' + resultBlobs.length + '개 파일 준비됨');
